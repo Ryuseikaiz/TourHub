@@ -203,6 +203,12 @@
                         <div id="filterStatus" class="filter-status">
                             <label>Tour Status:</label>
                             <div class="radio-group">
+                                <input type="radio" id="cancelled" name="status" value="Cancelled" onchange="sendStatus()" ${param.filterStatus == 'Cancelled' ? 'checked' : ''}>
+                                <label for="cancelled">Cancelled</label>
+
+                                <input type="radio" id="banned" name="status" value="Banned" onchange="sendStatus()" ${param.filterStatus == 'Banned' ? 'checked' : ''}>
+                                <label for="banned">Banned</label> 
+
                                 <input type="radio" id="hidden" name="status" value="Hidden" onchange="sendStatus()" ${param.filterStatus == 'Hidden' ? 'checked' : ''}>
                                 <label for="hidden">Hidden</label>
 
@@ -228,7 +234,7 @@
                                             <div class="col-md-6 col-xl-4 lazy">
                                                 <article class="event-default-wrap" style="background: rgba(0, 0, 0, 0.1); border-radius: 10px">
                                                     <c:choose>
-                                                        <c:when test="${tour.tour_Status == 'Hidden'}">
+                                                        <c:when test="${tour.tour_Status == 'Hidden' || tour.tour_Status == 'Banned'}">
                                                             <div class="event-default darken-effect">
                                                             </c:when>
                                                             <c:otherwise>
@@ -239,35 +245,37 @@
                                                                 <figure class="event-default-image skeleton" style="max-width: 300px; margin: auto; margin-top: 15px">
                                                                     <img data-src="${tour.tour_Img[0]}" alt="${tour.tour_Name}" style="min-height: 250px; max-height: 450px; object-fit: cover; width: 100%;" class="lazy fade-in">
                                                                 </figure>
-                                                                <div class="event-default-caption" style="position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; width: 0px; height: 0px">
-                                                                    <a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" 
-                                                                       class="button button-xs button-secondary button-nina tour-visit-count" 
-                                                                       style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;">
-                                                                        Edit
-                                                                    </a>
-                                                                    <a href="provider-management?action=add-option&tourId=${tour.tour_Id}" 
-                                                                       class="button button-xs button-secondary button-nina tour-visit-count" 
-                                                                       style="font-size: 12px; font-weight: bold; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;">
-                                                                        Add Option
-                                                                    </a>
-                                                                    <c:if test="${tour.tour_Status == 'Active'}">
-                                                                        <a href="javascript:void(0);" 
-                                                                           class="button button-xs button-secondary button-nina tour-visit-count action-link approve" 
-                                                                           style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;"
-                                                                           onclick="showModal('${tour.tour_Id}', 'Hidden')">
-                                                                            Hidden
-                                                                        </a>
-                                                                    </c:if>
-                                                                    <c:if test="${tour.tour_Status == 'Hidden'}">
-                                                                        <a href="javascript:void(0);" 
+                                                                <c:if test="${tour.tour_Status ne 'Banned'}">
+                                                                    <div class="event-default-caption" style="position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; width: 0px; height: 0px">
+                                                                        <a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" 
                                                                            class="button button-xs button-secondary button-nina tour-visit-count" 
-                                                                           style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;"
-                                                                           onclick="showModal('${tour.tour_Id}', 'Active')">
-                                                                            Active
+                                                                           style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;">
+                                                                            Edit
                                                                         </a>
-                                                                    </c:if>
+                                                                        <a href="provider-management?action=add-option&tourId=${tour.tour_Id}" 
+                                                                           class="button button-xs button-secondary button-nina tour-visit-count" 
+                                                                           style="font-size: 12px; font-weight: bold; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;">
+                                                                            Add Option
+                                                                        </a>
+                                                                        <c:if test="${tour.tour_Status == 'Active'}">
+                                                                            <a href="javascript:void(0);" 
+                                                                               class="button button-xs button-secondary button-nina tour-visit-count action-link approve" 
+                                                                               style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;"
+                                                                               onclick="showModal('${tour.tour_Id}', 'Hidden')">
+                                                                                Hidden
+                                                                            </a>
+                                                                        </c:if>
+                                                                        <c:if test="${tour.tour_Status == 'Hidden'}">
+                                                                            <a href="javascript:void(0);" 
+                                                                               class="button button-xs button-secondary button-nina tour-visit-count" 
+                                                                               style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;"
+                                                                               onclick="showModal('${tour.tour_Id}', 'Active')">
+                                                                                Active
+                                                                            </a>
+                                                                        </c:if>
 
-                                                                </div>
+                                                                    </div>
+                                                                </c:if>
                                                             </figure>
 
                                                         </div>
@@ -286,9 +294,10 @@
                             </div>
 
                         </c:if>
-                        <!-- Display All Tours if providerTours is available -->                      
-
-
+                        <!-- Display All Tours if providerTours is available -->   
+                        <c:if test="${empty tours}">
+                            <h4 style="margin-top: 30px; display: flex; text-align: center; width: 100%">No Tour Available</h4>
+                        </c:if>
                     </c:otherwise>
                 </c:choose>
                 </div>
@@ -315,18 +324,18 @@
         <script src="assests/js/script_profile.js"></script>     
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-                                                                               document.addEventListener('DOMContentLoaded', function () {
-                                                                                   const burger = document.querySelector('.burger');
-                                                                                   const navigation = document.querySelector('.navigation-admin');
-                                                                                   const main = document.querySelector('.main-admin');
-                                                                                   const profileCard = document.querySelector('.profile-card'); // Select the profile card
+                                                                                   document.addEventListener('DOMContentLoaded', function () {
+                                                                                       const burger = document.querySelector('.burger');
+                                                                                       const navigation = document.querySelector('.navigation-admin');
+                                                                                       const main = document.querySelector('.main-admin');
+                                                                                       const profileCard = document.querySelector('.profile-card'); // Select the profile card
 
-                                                                                   burger.addEventListener('click', function () {
-                                                                                       navigation.classList.toggle('active');
-                                                                                       main.classList.toggle('active');
-                                                                                       profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+                                                                                       burger.addEventListener('click', function () {
+                                                                                           navigation.classList.toggle('active');
+                                                                                           main.classList.toggle('active');
+                                                                                           profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+                                                                                       });
                                                                                    });
-                                                                               });
         </script>
         <script>
             function reloadData() {

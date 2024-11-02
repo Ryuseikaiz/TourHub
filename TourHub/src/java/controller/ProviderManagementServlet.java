@@ -366,7 +366,6 @@ public class ProviderManagementServlet extends HttpServlet {
             isUpdated = true;
             imageUpdated = true;
         }
-
         // Check if image was removed
         if (request.getAttribute("imageRemoved") != null && (boolean) request.getAttribute("imageRemoved")) {
             request.setAttribute("message", "Image deleted successfully.");

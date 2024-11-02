@@ -213,3 +213,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 .custom-button-secondary:hover {
     background-color: #1a242f; /* Darker blue on hover */
 }
+
+.black-blur {
+    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+    filter: blur(px); /* Adjust the blur effect */
+    border-radius: 10px;
+    position: relative;
+    z-index: 1;
+}

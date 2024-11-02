@@ -389,7 +389,7 @@ public class hoang_UserDB implements DatabaseInfo {
 
     public void updateTour(Tour updatedTour) throws SQLException {
         String sql = "UPDATE Tour SET tour_Name = ?, tour_Description = ?, start_Date = ?, end_Date = ?, location = ?, "
-                + "total_Time = ?, price = ?, slot = ?, tour_Img = ? WHERE tour_Id = ?";
+                + "total_Time = ?, price = ?, slot = ?, tour_Status = ?, tour_Img = ? WHERE tour_Id = ?";
 
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Set the parameters for the prepared statement
@@ -407,13 +407,13 @@ public class hoang_UserDB implements DatabaseInfo {
             stmt.setBigDecimal(7, updatedTour.getPrice());
 
             stmt.setInt(8, updatedTour.getSlot());
-
+            stmt.setString(9, "Pending");
             // Assuming tour_Img is a List<String>, join them into a single string separated by semicolons
             List<String> images = updatedTour.getTour_Img();
             String imageFilenames = String.join(";", images);
-            stmt.setString(9, imageFilenames);
+            stmt.setString(10, imageFilenames);
 
-            stmt.setString(10, updatedTour.getTour_Id()); // Assuming tour_Id is String
+            stmt.setString(11, updatedTour.getTour_Id()); // Assuming tour_Id is String
 
             // Execute the update statement
             stmt.executeUpdate();

@@ -374,12 +374,16 @@ public class TourDB implements DatabaseInfo {
             query.append(" AND tour_Status = 'Active'");
         } else if ("Hidden".equalsIgnoreCase(status)) {
             query.append(" AND tour_Status = 'Hidden'");
-        } // If "All" or any other value, no additional status filter is added
+        } else if ("Banned".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Banned'");
+        } else if ("Cancelled".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Cancelled'");
+        }
+// If "All" or any other value, no additional status filter is added
         System.out.println(query);
         try (Connection con = getConnect(); PreparedStatement stmt = con.prepareStatement(query.toString())) {
-
             // Set the companyId parameter in the PreparedStatement
-            stmt.setInt(1, companyId);            
+            stmt.setInt(1, companyId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String tourId = rs.getString("tour_Id");
