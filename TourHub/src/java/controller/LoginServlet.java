@@ -38,33 +38,47 @@ public class LoginServlet extends HttpServlet {
             // Google Login Flow
             GoogleLogin googleLogin = new GoogleLogin();
             String accessToken = googleLogin.getToken(code);
+
+            if (accessToken == null) {
+                System.out.println("Failed to obtain access token.");
+                request.setAttribute("errorMessage", "Google login failed. Please try again.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+                return;
+            }
+
             GoogleAccount googleAccount = googleLogin.getUserInfo(accessToken);
 
             // Check if Google account exists in the User table
             user = userDB.authenticate(googleAccount.getEmail(), null);
 
             if (user == null) {
-                // If Google user not found, create a new user and redirect to googleregister.jsp
+                // New Google user, create and save in DB
                 user = new User();
                 user.setEmail(googleAccount.getEmail());
                 user.setFirst_Name(googleAccount.getGiven_name());
                 user.setLast_Name(googleAccount.getFamily_name());
-                user.setPassword(""); // No password for Google users initially
+                user.setPassword(""); // No password initially for Google users
                 user.setCreated_At(new java.util.Date());
                 user.setUser_Status("Verified");
-                userDB.registerUser(user); // Save user in the DB
 
-                // Set user in session before redirecting
+                boolean isRegistered = userDB.registerUser(user);
+                if (!isRegistered) {
+                    System.out.println("Failed to register new Google user.");
+                    request.setAttribute("errorMessage", "Failed to register with Google. Please try again.");
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                }
+
+                // Set user in session and redirect
                 HttpSession session = request.getSession();
                 session.setAttribute("currentUser", user);
-
-                // Redirect to the Google registration page
-                response.sendRedirect("googleregister.jsp");
-                return;  // Important to return after redirect
+                session.setAttribute("infoMessage", "Login again to complete some information!");
+                response.sendRedirect("login.jsp");
+                return;
             } else if (user.getPassword().equals("")) {
-                // If the user exists but has an empty password, redirect to Google register
+                // If user exists but has an empty password, redirect to Google register
                 HttpSession session = request.getSession();
-                session.setAttribute("currentUser", user);  // Make sure to keep the session
+                session.setAttribute("currentUser", user);
                 response.sendRedirect("googleregister.jsp");
                 return;
             }

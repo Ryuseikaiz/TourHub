@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import utils.RemoveDiacritics;
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 50, // 50MB
@@ -68,7 +69,7 @@ public class ImportTourServlet extends HttpServlet {
                     // Check if the file is a .csv file
                     if (!fileName.endsWith(".csv")) {
                         message = "Invalid file type. Please upload a .csv file.";
-                        request.setAttribute("errorMessage", message);
+                        request.setAttribute("message", message);
                         request.getRequestDispatcher("my-tour").forward(request, response);
                         return;  // Stop further execution if the file is not a .csv file
                     }
@@ -90,7 +91,7 @@ public class ImportTourServlet extends HttpServlet {
                 } else {
                     message = "No file selected for upload.";
                 }
-                request.setAttribute("errorMessage", message);
+                request.setAttribute("message", message);
                 request.getRequestDispatcher("import-tour?action=save-to-db").forward(request, response);
                 CSVReader fileReader = new CSVReader();
                 fileReader.deleteAllFilesInDir(getFolderUpload(request).toString());
@@ -121,8 +122,8 @@ public class ImportTourServlet extends HttpServlet {
 
         for (Tour tour : toursAdded) {
             tourDB.saveTourToDatabase(request, tour.getTour_Name(), tour.getTour_Description(),
-                    tour.getStart_Date().toString(), tour.getEnd_Date().toString(), tour.getLocation(),
-                    tour.getTotal_Time(), tour.getPrice(), tour.getSlot(), tourImg);
+                    tour.getStart_Date().toString(), tour.getEnd_Date().toString(), new RemoveDiacritics().removeAccent(tour.getLocation()),
+                    tour.getTotal_Time(), tour.getSlot(), tourImg);
         }
 
     }

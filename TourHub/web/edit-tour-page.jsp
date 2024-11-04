@@ -23,7 +23,8 @@
         <link href="assests/css/provider_analysis.css" rel="stylesheet"/>        
         <link rel="stylesheet" href="assests/css/bootstrap.css" />
         <!--<link rel="stylesheet" href="assests/css/style.css" />-->
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+        <!-- Toasify JavaScript -->        
         <title>Analytic</title>
         <style>
             body {
@@ -205,25 +206,21 @@
                 </nav>
                 <!-- NAVBAR -->
 
-                <!-- MAIN -->
-                <main>
-                    <c:choose>
-                        <c:when test="${sessionScope.currentUser == null}">
-                            <c:redirect url="home" />
-                        </c:when>
-                        <c:otherwise>
-                            <h3 style="<c:if test='${requestScope.message.contains("successfully")}'>color: green;</c:if>
-                                <c:if test='${requestScope.message.contains("Error")}'>color: red;</c:if>">
-                                ${requestScope.message}
-                            </h3>
-                            <c:set value="${requestScope.tourEdit}" var="tour" />
 
-                            <div class="table-data">
-                                <div class="order">
-                                    <h3 class="head">Edit Tour</h3>
-                                    <form action="provider-management?action=save-edit-tour&tourId=${tour.tour_Id}" method="POST" enctype="multipart/form-data">
-                                        <div class="form-group">
-                                            <label for="tour_Name">Tour Name: <span style="color: red;">*</span></label>
+                    <!-- MAIN -->
+                    <main>
+                        <c:choose>
+                            <c:when test="${sessionScope.currentUser == null}">
+                                <c:redirect url="home" />
+                            </c:when>
+                            <c:otherwise>                               
+                                <c:set value="${requestScope.tourEdit}" var="tour" />
+                                <div class="table-data">
+                                    <div class="order">
+                                        <h3 class="head">Edit Tour</h3>
+                                        <form action="provider-management?action=save-edit-tour&tourId=${tour.tour_Id}" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+                                            <div class="form-group">
+                                                <label for="tour_Name">Tour Name: <span style="color: red;">*</span></label>
                                             <input type="text" class="form-control" id="tour_Name" name="tour_Name" maxlength="255" value="${tour.tour_Name}" required>
                                         </div>
                                         <div class="form-group">
@@ -258,28 +255,40 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="location">Location: <span style="color: red;">*</span></label>
-                                            <input type="text" class="form-control" id="location" name="location" value="${tour.location}" maxlength="50" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="price">Price: <span style="color: red;">*</span></label>
-                                            <input type="number" class="form-control" id="price" name="price" value="${tour.price}" required>
+                                            <select class="form-control" id="location" name="location" style="height: 40px;
+                                                    padding: 8px;
+                                                    font-size: 16px;" required>
+                                                <option value="">Select a province</option>
+                                                <c:set var="location" value="${location}"/> <!-- Move this line outside the forEach -->
+                                                <c:forEach var="province" items="${provinces}">
+                                                    <option value="${province.province_name}" style="height: 40px;
+                                                            padding: 8px;
+                                                            font-size: 16px;"
+                                                            <c:if test="${province.province_name == location}">selected</c:if>
+                                                            >${province.province_name}</option>
+                                                </c:forEach>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="slot">Slot: <span style="color: red;">*</span></label>
                                             <input type="number" class="form-control" id="slot" name="slot" value="${tour.slot}" required>
+                                            <small id="slotError" style="color: red;
+                                                   display: none;">Slot must be a non-negative number.</small>
                                         </div>
                                         <div class="form-group">
                                             <label for="status">Status:</label>
                                             <input type="text" class="form-control" id="status" name="status" value="${tour.tour_Status}" readonly>
                                         </div>
-                                        <div class="form-group required">
+                                        <div class="form-group">
                                             <label for="tour_Img">Tour Images: <span style="color: red;">*</span></label>
-                                            <input type="file" class="form-control-file" id="tour_Img" name="tour_Img" multiple>
+                                            <input type="file" class="form-control-file" id="fileButton" accept=".jpg, .jpeg, .png, .webp" multiple>
+                                            <progress value="0" max="100" id="uploader">0%</progress>
+                                            <input type="hidden" id="tour_Img_URLs" name="tour_Img_URLs">
+                                            <div id="imgDiv"></div>
                                             <small class="form-text text-muted">Upload image files (JPG, PNG, etc.), each not exceeding 2MB.</small>
                                         </div>
                                         <div class="form-group">
                                             <label for="tour_Img">Tour Images:</label>
-                                            <!-- Only display the div if tourEditImages is not empty -->
                                             <c:if test="${empty tourEditImages}">
                                                 No Image Available
                                             </c:if>
@@ -288,12 +297,12 @@
                                                     <c:forEach var="image" items="${tourEditImages}">
                                                         <c:if test="${not empty image}">
                                                             <figure class="tour-image-wrapper">
-                                                                <img src="./assests/images/tour-images/${image}" alt="${tour.tour_Name}" class="tour-image" />
+                                                                <img src="${image}" alt="${tour.tour_Name}" class="tour-image" />
                                                                 <div class="tour-image-caption">
                                                                     <button class="btn btn-danger" 
                                                                             onclick="removeImage('${tour.tour_Id}', '${image}')"
                                                                             style="font-size: 12px;
-                                                                            padding: 2px 5px;
+                                                                            padding: 3px 7px;
                                                                             line-height: 1;
                                                                             width: 50px;">
                                                                         Remove
@@ -304,9 +313,8 @@
                                                     </c:forEach>
                                                 </div>
                                             </c:if>
-
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-block">Save</button>
+                                        </div>                                        
+                                        <button type="submit" class="btn btn-primary btn-block action-link approve">Save</button>
                                     </form>
                                 </c:otherwise>
                             </c:choose>
@@ -314,6 +322,7 @@
                     </div>
                 </main>          
                 <!-- MAIN -->
+                <div id="toastContainer" data-message="<c:out value='${message}' />"></div>
             </section>
             <!-- CONTENT -->
 
@@ -324,23 +333,87 @@
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
             <script>
-                                                                                document.addEventListener('DOMContentLoaded', function () {
-                                                                                    const burger = document.querySelector('.burger');
-                                                                                    const navigation = document.querySelector('.navigation-admin');
-                                                                                    const main = document.querySelector('.main-admin');
-                                                                                    const profileCard = document.querySelector('.profile-card'); // Select the profile card
+//                                                                                document.addEventListener('DOMContentLoaded', function () {
+//                                                                                    const burger = document.querySelector('.burger');
+//                                                                                    const navigation = document.querySelector('.navigation-admin');
+//                                                                                    const main = document.querySelector('.main-admin');
+//                                                                                    const profileCard = document.querySelector('.profile-card'); // Select the profile card
+//
+//                                                                                    burger.addEventListener('click', function () {
+//                                                                                        navigation.classList.toggle('active');
+//                                                                                        main.classList.toggle('active');
+//                                                                                        profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+//                                                                                    });
+//                                                                                });
 
-                                                                                    burger.addEventListener('click', function () {
-                                                                                        navigation.classList.toggle('active');
-                                                                                        main.classList.toggle('active');
-                                                                                        profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                                                                                    });
+
+            </script>            
+            <c:remove var="message" />
+            <!-- Firebase Script Configuration -->
+            <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+            <script type="text/javascript">
+                                                                                const firebaseConfig = {
+                                                                                    apiKey: "AIzaSyADteJKp4c9C64kC08pMJs_jYh-Fa5EX6o",
+                                                                                    authDomain: "tourhub-41aa5.firebaseapp.com",
+                                                                                    projectId: "tourhub-41aa5",
+                                                                                    storageBucket: "tourhub-41aa5.appspot.com",
+                                                                                    messagingSenderId: "556340467473",
+                                                                                    appId: "1:556340467473:web:2f6de24bdbb33709e51eb0",
+                                                                                    measurementId: "G-0JBZE81PGF"
+                                                                                };
+                                                                                firebase.initializeApp(firebaseConfig);
+
+                                                                                const uploader = document.getElementById('uploader');
+                                                                                const fileButton = document.getElementById('fileButton');
+                                                                                const saveButton = document.querySelector('button[type="submit"]');
+                                                                                saveButton.disabled = true; // Disable save button initially
+
+                                                                                let uploadedCount = 0; // Track the count of uploaded files
+                                                                                let totalFiles = 0; // Total files selected
+                                                                                const imageUrls = [];
+
+                                                                                fileButton.addEventListener('change', function (e) {
+                                                                                    uploadedCount = 0; // Reset the upload count on new selection
+                                                                                    totalFiles = e.target.files.length; // Set total files selected
+                                                                                    Array.from(e.target.files).forEach(uploadFile);
                                                                                 });
 
+                                                                                function uploadFile(file) {
+                                                                                    const storageRef = firebase.storage().ref('images/' + file.name);
+                                                                                    const uploadTask = storageRef.put(file);
 
+                                                                                    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, function (snapshot) {
+                                                                                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                                                                        uploader.value = progress;
+                                                                                        saveButton.disabled = true; // Disable save button during upload
+                                                                                    }, function (error) {
+                                                                                        console.error("Upload failed:", error);
+                                                                                    }, function () {
+                                                                                        uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                                                                                            imageUrls.push(downloadURL);
+                                                                                            document.getElementById("tour_Img_URLs").value = imageUrls.join(';');
+                                                                                            displayImage(downloadURL);
+
+                                                                                            uploadedCount++; // Increase the count of uploaded files
+                                                                                            if (uploadedCount === totalFiles) {
+                                                                                                saveButton.disabled = false; // Enable save button when all files are uploaded
+                                                                                            }
+                                                                                        });
+                                                                                    });
+                                                                                }
+
+                                                                                function displayImage(url) {
+                                                                                    const imgDiv = document.getElementById("imgDiv");
+                                                                                    const imgElement = document.createElement("img");
+                                                                                    imgElement.src = url;
+                                                                                    imgElement.width = 100;
+                                                                                    imgElement.height = 100;
+                                                                                    imgDiv.appendChild(imgElement);
+                                                                                }
             </script>
-            <script src="./assests/js/edit-tour.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
 
-            <script src="dist/js/theme.min.js"></script>
-        </body>
-    </html>
+            <script src="assests/js/edit-tour.js"></script>
+        </script>
+    </body>
+</html>

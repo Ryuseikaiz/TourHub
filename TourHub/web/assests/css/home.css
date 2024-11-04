@@ -374,7 +374,7 @@ button .fa-search {
 }
 
 .coupon-card {
-    background: linear-gradient(135deg, #7158fe, #9d4de6);
+    background: linear-gradient(135deg, #FFA726, #FB8C00);
     color: #fff;
     text-align: center;
     padding: 40px 30px;
@@ -434,4 +434,15 @@ button .fa-search {
 
 .circle2 {
     right: -25px;
+}
+.coupon-card h3 .special-discount {
+    color: #FF6347; /* Màu đỏ nổi bật */
+    font-weight: bold;
+    font-size: 1.4em;
+}
+
+.coupon-card h3 .special-coupon {
+    color: #008080; /* Màu xanh lá */
+    font-weight: bold;
+    font-size: 1.2em;
 }

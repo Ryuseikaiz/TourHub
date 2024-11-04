@@ -66,7 +66,12 @@ public class CustomerInformationServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String bookId = request.getParameter("bookId");
+        String discountCost = request.getParameter("discountCost");
+        String totalNoDis = request.getParameter("totalNoDis");
+        
+        System.out.println("Total No Dis Tour Pay: " + totalNoDis);
 
+        System.out.println("Discount cost: " + discountCost);
         // Kiểm tra nếu có thông tin bị thiếu hoặc rỗng
         if (fullname == null || fullname.trim().isEmpty() || 
             phone == null || phone.trim().isEmpty() ||
@@ -100,6 +105,8 @@ public class CustomerInformationServlet extends HttpServlet {
         response.setContentType("text/plain");
         response.getWriter().write("Thông tin liên hệ đã được nhận!");
         request.setAttribute("book", book);
+        request.setAttribute("discountCost", discountCost);
+        request.setAttribute("totalNoDis", totalNoDis);
         request.getRequestDispatcher("/tour-pay.jsp").forward(request, response);
     } 
 

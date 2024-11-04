@@ -79,7 +79,7 @@ public class ProvinceDB {
 
     public List<Province> getProvinceByQuery(String query) {
         List<Province> provinces = new ArrayList<>();
-        String sql = "SELECT province_id, province_name, visit_count, image_url FROM Provinces WHERE province_name LIKE ?";
+        String sql = "SELECT province_id, province_name, visit_count, image_url FROM Provinces WHERE province_name COLLATE Latin1_General_CI_AI LIKE ?";
 
         try (Connection connection = getConnect(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
@@ -103,7 +103,29 @@ public class ProvinceDB {
         return provinces;
     }
 
-    
+    public List<Province> getAllProvince() {
+        List<Province> provinces = new ArrayList<>();
+        String sql = "SELECT province_id, province_name, visit_count, image_url FROM Provinces";
+
+        try (Connection connection = getConnect(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Province province = new Province();
+                    province.setProvince_id(resultSet.getInt("province_id"));
+                    province.setProvince_name(resultSet.getString("province_name"));
+                    province.setVisit_count(resultSet.getInt("visit_count"));
+                    province.setImage_url(resultSet.getString("image_url"));
+
+                    provinces.add(province);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return provinces;
+    }
+
     public static void main(String[] args) {
         List<Province> provinces = new ProvinceDB().getProvinceByVisitCount();
         for (Province pro : provinces) {

@@ -21,9 +21,15 @@
         <link rel="stylesheet" href="assests/css/style_profile.css">       
         <link href="assests/css/customer.css" rel="stylesheet" >      
         <link href="assests/css/provider_analysis.css" rel="stylesheet"/>        
-        <link rel="stylesheet" href="assests/css/bootstrap.css" />
+        <link rel="stylesheet" href="assests/css/bootstrap.css" />       
 
-        <title>Analytic</title>
+        <!-- Include Toastify CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.1/Toastify.min.css">
+        <!-- Include Toastify JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.1/Toastify.min.js"></script>
+
+
+        <title>Add Tour</title>
         <style>
             body {
                 background-color: #f4f4f4;
@@ -153,15 +159,10 @@
 
             <!-- MAIN -->
             <main>
-                <h3 style="<c:if test='${requestScope.message.contains("successfully")}'>color: green;</c:if>
-                    <c:if test='${requestScope.message.contains("Error")}'>color: red;</c:if>">
-                    ${requestScope.message}
-                </h3>
-
                 <div class="table-data">
                     <div class="order">
                         <h3 class="head">Add Tour</h3>                   
-                        <form action="provider-management?action=add-tour" method="POST" enctype="multipart/form-data"> <!-- Combined form with file upload -->
+                        <form action="provider-management?action=add-tour" method="POST" enctype="multipart/form-data" onsubmit="return submitForm(event);" > <!-- Combined form with file upload -->
                             <div class="form-group required">
                                 <label for="tour_Name">Tour Name: <span style="color: red;">*</span></label>
                                 <input type="text" class="form-control" id="tour_Name" name="tour_Name" maxlength="255" required>
@@ -193,143 +194,132 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="form-group required">
+                            <div class="form-group">
                                 <label for="location">Location: <span style="color: red;">*</span></label>
-                                <input type="text" class="form-control" id="location" name="location" maxlength="50" required>
-                            </div>
-                            <div class="form-group required">
-                                <label for="price">Price: <span style="color: red;">*</span></label>
-                                <input type="number" class="form-control" id="price" name="price" required>
+                                <select class="form-control" id="location" name="location" style="height: 40px;
+                                        padding: 8px;
+                                        font-size: 16px;" required>
+                                    <option value="">Select a province</option>
+                                    <c:set var="location" value="${location}"/> <!-- Move this line outside the forEach -->
+                                    <c:forEach var="province" items="${provinces}">
+                                        <option value="${province.province_name}" style="height: 40px;
+                                                padding: 8px;
+                                                font-size: 16px;"
+                                                <c:if test="${province.province_name == location}">selected</c:if>
+                                                >${province.province_name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                             <div class="form-group required">
                                 <label for="slot">Slot: <span style="color: red;">*</span></label>
                                 <input type="number" class="form-control" id="slot" name="slot" required>
-                            </div>
+                                <small id="slotError" style="color: red; display: none;">Slot must be a non-negative number.</small>
+                            </div>          
                             <div class="form-group required">
                                 <label for="tour_Img">Tour Images: <span style="color: red;">*</span></label>
-                                <input type="file" class="form-control-file" id="tour_Img" name="tour_Img" multiple required>
+                                <input type="file" class="form-control-file" id="fileButton" accept=".jpg, .jpeg, .png, .webp" multiple required>
+                                <progress value="0" max="100" id="uploader">0%</progress>
+                                <input type="hidden" id="tour_Img_URL" name="tour_Img_URL">                                
                                 <small class="form-text text-muted">Upload image files (JPG, PNG, etc.), each not exceeding 2MB.</small>
                             </div>
+                            <div id="imgDiv"></div>
+                            <c:out value="${message}"/>
+                            <button type="submit" class="btn btn-primary btn-block action-link approve">Add Tour</button>
 
-                            <button type="submit" class="btn btn-primary btn-block">Add Tour</button>
                         </form>
-
                     </div>
                 </div>
             </main>          
             <!-- MAIN -->
+            <div id="toastContainer" data-message="<c:out value='${message}' />"></div>
         </section>
         <!-- CONTENT -->
-
-
         <script src="assests/js/script_profile.js"></script>     
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script>
-                                    document.addEventListener('DOMContentLoaded', function () {
-                                        const burger = document.querySelector('.burger');
-                                        const navigation = document.querySelector('.navigation-admin');
-                                        const main = document.querySelector('.main-admin');
-                                        const profileCard = document.querySelector('.profile-card'); // Select the profile card
+        <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
 
-                                        burger.addEventListener('click', function () {
-                                            navigation.classList.toggle('active');
-                                            main.classList.toggle('active');
-                                            profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                                        });
+
+        <!--        <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                const burger = document.querySelector('.burger');
+                                                const navigation = document.querySelector('.navigation-admin');
+                                                const main = document.querySelector('.main-admin');
+                                                const profileCard = document.querySelector('.profile-card'); // Select the profile card
+        
+                                                burger.addEventListener('click', function () {
+                                                    navigation.classList.toggle('active');
+                                                    main.classList.toggle('active');
+                                                    profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+                                                });
+                                            });
+        
+                </script>-->
+
+        <script type="text/javascript">
+                                    const firebaseConfig = {
+                                        apiKey: "AIzaSyADteJKp4c9C64kC08pMJs_jYh-Fa5EX6o",
+                                        authDomain: "tourhub-41aa5.firebaseapp.com",
+                                        projectId: "tourhub-41aa5",
+                                        storageBucket: "tourhub-41aa5.appspot.com",
+                                        messagingSenderId: "556340467473",
+                                        appId: "1:556340467473:web:2f6de24bdbb33709e51eb0",
+                                        measurementId: "G-0JBZE81PGF"
+                                    };
+                                    firebase.initializeApp(firebaseConfig);
+
+                                    const uploader = document.getElementById('uploader');
+                                    const fileButton = document.getElementById('fileButton');
+                                    const saveButton = document.querySelector('button[type="submit"]');
+                                    saveButton.disabled = true; // Disable save button initially
+
+                                    let uploadedCount = 0; // Track the count of uploaded files
+                                    let totalFiles = 0; // Total files selected
+                                    const imageUrls = [];
+
+                                    fileButton.addEventListener('change', function (e) {
+                                        uploadedCount = 0; // Reset the upload count on new selection
+                                        totalFiles = e.target.files.length; // Set total files selected
+                                        Array.from(e.target.files).forEach(uploadFile);
                                     });
 
+                                    function uploadFile(file) {
+                                        const storageRef = firebase.storage().ref('images/' + file.name);
+                                        const uploadTask = storageRef.put(file);
+
+                                        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, function (snapshot) {
+                                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                            uploader.value = progress;
+                                            saveButton.disabled = true; // Disable save button during upload
+                                        }, function (error) {
+                                            console.error("Upload failed:", error);
+                                        }, function () {
+                                            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                                                imageUrls.push(downloadURL);
+                                                document.getElementById("tour_Img_URL").value = imageUrls.join(';');
+                                                displayImage(downloadURL);
+
+                                                uploadedCount++; // Increase the count of uploaded files
+                                                if (uploadedCount === totalFiles) {
+                                                    saveButton.disabled = false; // Enable save button when all files are uploaded
+                                                }
+                                            });
+                                        });
+                                    }
+
+                                    function displayImage(url) {
+                                        const imgDiv = document.getElementById("imgDiv");
+                                        const imgElement = document.createElement("img");
+                                        imgElement.src = url;
+                                        imgElement.width = 100;
+                                        imgElement.height = 100;
+                                        imgDiv.appendChild(imgElement);
+                                    }
         </script>
-        <script>
-            function reloadData() {
-                var date = document.getElementById("date").value;
-                $.ajax({
-                    url: "/Project_SWP/provider-analys",
-                    type: "POST",
-                    data: {
-                        date: date
-                    },
-                    success: function (data) {
-                        // Assuming 'data' is a JSON object
-                        document.querySelector("#totalVisitValue").innerHTML = data.totalVisitATour || 0;
-                        document.querySelector("#visitTodayValue").innerHTML = data.visitToday || 0;
-                        document.querySelector("#bookingThisMonthValue").innerHTML = data.bookingThisMonth || 0;
-                    }
-                });
-            }
-            function validateDates() {
-                const startDateInput = document.getElementById('start_Date');
-                const endDateInput = document.getElementById('end_Date');
-                const startDateError = document.getElementById('startDateError');
-                const endDateError = document.getElementById('endDateError');
+        <!--<script src="dist/js/theme.min.js"></script>-->
+        <script src="./assests/js/edit-tour.js"></script>
 
-                const today = new Date().setHours(0, 0, 0, 0); // Today's date without time
-
-                // Convert input values to date objects
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
-
-                // Validate start date
-                if (startDateInput.value && startDate < today) {
-                    startDateError.style.display = 'block';
-                    startDateInput.value = ''; // Clear invalid date
-                } else {
-                    startDateError.style.display = 'none';
-                }
-
-                // Validate end date
-                if (endDateInput.value && endDate < today) {
-                    endDateError.style.display = 'block';
-                    endDateInput.value = ''; // Clear invalid date
-                } else {
-                    endDateError.style.display = 'none';
-                }
-            }
-            // Function to set the minimum start date as today's date
-            document.addEventListener('DOMContentLoaded', function () {
-                const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-                document.getElementById("start_Date").setAttribute("min", today); // Set the min attribute to today's date
-            });
-
-            function calculateDuration() {
-                // Get the values of the start and end dates
-                var startDate = document.getElementById("start_Date").value;
-                var endDate = document.getElementById("end_Date").value;
-
-                if (startDate && endDate) {
-                    // Parse the dates into Date objects
-                    var start = new Date(startDate);
-                    var end = new Date(endDate);
-
-                    // Calculate the difference in time (milliseconds)
-                    var diffTime = end.getTime() - start.getTime();
-
-                    // Convert the time difference to days (1 day = 24*60*60*1000 milliseconds)
-                    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                    if (diffDays > 0) {
-                        // Set the day value
-                        document.getElementById("day").value = diffDays;
-
-                        // Set the night value (days - 1)
-                        document.getElementById("night").value = diffDays - 1;
-                    } else {
-                        // Reset the fields if the date difference is invalid (e.g., end date is before start date)
-                        document.getElementById("day").value = 0;
-                        document.getElementById("night").value = 0;
-                    }
-                } else {
-                    // Reset the fields if either date is missing
-                    document.getElementById("day").value = 0;
-                    document.getElementById("night").value = 0;
-                }
-            }
-
-        </script>
-
-        <script src="dist/js/theme.min.js"></script>
     </body>
 </html>

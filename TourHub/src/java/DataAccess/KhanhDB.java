@@ -23,7 +23,10 @@ import model.TourPeople;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import model.Booking;
+import model.Discount;
 import model.TourDetailDescription;
 import model.TourOptionDetail;
 
@@ -35,7 +38,7 @@ public class KhanhDB {
 
     public List<Tour> getAllTour(String sortOrder, String location, int minPrice, int maxPrice) {
         List<Tour> list = new ArrayList<>();
-        String sql = "SELECT * FROM Tour WHERE 1=1";
+        String sql = "SELECT * FROM Tour WHERE 1=1 AND tour_Status = 'Active' ";
 
         // Add location filter
         if (location != null && !location.equals("All")) {
@@ -150,7 +153,7 @@ public class KhanhDB {
         }
         return tour; // Return the Tour object or null if not found
     }
-    
+
     public TourDetailDescription getTourDetailDescriptionByTourId(String tourId) {
         TourDetailDescription tourDetailDescription = null;
         String sql = "SELECT * FROM TourDetailDescription WHERE tour_Id = ?";
@@ -188,11 +191,10 @@ public class KhanhDB {
         return tourDetailDescription; // Return the TourDetailDescription object or null if not found
     }
 
-
     public List<TourOption> getAllTourOptionsByTourId(String tourId) {
         List<TourOption> options = new ArrayList<>();
         String sql = "SELECT tourOpt.option_Id, tourOpt.tour_Id, tourOpt.option_Name, tourOpt.option_Price, tourOpt.option_Description, "
-                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date "  // Lấy thêm tour_Date
+                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date " // Lấy thêm tour_Date
                 + "FROM TourOption tourOpt "
                 + "LEFT JOIN TourSchedule ts ON tourOpt.option_Id = ts.option_Id "
                 + "WHERE tourOpt.tour_Id = ?";  // Sử dụng đúng tên trường
@@ -204,14 +206,14 @@ public class KhanhDB {
             while (rs.next()) {
                 // Tạo một đối tượng TourOption mới từ kết quả truy vấn
                 TourOption option = new TourOption(
-                        rs.getInt("option_Id"),             // optionId từ TourOption
-                        rs.getString("tour_Id"),            // tourId từ TourOption
-                        rs.getString("option_Name"),        // optionName từ TourOption
-                        rs.getBigDecimal("option_Price"),   // price từ TourOption
+                        rs.getInt("option_Id"), // optionId từ TourOption
+                        rs.getString("tour_Id"), // tourId từ TourOption
+                        rs.getString("option_Name"), // optionName từ TourOption
+                        rs.getBigDecimal("option_Price"), // price từ TourOption
                         rs.getString("option_Description"), // description từ TourOption
-                        rs.getString("day_Of_Week"),        // dayOfWeek từ TourSchedule
-                        rs.getInt("available_Slots"),       // availableSlots từ TourSchedule
-                        rs.getDate("tour_Date")             // Lấy thêm tour_Date từ TourSchedule
+                        rs.getString("day_Of_Week"), // dayOfWeek từ TourSchedule
+                        rs.getInt("available_Slots"), // availableSlots từ TourSchedule
+                        rs.getDate("tour_Date") // Lấy thêm tour_Date từ TourSchedule
                 );
 
                 options.add(option);  // Thêm option vào danh sách
@@ -222,11 +224,10 @@ public class KhanhDB {
         return options;  // Trả về danh sách TourOptions
     }
 
-
     public TourOption getTourOptionById(int optionId) {
         TourOption option = null;
         String sql = "SELECT tourOpt.option_Id, tourOpt.tour_Id, tourOpt.option_Name, tourOpt.option_Price, tourOpt.option_Description, "
-                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date "  // Lấy thêm tour_Date
+                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date " // Lấy thêm tour_Date
                 + "FROM TourOption tourOpt "
                 + "LEFT JOIN TourSchedule ts ON tourOpt.option_Id = ts.option_Id "
                 + "WHERE tourOpt.option_Id = ?";  // Sử dụng đúng tên trường
@@ -238,14 +239,14 @@ public class KhanhDB {
             if (rs.next()) {
                 // Tạo một đối tượng TourOption mới từ kết quả truy vấn
                 option = new TourOption(
-                        rs.getInt("option_Id"),             // optionId từ TourOption
-                        rs.getString("tour_Id"),            // tourId từ TourOption
-                        rs.getString("option_Name"),        // optionName từ TourOption
-                        rs.getBigDecimal("option_Price"),   // price từ TourOption
+                        rs.getInt("option_Id"), // optionId từ TourOption
+                        rs.getString("tour_Id"), // tourId từ TourOption
+                        rs.getString("option_Name"), // optionName từ TourOption
+                        rs.getBigDecimal("option_Price"), // price từ TourOption
                         rs.getString("option_Description"), // description từ TourOption
-                        rs.getString("day_Of_Week"),        // dayOfWeek từ TourSchedule
-                        rs.getInt("available_Slots"),       // availableSlots từ TourSchedule
-                        rs.getDate("tour_Date")             // Lấy thêm tour_Date từ TourSchedule
+                        rs.getString("day_Of_Week"), // dayOfWeek từ TourSchedule
+                        rs.getInt("available_Slots"), // availableSlots từ TourSchedule
+                        rs.getDate("tour_Date") // Lấy thêm tour_Date từ TourSchedule
                 );
             }
         } catch (SQLException e) {
@@ -257,8 +258,7 @@ public class KhanhDB {
     public int getScheduleId(int optionId, Date tourDate) throws SQLException {
         String query = "SELECT schedule_Id FROM TourSchedule WHERE option_Id = ? AND tour_Date = ?";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
 
             // Set parameters
             ps.setInt(1, optionId);
@@ -274,12 +274,12 @@ public class KhanhDB {
         // Trả về -1 nếu không có kết quả nào
         return -1;
     }
-    
+
     public List<TourOptionDetail> getTourOptionDetailsByOptionId(int optionId) {
         List<TourOptionDetail> optionDetails = new ArrayList<>();
-        String sql = "SELECT toc.detail_Description, toc.category_Id, toc.detail_Id, toc.option_Id " +
-                     "FROM TourOptionDetail toc " +
-                     "WHERE toc.option_Id = ?";
+        String sql = "SELECT toc.detail_Description, toc.category_Id, toc.detail_Id, toc.option_Id "
+                + "FROM TourOptionDetail toc "
+                + "WHERE toc.option_Id = ?";
 
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, optionId);
@@ -342,13 +342,12 @@ public class KhanhDB {
         // Trả về -1 nếu không có kết quả nào
         return -1;
     }
-    
+
     public int importTourOption(String tourId, String optionName, BigDecimal optionPrice, String optionDescription) throws SQLException {
 
         String sql = "INSERT INTO TourOption (tour_Id, option_Name, option_Price, option_Description) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             // Set the parameters for the prepared statement
             ps.setString(1, tourId);
@@ -369,13 +368,12 @@ public class KhanhDB {
             }
         }
     }
-    
+
     public void importTourOptionPeople(int optionId, String peopleType, int minCount, int maxCount, BigDecimal price, String description) throws SQLException {
 
         String sql = "INSERT INTO TourOptionPeople (option_Id, people_Type, min_Count, max_Count, price, description) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             // Set the parameters for the prepared statement
             ps.setInt(1, optionId);
@@ -390,7 +388,7 @@ public class KhanhDB {
             System.out.println("TourOptionPeople record inserted successfully for option ID: " + optionId);
         }
     }
-    
+
     public void importTourSchedule(int optionId, String startDate, String endDate, String dayOfWeek, int availableSlots) throws SQLException {
 
         String sql = "{CALL InsertTourSchedule(?, ?, ?, ?, ?)}";  // SQL to call the stored procedure
@@ -401,8 +399,7 @@ public class KhanhDB {
         Date sqlEndDate = Date.valueOf(LocalDate.parse(endDate, formatter));
 
         // Establish connection and prepare the CallableStatement
-        try (Connection conn = UserDB.getConnect();
-             CallableStatement cs = conn.prepareCall(sql)) {
+        try (Connection conn = UserDB.getConnect(); CallableStatement cs = conn.prepareCall(sql)) {
 
             // Set input parameters
             cs.setInt(1, optionId);
@@ -459,6 +456,39 @@ public class KhanhDB {
             ps.setDate(10, bookDateSql);
             ps.setBigDecimal(11, refundAmount);
             ps.setString(12, bookingDetail);
+
+            // Execute the insert
+            ps.executeUpdate();
+        }
+    }
+    
+    public void importBill(BigDecimal amount, String billDate, String payMethod, int bookId) throws SQLException {
+
+        // Ensure amount is not null and positive
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive and not null");
+        }
+
+        // Define the date format pattern that matches your input date (e.g., "dd/MM/yyyy")
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        // Convert the bill date from string to java.sql.Date
+        Date billDateSql;
+        try {
+            billDateSql = Date.valueOf(LocalDate.parse(billDate, formatter));
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format for bill date: " + billDate);
+        }
+
+        // SQL statement to insert a record into the Bill table
+        String sql = "INSERT INTO Bill (amount, bill_Date, pay_Method, book_Id) VALUES (?, ?, ?, ?)";
+
+        // Using try-with-resources to manage resources and ensure closure
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBigDecimal(1, amount);
+            ps.setDate(2, billDateSql);
+            ps.setString(3, payMethod);
+            ps.setInt(4, bookId);
 
             // Execute the insert
             ps.executeUpdate();
@@ -528,8 +558,7 @@ public class KhanhDB {
         // SQL query to update the book_Status to 'Booked' for the specified book_Id
         String sql = "UPDATE Booking SET book_Status = ? WHERE book_Id = ?";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             // Set the parameters for the query
             ps.setString(1, "Booked");
@@ -550,7 +579,7 @@ public class KhanhDB {
             throw e;
         }
     }
-    
+
     public Integer getCusIdFromUserId(int userId) throws SQLException {
         String sql = "SELECT cus_Id FROM Customer WHERE user_Id = ?";
 
@@ -586,7 +615,56 @@ public class KhanhDB {
         return null; // Return null if no tour_Id is found or if the input is invalid
     }
     
+    public List<Discount> getAllDiscountByTourId(String tourId) throws SQLException {
+        String sql = "SELECT * FROM Discount WHERE tour_Id = ?"; // SQL query to fetch discounts by tour_Id
+        List<Discount> discounts = new ArrayList<>(); // List to store all discount records
+
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tourId); // Set the tourId in the query
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Create and populate a Discount object with data from the result set
+                    Discount discount = new Discount();
+                    discount.setDiscount_Id(rs.getInt("discount_Id"));
+                    discount.setStart_Day(rs.getDate("start_Day"));
+                    discount.setEnd_Day(rs.getDate("end_Day"));
+                    discount.setCode(rs.getString("code"));
+                    discount.setQuantity(rs.getInt("quantity"));
+                    discount.setPercent_Discount(rs.getBigDecimal("percent_Discount").doubleValue());
+                    discount.setRequire(rs.getString("require"));
+                    discount.setTour_Id(rs.getString("tour_Id"));
+
+                    // Add the Discount object to the list
+                    discounts.add(discount);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle SQL exceptions
+        }
+
+        // Sort the discounts list by start_Day
+        discounts.sort(Comparator.comparing(Discount::getStart_Day));
+
+        return discounts; // Return the sorted list of discounts
+    }
     
+    public void decrementDiscountQuantity(int discountId) throws SQLException {
+        String sql = "UPDATE Discount SET quantity = quantity - 1 WHERE discount_Id = ? AND quantity > 0"; // Cập nhật quantity
+
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, discountId); // Thiết lập discountId trong câu truy vấn
+            int affectedRows = ps.executeUpdate(); // Thực thi cập nhật và lấy số hàng bị ảnh hưởng
+
+            if (affectedRows == 0) {
+                System.out.println("Discount quantity is already at zero or discount does not exist.");
+            } else {
+                System.out.println("Quantity decremented successfully.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Xử lý ngoại lệ SQL
+        }
+    }
 
     public static void main(String[] args) {
         KhanhDB userDB = new KhanhDB();
@@ -647,9 +725,7 @@ public class KhanhDB {
 //        }
 //        List<TourOption> tourOptions = userDB.getAllTourOptionsByTourId("T0000001");
 //        System.out.println(tourOptions);
-        
 //        TourOption to = userDB.getTourOptionById(1);
 //        System.out.println(to.toString());
-
     }
 }

@@ -70,12 +70,12 @@
                             <ul class="list-inline">
                                 <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-phone"></span>
                                     <ul class="list-comma">
-                                        <li><a href="tel:#">1-800-1234-567</a></li>
-                                        <li><a href="tel:#">1-800-6780-345</a></li>
+                                        <li><a href="tel:#">0854719702</a></li>
+                                        <li><a href="tel:#">0828006916</a></li>
                                     </ul>
                                 </li>
-                                <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-map-marker"></span><a href="#">2130 Fulton Street, San Diego, CA 94117-1080 USA</a></li>
-                                <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-email"></span><a href="mailto:#">mail@demolink.org</a></li>
+                                <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-map-marker"></span><a href="#">FPT University Da Nang</a></li>
+                                <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-email"></span><a href="mailto:#">tourhubforlife@gmail.com</a></li>
                             </ul>
                             <ul class="list-inline">
                                 <li class="list-inline-item"><a class="icon novi-icon icon-sm-bigger icon-gray-1 mdi mdi-facebook" href="#"></a></li>
@@ -138,7 +138,7 @@
                                         <a href="manage.jsp">System Management</a>
                                         <a href="admin-chat.jsp">Chat with customer</a>
                                     </c:if>
-                                    
+
                                     <a href="logout">Logout</a>
                                 </div>
                             </div>
@@ -300,23 +300,26 @@
                                 <c:set var="tour" value="${item.tour}" />
 
                                 <div class="coupon-card">   
-                                    <img src="assests/images/tour-images/${tour.tour_Img[0]}" class="logo">
-                                    <h3>
-                                        ${discount.description}<br>
-                                        ${discount.percent_Discount}% flat off on ${tour.tour_Name}<br>
-                                        Use coupon: ${discount.code}
-                                    </h3>
+                                    <a href="SearchTourByIdServlet?tourId=${tour.tour_Id}">
+                                        <img src="${tour.tour_Img[0]}" style="min-height:150px; max-height: 150px; min-width: 240px; max-width: 240px; border-radius: 10px; margin-bottom: 10px">
+                                        <h3>
+                                            <span class="special-discount">${discount.percent_Discount}%</span> 
+                                            <span>flat off on ${tour.tour_Name}</span><br>
+                                            <span class="special-coupon">Use coupon: ${discount.code}</span>
+                                        </h3>
+                                    </a>
                                     <div class="coupon-row">
                                         <span class="cpnCode">${discount.code}</span>
                                         <span class="cpnBtn" onclick="copyToClipboard('${discount.code}')">Copy Code</span>
                                     </div>
                                     <p>Valid Till: 
-                                        <!-- Format the endDay date using JSTL -->
-                                        <fmt:formatDate value="${discount.end_Day}" pattern="dd MMM, yyyy" />
+                                        <fmt:formatDate value="${discount.end_Day}" pattern="dd/MMM/yyyy" />
                                     </p>
                                     <div class="circle1"></div>
                                     <div class="circle2"></div>
                                 </div>
+
+
                             </c:forEach>
                         </div>
                     </div>

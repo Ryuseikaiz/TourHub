@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import model.Province;
 import model.Tour;
+import utils.RemoveDiacritics;
 
 /**
  *
@@ -97,10 +98,14 @@ public class SearchTourServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String query = request.getParameter("q"); // Get the search query from the request body
-
+        String querryFormat = new RemoveDiacritics().removeAccent(query.toLowerCase());
         // Fetch matching tours and provinces
-        List<Tour> tours = new hoang_UserDB().searchTours(query);
-        List<Province> provinces = new ProvinceDB().getProvinceByQuery(query); // Add a method to search provinces
+        List<Tour> tours = new hoang_UserDB().searchTours(querryFormat);
+        List<Province> provinces = new ProvinceDB().getProvinceByQuery(querryFormat); // Add a method to search provinces
+
+        System.out.println("Tours: " + tours.toString());
+        System.out.println("Provinces: " + provinces.toString());
+        System.out.println("TESSTTTTTTT");
 
         // Create a map to hold both results
         Map<String, Object> resultMap = new HashMap<>();

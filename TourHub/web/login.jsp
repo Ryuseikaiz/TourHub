@@ -42,6 +42,17 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10 col-xl-8">
+                        <%
+            String infoMessage = (String) session.getAttribute("infoMessage");
+            if (infoMessage != null) {
+                        %>
+                        <div class="alert alert-info text-center" role="alert">
+                            <%= infoMessage %>
+                        </div>
+                        <%
+                            session.removeAttribute("infoMessage"); // Clear message after displaying
+                        }
+                        %>
                         <% String status = request.getParameter("status"); %>
 
                         <% if ("resetSuccess".equals(status)) { %>

@@ -69,6 +69,40 @@ public class UserDB implements DatabaseInfo {
             e.printStackTrace();
         }
     }
+    
+    public User getUserById(int userId) {
+    User user = null;
+    String query = "SELECT user_Id, password, user_Status, role, first_Name, last_Name, email, phone, address, created_At, avatar "
+                 + "FROM [User] WHERE user_Id = ?";
+
+    try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, userId);  // Set the user ID parameter
+
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            // Retrieve user details from the result set
+            user = new User(
+                rs.getInt("user_Id"),
+                rs.getString("password"),
+                rs.getString("first_Name"),
+                rs.getString("last_Name"),
+                rs.getString("phone"),
+                rs.getString("email"),
+                rs.getString("address"),
+                rs.getTimestamp("created_At"),
+                rs.getString("user_Status"),
+                rs.getString("role"),
+                rs.getString("avatar")
+            );
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Logger.getLogger(UserDB.class.getName()).log(Level.SEVERE, null, e);
+    }
+
+    return user;  // Return the User object or null if not found
+}
+
 
     public User authenticate(String email, String password) {
         String sql = "SELECT * FROM [User] WHERE email = ?";

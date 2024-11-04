@@ -214,13 +214,13 @@ public class TourDB implements DatabaseInfo {
     }
 
     public void saveTourToDatabase(HttpServletRequest request, String tourName, String tourDescription, String startDate,
-            String endDate, String location, String duration, BigDecimal price, int slot, String tourImg) throws SQLException {
+            String endDate, String location, String duration, int slot, String tourImg) throws SQLException {
         int companyId = new UserDB().getProviderIdFromUserId(new UserDB().getUserFromSession(request.getSession()).getUser_Id());
         String tourId = generateTourId();
         String query = "INSERT INTO Tour (tour_Id, tour_Name, tour_Description, start_Date, end_Date, "
-                + "location, total_Time, price, slot, tour_Status, tour_Img, company_Id, "
+                + "location, total_Time, slot, tour_Status, tour_Img, company_Id, "
                 + "purchases_Time, average_Review_Rating, number_Of_Review) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0.0, 0)";  // Default values for purchases, rating, reviews
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0.0, 0)";  // Default values for purchases, rating, reviews
 
         try (Connection connection = getConnect(); PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, tourId);
@@ -230,11 +230,10 @@ public class TourDB implements DatabaseInfo {
             pstmt.setString(5, endDate);
             pstmt.setString(6, location);
             pstmt.setString(7, duration);
-            pstmt.setBigDecimal(8, price);
-            pstmt.setInt(9, slot);
-            pstmt.setString(10, "Pending");
-            pstmt.setString(11, tourImg);
-            pstmt.setInt(12, companyId);
+            pstmt.setInt(8, slot);
+            pstmt.setString(9, "Pending");
+            pstmt.setString(10, tourImg);
+            pstmt.setInt(11, companyId);
             pstmt.executeUpdate();
         }
     }
@@ -333,6 +332,58 @@ public class TourDB implements DatabaseInfo {
             // Set the companyId parameter in the PreparedStatement
             stmt.setInt(1, companyId);
 
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String tourId = rs.getString("tour_Id");
+                    String tourName = rs.getString("tour_Name");
+                    String description = rs.getString("tour_Description");
+                    Date startDate = rs.getDate("start_Date");
+                    Date endDate = rs.getDate("end_Date");
+                    float avgRating = rs.getFloat("average_Review_Rating");
+                    int numOfReview = rs.getInt("number_Of_Review");
+                    String totalTime = rs.getString("total_Time");
+                    BigDecimal price = rs.getBigDecimal("price");
+                    int slot = rs.getInt("slot");
+                    String location = rs.getString("location");
+                    String tourStatus = rs.getString("tour_Status");
+                    Date createdAt = rs.getDate("created_At");
+                    String tourImg = rs.getString("tour_Img");
+
+                    List<String> tourImgList = splitImages(tourImg);
+                    Tour tour = new Tour(tourId, tourName, description, startDate, endDate, location, numOfReview, avgRating, numOfReview, totalTime, price, slot, tourStatus, createdAt, tourImgList, companyId);
+                    tours.add(tour);
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return tours;
+    }
+    //Get all tour
+
+    public List<Tour> getToursByProviderID(int companyId, String status) {
+        List<Tour> tours = new ArrayList<>();
+        StringBuilder query = new StringBuilder("SELECT * FROM Tour WHERE company_Id = ?");
+
+        // Add conditional status filtering
+        if ("Pending".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Pending'");
+        } else if ("Active".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Active'");
+        } else if ("Hidden".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Hidden'");
+        } else if ("Banned".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Banned'");
+        } else if ("Cancelled".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Cancelled'");
+        }
+// If "All" or any other value, no additional status filter is added
+        System.out.println(query);
+        try (Connection con = getConnect(); PreparedStatement stmt = con.prepareStatement(query.toString())) {
+            // Set the companyId parameter in the PreparedStatement
+            stmt.setInt(1, companyId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String tourId = rs.getString("tour_Id");
