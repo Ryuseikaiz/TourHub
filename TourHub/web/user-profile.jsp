@@ -141,6 +141,107 @@
                 display: none;
             }
 
+            /* Base Styles */
+            .notification {
+                position: relative;
+                cursor: pointer;
+            }
+            .dropdown{
+                margin-right: 20px;
+            }
+            /* Dropdown Container */
+            .dropdown {
+                display: none; /* Hidden by default, can be toggled with JavaScript */
+                position: absolute;
+                top: 40px; /* Adjust based on icon height */
+                right: 0;
+                width: 400px; /* Increased width */
+                max-height: 500px; /* Increased height */
+                background-color: #ffffff; /* White background */
+                color: #333333; /* Dark text color for readability */
+                border-radius: 8px;
+                overflow-y: auto;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                font-family: 'Arial', sans-serif; /* Adjusted font */
+            }
+
+            /* Dropdown Content */
+            .dropdown-content {
+                padding: 15px; /* Adjusted padding for more spacing */
+            }
+
+            /* Header */
+            .dropdown h2 {
+                margin: 10px;
+                font-size: 18px; /* Slightly larger font */
+                font-weight: bold;
+                color: #333333; /* Dark color for text */
+                padding-bottom: 10px;
+                border-bottom: 1px solid #e0e0e0; /* Light border */
+            }
+
+            /* Notification Item */
+            .notification-item {
+                display: flex;
+                align-items: center;
+                padding: 15px; /* More padding for larger items */
+                border-bottom: 1px solid #f0f0f0; /* Light gray for item separator */
+            }
+
+            .notification-item:last-child {
+                border-bottom: none;
+            }
+
+            .notification-item img {
+                width: 50px; /* Increased image size */
+                height: 50px;
+                border-radius: 50%;
+                margin-right: 15px; /* More space between image and text */
+            }
+
+            .notification-item .text {
+                flex: 1;
+            }
+
+            .notification-item .text p {
+                margin: 0;
+                font-size: 15px; /* Slightly larger font */
+                color: #333333; /* Dark text color */
+                line-height: 1.5;
+            }
+
+            .notification-item .text span {
+                font-size: 13px; /* Slightly larger font for timestamp */
+                color: #666666; /* Muted gray for timestamps */
+            }
+
+            /* See More Button */
+            .see-more {
+                display: block;
+                width: 100%;
+                padding: 12px; /* Increased padding */
+                background-color: #FD7238; /* Orange button color */
+                border: none;
+                color: #ffffff; /* White text */
+                font-size: 15px; /* Slightly larger font */
+                cursor: pointer;
+                text-align: center;
+                border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+                font-family: 'Arial', sans-serif; /* Ensure consistency with dropdown font */
+            }
+
+            .see-more:hover {
+                background-color: #e26229; /* Slightly darker on hover */
+            }
+
+            /* Dropdown Toggle */
+            .notification:hover + .dropdown,
+            .dropdown:hover {
+                display: block;
+            }
+
+
         </style>
     </head>
     <body>
@@ -163,10 +264,30 @@
                 </form>
                 <input type="checkbox" id="switch-mode" hidden>
                 <label for="switch-mode" class="switch-mode"></label>
-                <a href="#" class="notification">
-                    <i class='bx bxs-bell' ></i>
-                    <!-- <span class="num">8</span> -->
+                <a href="#" class="notification" onclick="toggleDropdown()">
+                    <i class='bx bxs-bell'></i>
                 </a>
+
+
+
+                <!-- Notification Dropdown -->
+                <div id="notificationDropdown" class="dropdown">
+                    <h2>Notifications</h2>
+                    <div class="dropdown-content">
+                        <p style="display: flex; justify-content: space-between"><strong>New</strong> <a href="#">See all</a></p>
+                        <div class="notification-item">
+                            <img src="user1.jpg" alt="User Image">
+                            <div class="text">
+                                <p><strong>Duy Khánh</strong> played Tiến Lên Miền Nam Cybergame: "Duy" is the winner and won 118.75K chip!</p>
+                                <span>1h</span>
+                            </div>
+                        </div>
+                        <!-- Repeat .notification-item for other notifications -->
+                    </div>
+                    <button class="see-more">See previous notifications</button>
+                </div>
+
+
                 <div class="image-container">
                     <img src="${currentUser.avatar}" alt="User Avatar" class="avatar">
                 </div>
@@ -302,6 +423,18 @@
                                                         });
                                                     });
 
+
+
+                                                    function toggleDropdown() {
+                                                        const dropdown = document.getElementById("notificationDropdown");
+                                                        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+                                                    }
+
+                                                    window.onclick = function (event) {
+                                                        if (!event.target.matches('.notification, .notification *')) {
+                                                            document.getElementById("notificationDropdown").style.display = "none";
+                                                        }
+                                                    }
         </script>
     </body>
 </html>

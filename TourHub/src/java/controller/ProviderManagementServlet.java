@@ -4,6 +4,7 @@ package controller;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+import DataAccess.CompanyDB;
 import DataAccess.KhanhDB;
 import DataAccess.ProvinceDB;
 import DataAccess.TourDB;
@@ -38,6 +39,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import model.Company;
 import model.Province;
 import model.Tour;
 import model.Withdrawals;
@@ -503,11 +505,16 @@ public class ProviderManagementServlet extends HttpServlet {
         }
         WithdrawalsDB withdrawalsDB = new WithdrawalsDB();
         String message;
-
-        if (withdrawalsDB.saveWithdrawal(provider_Id, bdWithdrawMoney)) {
-            message = "Request sent, please wait for a response.";
-        } else {
+        CompanyDB companyDB = new CompanyDB();
+        Company provider = companyDB.getProviderByProviderId(provider_Id);
+        if (provider.getBalance().compareTo(bdWithdrawMoney) < 0) {
             message = "Request failed, please try again.";
+        } else {
+            if (withdrawalsDB.saveWithdrawal(provider_Id, bdWithdrawMoney)) {
+                message = "Request sent, please wait for a response.";
+            } else {
+                message = "Request failed, please try again.";
+            }
         }
 
         request.setAttribute("message", message);

@@ -4,9 +4,12 @@
  */
 package controller;
 
+import DataAccess.CompanyDB;
 import DataAccess.KhanhDB;
 import DataAccess.ThienDB;
 import DataAccess.UserDB;
+import DataAccess.WithdrawalsDB;
+import DataAccess.hoang_UserDB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.awt.print.Book;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -27,6 +31,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import model.Booking;
+import model.Company;
 import model.Tour;
 import model.User;
 
@@ -86,18 +91,19 @@ public class FinishBookingServlet extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         Booking book = new Booking();
-
+        
         try {
             book = u.getBookingById(book_Id);
         } catch (SQLException ex) {
             Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         User user = userDB.getUserFromSession(request.getSession());
         if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
             sendBookingConfirmationEmail(user.getEmail(), book, user);
+            setBalanceAfterBookingSuccess(book, request, response);
             response.getWriter().write("Email sent successfully!");
         } else {
             response.getWriter().write("Tour status is not 'Booked'.");
@@ -105,7 +111,7 @@ public class FinishBookingServlet extends HttpServlet {
         request.setAttribute("booking", book);
         request.getRequestDispatcher("/booked-tour.jsp").forward(request, response);
     }
-
+    
     private void sendBookingConfirmationEmail(String toEmail, Booking bookedDetail, User userBooking) {
         // Sender's email credentials
         final String fromEmail = "tourhubforlife@gmail.com"; // replace with your email
@@ -124,7 +130,7 @@ public class FinishBookingServlet extends HttpServlet {
                 return new PasswordAuthentication(fromEmail, password);
             }
         });
-
+        
         try {
             // Create a default MimeMessage object
             Message message = new MimeMessage(session);
@@ -146,15 +152,26 @@ public class FinishBookingServlet extends HttpServlet {
                     + "We look forward to providing you with an unforgettable experience!\n\n"
                     + "Best regards,\n"
                     + "TourHub - Buy a tour without leaving your home";
-
+            
             message.setText(emailContent);
 
             // Send message
             Transport.send(message);
             System.out.println("Email sent successfully!");
-
+            
         } catch (MessagingException e) {
             e.printStackTrace();
+        }
+    }
+    
+    public void setBalanceAfterBookingSuccess(Booking booking, HttpServletRequest request, HttpServletResponse response) {        
+        Company company = new CompanyDB().getProviderByTourId(booking.getTour_Id());
+        CompanyDB companyDB = new CompanyDB();
+        if (company != null && "Booked".equalsIgnoreCase(booking.getBook_Status())) {
+            company.setBalance(company.getBalance().add(booking.getTotal_Cost().multiply(new BigDecimal("0.9"))));
+            companyDB.updateCompanyBalance(company);
+        } else {
+            Logger.getLogger(ProviderManagementServlet.class.getName()).log(Level.WARNING, "Company or booking status invalid.");
         }
     }
 

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Booking;
 import model.BookingDetails;
 import model.Discount;
 import model.Review;
@@ -693,7 +694,7 @@ public class hoang_UserDB implements DatabaseInfo {
         }
         return balance;
     }
-
+    
     public static void main(String[] args) {
         List<Discount> tours = new hoang_UserDB().getAllDiscounts();
         for (Discount book : tours) {
