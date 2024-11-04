@@ -14,7 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.awt.print.Book;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Booking;
@@ -76,6 +79,19 @@ public class FinishBookingServlet extends HttpServlet {
         
         try {
             book = u.getBookingById(book_Id);
+        } catch (SQLException ex) {
+            Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        BigDecimal amount = book.getTotal_Cost();
+        String pay_Method = "QR";
+        
+        // Get the current date in the format "dd/MM/yyyy"
+        LocalDate currentDate = LocalDate.now();
+        String billDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        
+        try {
+            u.importBill(amount, billDate, pay_Method, book_Id);
         } catch (SQLException ex) {
             Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }

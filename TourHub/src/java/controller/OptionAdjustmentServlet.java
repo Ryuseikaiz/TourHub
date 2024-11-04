@@ -13,9 +13,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import model.TourOption;
 import model.TourPeople;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Discount;
 /**
  *
  * @author LENOVO
@@ -64,6 +69,17 @@ public class OptionAdjustmentServlet extends HttpServlet {
         String selectedDate = request.getParameter("selectedDate");
         System.out.println(selectedDate);
         
+        String tour_Id = "";
+        Discount dis = new Discount();
+        List<Discount> discounts = new ArrayList<>();
+        try {
+            tour_Id = u.getTourIdByOptionId(optionIdRaw);
+            discounts = u.getAllDiscountByTourId(tour_Id);
+        } catch (SQLException ex) {
+            Logger.getLogger(OptionAdjustmentServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
         int optionId = Integer.parseInt(optionIdRaw);
         
         TourOption option = u.getTourOptionById(optionId);
@@ -73,6 +89,7 @@ public class OptionAdjustmentServlet extends HttpServlet {
         request.setAttribute("option", option);
         request.setAttribute("peopleList", peopleList);
         request.setAttribute("previousSelectedDate", selectedDate);
+        request.setAttribute("discounts", discounts);
         
         request.getRequestDispatcher("/option-adjustment.jsp").forward(request, response);
     } 

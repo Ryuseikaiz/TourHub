@@ -164,13 +164,13 @@
                             <!-- RD Navbar Toggle-->
                             <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
                             <!-- RD Navbar Brand-->
-                            <div class="rd-navbar-brand"><a class="brand-name" href="index.html"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
+                            <div class="rd-navbar-brand"><a class="brand-name" href="home"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
                         </div>
                         <div class="rd-navbar-aside-center">
                             <div class="rd-navbar-nav-wrap">
                                 <!-- RD Navbar Nav-->
                                 <ul class="rd-navbar-nav">
-                                    <li><a href="index.jsp">Home</a>
+                                    <li><a href="home">Home</a>
                                     </li>
                                     <li><a href="about-us.jsp">About Us</a>
                                     </li>
@@ -191,17 +191,17 @@
                     <div class="main-container">
                         <div class="title-container">
                             <span class="title">
-                                Đặt chỗ của tôi
+                                My booking
                             </span>
                             <br>
                             <span class="sub-title">
-                                Điền thông tin và xem lại đặt chỗ
+                                Fill in the information and review the reservation
                             </span>
                         </div>
 
                         <div class="body-container">
                             <div class="forms-container">
-                                <div class="invite-login-container">
+<!--                                <div class="invite-login-container">
                                     <div class="invite-login-img">
                                         <img src="Image/login-invite.png" alt="">
                                     </div>
@@ -221,22 +221,22 @@
 
                                         <a href="" class="invite-login-link">Đăng nhập hoặc đăng kí</a>
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <div class="contact-information">
                                     <div class="contact-information-title">
-                                        Thông tin liên hệ
+                                        Contact Information
                                     </div>
 
                                     <div class="contact-information-form">
                                         <div class="contact-information-form-title">
-                                            Thông tin liên hệ (nhận vé/Phiếu thanh toán)
+                                            Contact Information (receive ticket/Bill)
                                         </div>
 
                                         <form class="inner-contact-information-form" action="CustomerInformation">
                                             <div class="form-group">
-                                                <label for="fullname">Họ tên*</label>
-                                                <input type="text" id="fullname" name="fullname" placeholder="Như trên CMND (không dấu)" required>
+                                                <label for="fullname">Full Name*</label>
+                                                <input type="text" id="fullname" name="fullname" placeholder="Similar to CCCD" required>
                                             </div>
 
                                             <div class="form-group phone-group">
@@ -254,15 +254,17 @@
 
                                             <div class="radio-group">
                                                 <label>
-                                                    <input type="radio" name="visitorType" value="self" checked> Tôi là khách tham quan
+                                                    <input type="radio" name="visitorType" value="self" checked> I'm a visitor
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="visitorType" value="other"> Tôi đặt cho người khác
+                                                    <input type="radio" name="visitorType" value="other"> I book for another
                                                 </label>
                                             </div>
 
                                             <!-- Input hidden để truyền bookId -->
                                             <input type="hidden" id="bookId" name="bookId" value="${book.book_Id}">
+                                            <input type="hidden" id="discountCost" name="discountCost" value="${discountCost}">
+                                            <input type="hidden" id="totalNoDis" name="totalNoDis" value="${totalNoDis}">
 
                                             <input type="submit" value="SAVE" id="saveBtn" style="display: none;"/>
                                         </form>
@@ -271,26 +273,25 @@
 
                                 <div class="guest-infomation">
                                     <span class="guest-information-title">
-                                        Thông tin khách
+                                        Visitor Information
                                     </span>
 
                                     <div class="guest-information-form">
                                         <div class="guest-information-form-title">
-                                            Người lớn 1
+                                            Adult 1
                                         </div>
 
                                         <form class="inner-guest-information-form">
-                                            <label for="fullname">Danh xưng*</label>
+                                            <label for="fullname">Title*</label>
                                             <select class="person-title">
                                                 <option value=""></option>
-                                                <option value="Ông">Ông</option>
-                                                <option value="Bà">Bà</option>
-                                                <option value="Cô">Cô</option>
+                                                <option value="Mr.">Mr.</option>
+                                                <option value="Mrs.">Mrs.</option>
                                             </select>
 
                                             <div class="form-group">
-                                                <label for="fullname">Họ tên*</label>
-                                                <input type="text" id="fullname" name="fullname" placeholder="Như trên CMND (không dấu)"
+                                                <label for="fullname">Full Name*</label>
+                                                <input type="text" id="fullname" name="fullname" placeholder="Similar to CCCD"
                                                        required>
                                             </div>
 
@@ -316,7 +317,7 @@
 
                                     <div class="additional-infomation">
                                         <div class="additional-infomation-title">
-                                            Thông tin thêm
+                                            Additional Information
                                         </div>
 
                                         <div class="form-group additional-form-group">
@@ -329,14 +330,14 @@
 
                                     <div class="additional-request">
                                         <div class="additional-infomation-title">
-                                            Yêu cầu thêm (tuỳ chọn)
+                                            Additional Request (Optional)
                                         </div>
 
                                         <div class="form-group additional-form-group">
                                             <input class="request-input" type="text" id="fullname" name="fullname"
-                                                   placeholder="Yêu cầu đặc biệt" required>
-                                            <label class="request-format">Định dạng: bằng tiếng Anh hoặc ngôn ngữ địa phương tại điểm
-                                                đến. Yêu cầu tuỳ vào tình hình thực tế của nhà cung cấp.</label>
+                                                   placeholder="Special Request" required>
+                                            <label class="request-format">Format: in English or local language at destination.
+                                                Requirements subject to the actual situation of the supplier.</label>
                                         </div>
                                     </div>
                                 </div>
@@ -345,7 +346,7 @@
 
                                 <div class="pickup-location">
                                     <div class="pickup-location-title">
-                                        Thông tin đưa đón & địa điểm
+                                        Pickup & drop off information
                                     </div>
 
                                     <div class="map">
@@ -355,13 +356,13 @@
 
                                 <div class="total-cost-overview-container">
                                     <div class="total-cost-overview-title">
-                                        Tóm tắt
+                                        Summary
                                     </div>
 
                                     <div class="total-cost-overview">
                                         <div class="total-cost-heading">
                                             <div class="pay-title">
-                                                Giá bạn trả
+                                                You must pay
                                             </div>
 
                                             <div class="total-cost-container">
@@ -385,16 +386,26 @@
 
                                                     </div>
 
-                                                    <div class="detail-price">
+                                                    <div class="detail-price" style="text-align: end">
 
                                                     </div>
+                                                </div>
+                                                
+                                                <div class="detail-discount-container" style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div class="detal-price-name" style="font-size: 17px; font-weight: 600; color: black;">Total</div>
+                                                    <div class="detail-price" style="font-size: 17px; font-weight: 700; color: #FF5E1F; text-align: end;">${totalNoDis} VND</div>
+                                                </div>
+                                                
+                                                <div class="detail-discount-container" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;">
+                                                    <div class="detal-price-name">Discount</div>
+                                                    <div class="detail-price" style="text-align: end">${discountCost}</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="continue-btn-conatiner">
-                                        <button class="continue-btn"  type="button">Tiếp tục</button>
+                                        <button class="continue-btn"  type="button">Continue</button>
                                     </div>
                                 </div>
                             </div>
@@ -465,6 +476,10 @@
           document.querySelector('.continue-btn').addEventListener('click', function() {
             document.getElementById('saveBtn').click();
           });
+          
+          document.getElementById('fullname').value = `${user.first_Name} ${user.last_Name}`;
+          document.getElementById('phone').value = `${user.phone}`;
+          document.getElementById('email').value = `${user.email}`;
     </script>
 
     <script>

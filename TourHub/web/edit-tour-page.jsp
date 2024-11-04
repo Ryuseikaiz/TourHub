@@ -88,7 +88,7 @@
                 border: none;
                 border-radius: 3px;
                 cursor: pointer;
-                transition: background-color 0.3s ease
+                transition: background-color 0.3s ease;
 
                 </style>
             </head>

@@ -1,36 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!-- Footer Minimal-->
 
-<style>
-    /* Ensure footer is at the bottom */
-    html, body {
-        height: 100%;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-    }
-    body {
-        flex: 1;
-    }
-    .container.container-wide {
-        flex: 1;
-    }
-    footer {
-        margin-top: auto; /* Pushes the footer to the bottom when content is short */
-        background-color: #333; /* You can adjust this color if needed */
-        padding: 20px;
-        color: white;
-    }
-</style>
-
 <footer class="section page-footer page-footer-minimal novi-background bg-cover text-center bg-gray-darker">
     <div class="container container-wide">
         <div class="row row-fix justify-content-sm-center align-items-md-center row-30">
-            <div class="col-md-10 col-lg-7 col-xl-4 text-xl-left">
-                <a href="home">
-                    <img class="inverse-logo" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/>
-                </a>
-            </div>
+            <div class="col-md-10 col-lg-7 col-xl-4 text-xl-left"><a href="home"><img class="inverse-logo" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/></a></div>
             <div class="col-md-10 col-lg-7 col-xl-4">
                 <p class="right">&#169;&nbsp;<span class="copyright-year"></span> All Rights Reserved. Design&nbsp;by&nbsp;<a href="https://www.facebook.com/profile.php?id=61565895392945">TourHub</a></p>
             </div>
@@ -47,13 +21,13 @@
     </div>
 </footer>
 </div>
-
 <!-- Global Mailform Output-->
 <div class="snackbars" id="form-output-global"> </div>
 <!-- Javascript-->
 <script src="assests/js/core.min.js"></script>
 <script src="assests/js/script.js"></script>
 <!--<script src="assests/js/home.js"></script>-->
+
 
 <!-- coded by barber-->
 </body>
