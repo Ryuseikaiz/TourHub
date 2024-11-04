@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,6 +102,19 @@ public class FinishBookingServlet extends HttpServlet {
             Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        BigDecimal amount = book.getTotal_Cost();
+        String pay_Method = "QR";
+        
+        // Get the current date in the format "dd/MM/yyyy"
+        LocalDate currentDate = LocalDate.now();
+        String billDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        
+        try {
+            u.importBill(amount, billDate, pay_Method, book_Id);
+        } catch (SQLException ex) {
+            Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         User user = userDB.getUserFromSession(request.getSession());
         if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
             sendBookingConfirmationEmail(user.getEmail(), book, user);
@@ -108,6 +123,7 @@ public class FinishBookingServlet extends HttpServlet {
         } else {
             response.getWriter().write("Tour status is not 'Booked'.");
         }
+      
         request.setAttribute("booking", book);
         request.getRequestDispatcher("/booked-tour.jsp").forward(request, response);
     }
