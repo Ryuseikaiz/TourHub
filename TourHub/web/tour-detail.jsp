@@ -606,6 +606,7 @@
         </div>
         <div class="content flex">
             <div class="tour-gallery">
+                <c:if test="${not empty tour.tour_Img[0]}">
                 <div class="image-highlight">
                     <img class="tour-img" src="${tour.tour_Img.get(0)}" alt="Tour Image 1">
                     <a href="javascript:void(0)" onclick="toggle('popup1')">
