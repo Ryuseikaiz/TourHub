@@ -67,6 +67,7 @@ public class DisplayAllServlet extends HttpServlet {
             throws ServletException, IOException {
         KhanhDB u = new KhanhDB();
         ProvinceDB provinceDB = new ProvinceDB();
+
         // Get the sort order from the request
         String sortOrder = request.getParameter("sortOrder");
         if (sortOrder == null || sortOrder.isEmpty()) {
@@ -75,7 +76,6 @@ public class DisplayAllServlet extends HttpServlet {
 
         // Get the location or search query from the request
         String location = request.getParameter("location");
-        String name;
         String searchQuery = request.getParameter("querry"); // Using 'query' for consistency
         if (location == null || location.isEmpty()) {
             location = "All";  // Default to "All"
@@ -92,29 +92,37 @@ public class DisplayAllServlet extends HttpServlet {
             minPrice = Integer.parseInt(prices[0]);
             maxPrice = Integer.parseInt(prices[1]);
         }
+
         List<Province> provinces = provinceDB.getProvinceByQuery(location);
+
         // If a search query is provided, prioritize that over location
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             location = searchQuery.trim(); // Update location to search query if present
         }
-//        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-//            name = searchQuery.trim(); // Update location to search query if present
-//        }
+
         // Call the getAll method with the sorting, location, and price filters
         List<Tour> list = u.getAllTour(sortOrder, location, minPrice, maxPrice);
         List<Tour> tours = new TourDB().getTours();
+
+        // Set attributes for JSP forwarding
         request.setAttribute("data", list);
         request.setAttribute("tours", tours);
-        response.setContentType("application/json");
-        response.getWriter().write(new Gson().toJson(tours));
-        response.getWriter().write(new Gson().toJson(provinces));
-        // Pass the sortOrder, location (or search query), and priceRange back to the JSP
         request.setAttribute("sortOrder", sortOrder);
         request.setAttribute("location", location);
         request.setAttribute("priceRange", priceRange);
 
-        // Forward to the search-page.jsp
-        request.getRequestDispatcher("search-page.jsp").forward(request, response);
+        // Check if the request expects JSON response
+        String jsonResponse = request.getParameter("responseType");
+        if ("json".equalsIgnoreCase(jsonResponse)) {
+            // Send JSON response
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(new Gson().toJson(tours));
+            response.getWriter().write(new Gson().toJson(provinces));
+        } else {
+            // Forward to the JSP page
+            request.getRequestDispatcher("search-page.jsp").forward(request, response);
+        }
     }
 
     /**

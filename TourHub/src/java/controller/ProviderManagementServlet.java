@@ -4,6 +4,7 @@ package controller;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+import DataAccess.CompanyDB;
 import DataAccess.KhanhDB;
 import DataAccess.ProvinceDB;
 import DataAccess.TourDB;
@@ -20,6 +21,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.math.BigDecimal;
@@ -37,6 +39,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import model.Company;
 import model.Province;
 import model.Tour;
 import model.Withdrawals;
@@ -158,37 +161,27 @@ public class ProviderManagementServlet extends HttpServlet {
         String night = (nightParam != null && !nightParam.isEmpty()) ? nightParam : "0";
 
         String duration = day + "D" + night + "N";
-//        double price = Double.parseDouble(request.getParameter("price"));
         int slot = Integer.parseInt(request.getParameter("slot"));
 
-        // Handle multiple file uploads
-        StringBuilder fileNames = new StringBuilder(); // To store the filenames separated by ";"
-        for (Part part : request.getParts()) {
-            if (part.getName().equals("tour_Img") && part.getSize() > 0) {
-                String fileName = extractFileName(part);
-                fileName = new File(fileName).getName(); // Get the file name
-                part.write(getFolderUpload(request).getAbsolutePath() + File.separator + fileName); // Save file
-                if (fileNames.length() > 0) {
-                    fileNames.append(";"); // Separate filenames with a semicolon
-                }
-                fileNames.append(fileName); // Append the filename to the list
-            }
-        }
+        // Get image URLs from the hidden input
+        String imageFilenames = request.getParameter("tour_Img_URL");
 
-        String imageFilenames = fileNames.toString(); // Convert StringBuilder to String
-//        BigDecimal price_db = BigDecimal.valueOf(price);
-        // Save tour information to the database
         try {
             new TourDB().saveTourToDatabase(request, tourName, tourDescription, startDate, endDate, new RemoveDiacritics().removeAccent(location),
                     duration, slot, imageFilenames);
+
+            // Set the message in the session for Toastify display
             request.setAttribute("message", "Tour added successfully!");
 
         } catch (SQLException e) {
             e.printStackTrace();
+            // Set error message in session
             request.setAttribute("message", "Error adding tour: " + e.getMessage());
         }
 
-        getServletContext().getRequestDispatcher("/add-tour.jsp").forward(request, response);
+        // Forward to the add-tour page to display the result
+        getServletContext().getRequestDispatcher("/my-tour").forward(request, response);
+
     }
 
     private void editTour(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -201,8 +194,6 @@ public class ProviderManagementServlet extends HttpServlet {
         }
         Tour tourEdit = new TourDB().getTourFromTourID(tourId, companyId);
 
-        System.out.println("TEST Image" + tourEdit.toString());
-        System.out.println("TEST Image" + tourEdit.getTour_Img());
         List<String> images = tourEdit.getTour_Img(); // Assuming this is a single String with images separated by commas
         List<String> imageList = images != null ? images : new ArrayList<>(); // Directly assign images if it's not null
         List<Province> provinces = new ProvinceDB().getAllProvince();
@@ -258,22 +249,28 @@ public class ProviderManagementServlet extends HttpServlet {
             // Update the tour's images in the database with the updated list
             hoangDB.updateTourImages(tourId, images);
 
+            // Set a flag to indicate the image has been removed
+            request.setAttribute("imageRemoved", true);
+
             // Success, return 200 OK status
             response.setStatus(HttpServletResponse.SC_OK);
+            return;
 
         } catch (Exception e) {
             // Log the exception and return 500 status
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
         }
     }
+    private boolean imageUpdated;
 
     private void saveEditTour(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String tourId = request.getParameter("tourId");
         TourDB tourDB = new TourDB();
         Tour oldTour = tourDB.getTourFromTourID(tourId);
 
-        // Extract parameters with potential null-checks
+        // Extract parameters
         String newTourName = request.getParameter("tour_Name");
         String newTourDescription = request.getParameter("tour_Description");
         String newStartDateStr = request.getParameter("start_Date");
@@ -300,55 +297,48 @@ public class ProviderManagementServlet extends HttpServlet {
         String newNight = (nightParam != null && !nightParam.isEmpty()) ? nightParam : "0";
         String newDuration = newDay + "N" + newNight + "D";
 
-        // Parse price and slot with error handling
-        BigDecimal newPrice;
+        // Parse slot with error handling
         int newSlot;
         try {
-//            newPrice = new BigDecimal(request.getParameter("price"));
             newSlot = Integer.parseInt(request.getParameter("slot"));
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            request.setAttribute("message", "Invalid number format for price or slot.");
+            request.setAttribute("message", "Invalid number format for slot.");
             forwardToEditPage(request, response, tourId);
             return;
         }
 
-        // Handle multiple file uploads for images without adding a leading semicolon
-        StringBuilder imageFilenames = new StringBuilder();
-        try {
-            boolean firstImage = true; // Flag to check if it's the first image
-            for (Part part : request.getParts()) {
-                if ("tour_Img".equals(part.getName()) && part.getSize() > 0) {
-                    String fileName = extractFileName(part);
-                    fileName = new File(fileName).getName(); // Get the file name
-                    part.write(getFolderUpload(request).getAbsolutePath() + File.separator + fileName); // Save file
+        // Get the uploaded image URLs from the hidden input
+        String newImageFilenames = request.getParameter("tour_Img_URLs");
 
-                    // Add semicolon only after the first filename has been appended
-                    if (!firstImage) {
-                        imageFilenames.append(";"); // Add separator for subsequent images
-                    } else {
-                        firstImage = false; // Turn off the flag after the first image
-                    }
-                    imageFilenames.append(fileName); // Append filename
+        // Initialize combinedImages list with old images
+        List<String> combinedImages = new ArrayList<>();
+        if (oldTour.getTour_Img() != null) {
+            combinedImages.addAll(oldTour.getTour_Img());
+        }
+
+        if (newImageFilenames != null && !newImageFilenames.trim().isEmpty()) {
+            // Split new images by semicolon and iterate, ignoring empty entries
+            for (String newImage : newImageFilenames.split(";")) {
+                newImage = newImage.trim();
+
+                // Check if newImage is non-empty and not already in the list
+                if (!newImage.isEmpty() && !combinedImages.contains(newImage)) {
+                    combinedImages.add(newImage);
                 }
             }
-        } catch (IOException | ServletException ex) {
-            Logger.getLogger(ProviderManagementServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // Ensure no leading semicolon in the final concatenated filenames
-        String newImageFilenames = imageFilenames.toString();
-        if (newImageFilenames.startsWith(";")) {
-            newImageFilenames = newImageFilenames.substring(1);
-        }
+        // Remove any empty string entries from combinedImages, if any slipped in
+        combinedImages.removeIf(String::isEmpty);
 
-        // Compare old and new values, update only if values have changed
+        // Compare and update fields if changes exist
         boolean isUpdated = false;
-        if (!newTourName.equals(oldTour.getTour_Name())) {
+        if (newTourName != null && !newTourName.equals(oldTour.getTour_Name())) {
             oldTour.setTour_Name(newTourName);
             isUpdated = true;
         }
-        if (!newTourDescription.equals(oldTour.getTour_Description())) {
+        if (newTourDescription != null && !newTourDescription.equals(oldTour.getTour_Description())) {
             oldTour.setTour_Description(newTourDescription);
             isUpdated = true;
         }
@@ -360,40 +350,29 @@ public class ProviderManagementServlet extends HttpServlet {
             oldTour.setEnd_Date(newEndDate);
             isUpdated = true;
         }
-        if (!newLocation.equals(oldTour.getLocation())) {
+        if (newLocation != null && !newLocation.equals(oldTour.getLocation())) {
             oldTour.setLocation(newLocation);
             isUpdated = true;
         }
-        if (!newDuration.equals(oldTour.getTotal_Time())) {
+        if (newDuration != null && !newDuration.equals(oldTour.getTotal_Time())) {
             oldTour.setTotal_Time(newDuration);
             isUpdated = true;
         }
-//        if (newPrice.compareTo(oldTour.getPrice()) != 0) {
-//            oldTour.setPrice(newPrice);
-//            isUpdated = true;
-//        }
         if (newSlot != oldTour.getSlot()) {
             oldTour.setSlot(newSlot);
             isUpdated = true;
         }
 
-        // Update images if new ones are uploaded
-        if (!newImageFilenames.isEmpty()) {
-            Set<String> uniqueImages = new HashSet<>(oldTour.getTour_Img() != null ? oldTour.getTour_Img() : new ArrayList<>());
-            uniqueImages.addAll(Arrays.asList(newImageFilenames.split(";")));
-
-            // Convert unique images back to a single string without leading semicolons
-            String updatedImageString = String.join(";", uniqueImages);
-            if (updatedImageString.startsWith(";")) {
-                updatedImageString = updatedImageString.substring(1);
-            }
-
-            oldTour.setTour_Img(new ArrayList<>(Arrays.asList(updatedImageString.split(";"))));
+        if (!combinedImages.equals(oldTour.getTour_Img())) {
+            oldTour.setTour_Img(combinedImages);
             isUpdated = true;
+            imageUpdated = true;
         }
-
-        // Save changes if any updates were made
-        if (isUpdated) {
+        // Check if image was removed
+        if (request.getAttribute("imageRemoved") != null && (boolean) request.getAttribute("imageRemoved")) {
+            request.setAttribute("message", "Image deleted successfully.");
+        } // Save changes if any updates were made
+        else if (isUpdated) {
             try {
                 new hoang_UserDB().updateTour(oldTour);
                 request.setAttribute("message", "Tour updated successfully!");
@@ -401,6 +380,8 @@ public class ProviderManagementServlet extends HttpServlet {
                 e.printStackTrace();
                 request.setAttribute("message", "Error updating tour: " + e.getMessage());
             }
+        } else if (imageUpdated) {
+            request.setAttribute("message", "Image updated successfully!");
         } else {
             request.setAttribute("message", "No changes made to the tour.");
         }
@@ -445,10 +426,10 @@ public class ProviderManagementServlet extends HttpServlet {
             request.getRequestDispatcher("edit-tour.jsp").forward(request, response);
             return;
         }
-        System.out.println("TESTTTTTT ----- " + query);
+
         // Retrieve the tour details by tourId
         List<Tour> tourEdit = tourDBs.getTourFromQuery(new RemoveDiacritics().removeAccent(query), companyId);
-        System.out.println("TESTTTTTT ----- " + tourEdit.size());
+
         // Check if the tour was found
         if (tourEdit == null) {
             request.setAttribute("errorMessage", "No tour found with the given ID.");
@@ -457,7 +438,7 @@ public class ProviderManagementServlet extends HttpServlet {
         }
 
         // Set the tourEdit object in request scope and forward to the edit page
-        request.setAttribute("tourEdit", tourEdit);
+        request.setAttribute("tours", tourEdit);
         List<Tour> tourEditSession = tourEdit;
         request.getSession().setAttribute("tourEditSession", tourEditSession);
         request.getRequestDispatcher("mytour.jsp").forward(request, response);
@@ -483,7 +464,7 @@ public class ProviderManagementServlet extends HttpServlet {
         }
 
         // Set the error message in request attributes
-        request.setAttribute("errorMessage", errorMessage);
+        request.setAttribute("message", errorMessage);
 
         // Use include instead of forward
         request.getRequestDispatcher("my-tour").forward(request, response);
@@ -524,11 +505,16 @@ public class ProviderManagementServlet extends HttpServlet {
         }
         WithdrawalsDB withdrawalsDB = new WithdrawalsDB();
         String message;
-
-        if (withdrawalsDB.saveWithdrawal(provider_Id, bdWithdrawMoney)) {
-            message = "Request sent, please wait for a response.";
-        } else {
+        CompanyDB companyDB = new CompanyDB();
+        Company provider = companyDB.getProviderByProviderId(provider_Id);
+        if (provider.getBalance().compareTo(bdWithdrawMoney) < 0) {
             message = "Request failed, please try again.";
+        } else {
+            if (withdrawalsDB.saveWithdrawal(provider_Id, bdWithdrawMoney)) {
+                message = "Request sent, please wait for a response.";
+            } else {
+                message = "Request failed, please try again.";
+            }
         }
 
         request.setAttribute("message", message);
@@ -588,47 +574,6 @@ public class ProviderManagementServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
-    private String extractFileName(Part part) {
-        String contentDisp = part.getHeader("content-disposition");
-        String[] items = contentDisp.split(";");
-        for (String s : items) {
-            if (s.trim().startsWith("filename")) {
-                return s.substring(s.indexOf("=") + 2, s.length() - 1);
-            }
-        }
-        return "";
-    }
-
-    // Updated getFolderUpload method
-    private File getFolderUpload(HttpServletRequest request) throws IOException {
-        // Get the ServletContext to use in the getFolderUpload method
-        String uploadPath = request.getServletContext().getRealPath("/assests/images/tour-images");
-        String noBuild = removeBuildPath(uploadPath);
-        System.out.println("Upload Path: " + noBuild); // Debugging line
-
-        File folderUpload = new File(noBuild);
-        // Create the folder if it doesn't exist
-        if (!folderUpload.exists()) {
-            if (folderUpload.mkdirs()) {
-                System.out.println("Created directory: " + folderUpload.getAbsolutePath());
-            } else {
-                System.out.println("Failed to create directory: " + folderUpload.getAbsolutePath());
-            }
-        } else {
-            System.out.println("Directory already exists: " + folderUpload.getAbsolutePath());
-        }
-
-        return folderUpload;
-    }
-
-    private String removeBuildPath(String originalPath) {
-        String buildPath = "build\\";
-        if (originalPath.contains(buildPath)) {
-            return originalPath.replace(buildPath, "");
-        }
-        return originalPath;
     }
 
     public void addOption(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

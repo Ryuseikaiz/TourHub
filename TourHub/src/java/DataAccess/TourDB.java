@@ -361,6 +361,58 @@ public class TourDB implements DatabaseInfo {
 
         return tours;
     }
+    //Get all tour
+
+    public List<Tour> getToursByProviderID(int companyId, String status) {
+        List<Tour> tours = new ArrayList<>();
+        StringBuilder query = new StringBuilder("SELECT * FROM Tour WHERE company_Id = ?");
+
+        // Add conditional status filtering
+        if ("Pending".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Pending'");
+        } else if ("Active".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Active'");
+        } else if ("Hidden".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Hidden'");
+        } else if ("Banned".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Banned'");
+        } else if ("Cancelled".equalsIgnoreCase(status)) {
+            query.append(" AND tour_Status = 'Cancelled'");
+        }
+// If "All" or any other value, no additional status filter is added
+        System.out.println(query);
+        try (Connection con = getConnect(); PreparedStatement stmt = con.prepareStatement(query.toString())) {
+            // Set the companyId parameter in the PreparedStatement
+            stmt.setInt(1, companyId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String tourId = rs.getString("tour_Id");
+                    String tourName = rs.getString("tour_Name");
+                    String description = rs.getString("tour_Description");
+                    Date startDate = rs.getDate("start_Date");
+                    Date endDate = rs.getDate("end_Date");
+                    float avgRating = rs.getFloat("average_Review_Rating");
+                    int numOfReview = rs.getInt("number_Of_Review");
+                    String totalTime = rs.getString("total_Time");
+                    BigDecimal price = rs.getBigDecimal("price");
+                    int slot = rs.getInt("slot");
+                    String location = rs.getString("location");
+                    String tourStatus = rs.getString("tour_Status");
+                    Date createdAt = rs.getDate("created_At");
+                    String tourImg = rs.getString("tour_Img");
+
+                    List<String> tourImgList = splitImages(tourImg);
+                    Tour tour = new Tour(tourId, tourName, description, startDate, endDate, location, numOfReview, avgRating, numOfReview, totalTime, price, slot, tourStatus, createdAt, tourImgList, companyId);
+                    tours.add(tour);
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(TourDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return tours;
+    }
 
     public boolean setTourStatusToHidden(String tourId) {
         String sql = "UPDATE Tour SET tour_Status = 'Hidden' WHERE tour_Id = ?";

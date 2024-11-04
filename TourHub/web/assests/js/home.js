@@ -86,7 +86,7 @@ function displaySearchs(result) {
         const content = result.map(item => {
             return `<li onclick="selectInput('${item.tour_Id}')" style="display: flex; align-items: center; margin-bottom: 10px;">
                         <div style="flex-shrink: 0;">
-                            <img src="assests/images/tour-images/${item.tour_Img[0]}" alt="${item.tour_Name}" style="width: 100px; height: 100px; object-fit: cover;">
+                            <img src="${item.tour_Img[0]}" alt="${item.tour_Name}" style="width: 100px; height: 100px; object-fit: cover;">
                         </div>
                         <span style="margin-left: 15px; font-size: 18px;">${item.tour_Name}</span>
                     </li>`;
@@ -120,28 +120,38 @@ function displayTours(city) {
         const colDiv = document.createElement('div');
         colDiv.classList.add('col-md-6', 'col-xl-4');
         colDiv.style.maxHeight = '450px';
-        // Create the article element and set its class
+        colDiv.style.minHeight = '450px';
+
+// Create the article element and set its class
         const article = document.createElement('article');
         article.classList.add('event-default-wrap');
 
-        // Create the event default div and set its class
+// Create the event default div and set its class
         const eventDefault = document.createElement('div');
         eventDefault.classList.add('event-default');
 
-        // Create and append the image
+// Create and append the image
         const figure = document.createElement('figure');
         figure.classList.add('event-default-image');
+
         const img = document.createElement('img');
-        img.src = "assests/images/tour-images/" + tour.tour_Img[0];
+        img.src = tour.tour_Img[0];
         img.alt = tour.tour_Name;
-        img.width = 570;
-        img.height = 370;
+        // Set a fixed height and max height to ensure uniformity
+        const fixedHeight = '370px'; // Set desired fixed height for all images
+        img.style.height = fixedHeight; // Set the fixed height
+        img.style.maxHeight = '300px'; // Set maximum height for the image
+        img.style.width = 'auto'; // Allow width to adjust automatically
+
+// Set CSS properties to ensure the image maintains aspect ratio and fits correctly
+        img.style.objectFit = 'cover'; // This will crop the image to fit without distortion
+
         figure.appendChild(img);
 
-        // Append the figure to the event default div
+// Append the figure to the event default div
         eventDefault.appendChild(figure);
 
-        // Create the caption div and set its class
+// Create the caption div and set its class
         const captionDiv = document.createElement('div');
         captionDiv.classList.add('event-default-caption');
 
@@ -188,13 +198,7 @@ function displayTours(city) {
         // Append the tour name to the tour info div
         tourInfoDiv.appendChild(tourName);
 
-        // Create the price span, set its content, and append it to the tour info div
-        const priceSpan = document.createElement('span');
-        priceSpan.classList.add('heading-5');
-        const price = tour.price;  // Assuming tour.price contains the price value
-        const formattedPrice = new Intl.NumberFormat('vi-VN').format(price);
-        priceSpan.textContent = `${formattedPrice} VND`;
-        tourInfoDiv.appendChild(priceSpan);
+
         // Append the tour info div to the event default inner div
         eventDefaultInner.appendChild(tourInfoDiv);
 

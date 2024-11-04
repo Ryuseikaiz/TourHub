@@ -93,7 +93,7 @@ function showResults(tours, provinces) {
             imgDiv.style.flexShrink = '0';
 
             const img = document.createElement('img');
-            img.src = `assests/images/tour-images/${tour.tour_Img[0]}`;
+            img.src = `${tour.tour_Img[0]}`;
             img.alt = tour.tour_Name;
             img.style.width = '100px';
             img.style.height = '100px';

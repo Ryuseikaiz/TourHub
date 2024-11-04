@@ -21,11 +21,15 @@
         <link rel="stylesheet" href="assests/css/style_profile.css">       
         <link href="assests/css/customer.css" rel="stylesheet" >      
         <link href="assests/css/provider_analysis.css" rel="stylesheet"/>        
-        <link rel="stylesheet" href="assests/css/bootstrap.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
-        <!-- Toasify JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
-        <title>Analytic</title>
+        <link rel="stylesheet" href="assests/css/bootstrap.css" />       
+
+        <!-- Include Toastify CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.1/Toastify.min.css">
+        <!-- Include Toastify JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.1/Toastify.min.js"></script>
+
+
+        <title>Add Tour</title>
         <style>
             body {
                 background-color: #f4f4f4;
@@ -155,15 +159,10 @@
 
             <!-- MAIN -->
             <main>
-<!--                <h3 style="<c:if test='${requestScope.message.contains("successfully")}'>color: green;</c:if>
-                <c:if test='${requestScope.message.contains("Error")}'>color: red;</c:if>">
-                ${requestScope.message}
-            </h3>-->
-
                 <div class="table-data">
                     <div class="order">
                         <h3 class="head">Add Tour</h3>                   
-                        <form action="provider-management?action=add-tour" method="POST" enctype="multipart/form-data"> <!-- Combined form with file upload -->
+                        <form action="provider-management?action=add-tour" method="POST" enctype="multipart/form-data" onsubmit="return submitForm(event);" > <!-- Combined form with file upload -->
                             <div class="form-group required">
                                 <label for="tour_Name">Tour Name: <span style="color: red;">*</span></label>
                                 <input type="text" class="form-control" id="tour_Name" name="tour_Name" maxlength="255" required>
@@ -195,11 +194,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!--                            <div class="form-group required">
-                                                            <label for="location">Location: <span style="color: red;">*</span></label>
-                                                            <input type="text" class="form-control" id="location" name="location" maxlength="50" required>
-                                                        </div>-->
                             <div class="form-group">
                                 <label for="location">Location: <span style="color: red;">*</span></label>
                                 <select class="form-control" id="location" name="location" style="height: 40px;
@@ -216,74 +210,116 @@
                                     </c:forEach>
                                 </select>
                             </div>
-
-                            <!--                            <div class="form-group required">
-                                                            <label for="price">Price: <span style="color: red;">*</span></label>
-                                                            <input type="number" class="form-control" id="price" name="price" required>
-                                                        </div>-->
                             <div class="form-group required">
                                 <label for="slot">Slot: <span style="color: red;">*</span></label>
                                 <input type="number" class="form-control" id="slot" name="slot" required>
-                            </div>
+                                <small id="slotError" style="color: red; display: none;">Slot must be a non-negative number.</small>
+                            </div>          
                             <div class="form-group required">
                                 <label for="tour_Img">Tour Images: <span style="color: red;">*</span></label>
-                                <input type="file" class="form-control-file" id="tour_Img" name="tour_Img" multiple required>
+                                <input type="file" class="form-control-file" id="fileButton" accept=".jpg, .jpeg, .png, .webp" multiple required>
+                                <progress value="0" max="100" id="uploader">0%</progress>
+                                <input type="hidden" id="tour_Img_URL" name="tour_Img_URL">                                
                                 <small class="form-text text-muted">Upload image files (JPG, PNG, etc.), each not exceeding 2MB.</small>
                             </div>
-                            <div class="action-container">
-                                <button type="submit" class="btn btn-primary btn-block action-link approve">Add Tour</button>
-                            </div>
-                        </form>
+                            <div id="imgDiv"></div>
+                            <c:out value="${message}"/>
+                            <button type="submit" class="btn btn-primary btn-block action-link approve">Add Tour</button>
 
+                        </form>
                     </div>
                 </div>
             </main>          
             <!-- MAIN -->
+            <div id="toastContainer" data-message="<c:out value='${message}' />"></div>
         </section>
         <!-- CONTENT -->
-
-
         <script src="assests/js/script_profile.js"></script>     
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script>
-                                    document.addEventListener('DOMContentLoaded', function () {
-                                        const burger = document.querySelector('.burger');
-                                        const navigation = document.querySelector('.navigation-admin');
-                                        const main = document.querySelector('.main-admin');
-                                        const profileCard = document.querySelector('.profile-card'); // Select the profile card
+        <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
 
-                                        burger.addEventListener('click', function () {
-                                            navigation.classList.toggle('active');
-                                            main.classList.toggle('active');
-                                            profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                                        });
+
+        <!--        <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                const burger = document.querySelector('.burger');
+                                                const navigation = document.querySelector('.navigation-admin');
+                                                const main = document.querySelector('.main-admin');
+                                                const profileCard = document.querySelector('.profile-card'); // Select the profile card
+        
+                                                burger.addEventListener('click', function () {
+                                                    navigation.classList.toggle('active');
+                                                    main.classList.toggle('active');
+                                                    profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+                                                });
+                                            });
+        
+                </script>-->
+
+        <script type="text/javascript">
+                                    const firebaseConfig = {
+                                        apiKey: "AIzaSyADteJKp4c9C64kC08pMJs_jYh-Fa5EX6o",
+                                        authDomain: "tourhub-41aa5.firebaseapp.com",
+                                        projectId: "tourhub-41aa5",
+                                        storageBucket: "tourhub-41aa5.appspot.com",
+                                        messagingSenderId: "556340467473",
+                                        appId: "1:556340467473:web:2f6de24bdbb33709e51eb0",
+                                        measurementId: "G-0JBZE81PGF"
+                                    };
+                                    firebase.initializeApp(firebaseConfig);
+
+                                    const uploader = document.getElementById('uploader');
+                                    const fileButton = document.getElementById('fileButton');
+                                    const saveButton = document.querySelector('button[type="submit"]');
+                                    saveButton.disabled = true; // Disable save button initially
+
+                                    let uploadedCount = 0; // Track the count of uploaded files
+                                    let totalFiles = 0; // Total files selected
+                                    const imageUrls = [];
+
+                                    fileButton.addEventListener('change', function (e) {
+                                        uploadedCount = 0; // Reset the upload count on new selection
+                                        totalFiles = e.target.files.length; // Set total files selected
+                                        Array.from(e.target.files).forEach(uploadFile);
                                     });
 
-        </script>
-        <script>
+                                    function uploadFile(file) {
+                                        const storageRef = firebase.storage().ref('images/' + file.name);
+                                        const uploadTask = storageRef.put(file);
 
-        </script>
-        <script>
-            window.onload = function () {
-                const message = '${message}';
-                if (message) {
-                    Toastify({
-                        text: message,
-                        duration: 3000, // Thời gian hiển thị (3 giây)
-                        gravity: "top", // Vị trí hiển thị (top/bottom)
-                        position: 'right', // Vị trí bên trái/bên phải
-                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // Màu nền
-                    }).showToast();
+                                        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, function (snapshot) {
+                                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                            uploader.value = progress;
+                                            saveButton.disabled = true; // Disable save button during upload
+                                        }, function (error) {
+                                            console.error("Upload failed:", error);
+                                        }, function () {
+                                            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                                                imageUrls.push(downloadURL);
+                                                document.getElementById("tour_Img_URL").value = imageUrls.join(';');
+                                                displayImage(downloadURL);
 
-                    // Xóa message sau khi đã hiển thị
-            <c:remove var="message" />
-                }
-            };
-        </script> 
-        <script src="dist/js/theme.min.js"></script>
+                                                uploadedCount++; // Increase the count of uploaded files
+                                                if (uploadedCount === totalFiles) {
+                                                    saveButton.disabled = false; // Enable save button when all files are uploaded
+                                                }
+                                            });
+                                        });
+                                    }
+
+                                    function displayImage(url) {
+                                        const imgDiv = document.getElementById("imgDiv");
+                                        const imgElement = document.createElement("img");
+                                        imgElement.src = url;
+                                        imgElement.width = 100;
+                                        imgElement.height = 100;
+                                        imgDiv.appendChild(imgElement);
+                                    }
+        </script>
+        <!--<script src="dist/js/theme.min.js"></script>-->
         <script src="./assests/js/edit-tour.js"></script>
+
     </body>
 </html>

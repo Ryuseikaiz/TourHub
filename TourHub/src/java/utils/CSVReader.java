@@ -40,7 +40,7 @@ public class CSVReader {
                 // Parse line manually to handle quoted commas
                 List<String> values = parseCsvLine(line);
 
-                if (values.size() < 7) {
+                if (values.size() < 6) {
                     System.out.println("Skipping line due to insufficient data: " + line);
                     continue;
                 }

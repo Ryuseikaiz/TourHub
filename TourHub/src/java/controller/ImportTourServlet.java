@@ -69,7 +69,7 @@ public class ImportTourServlet extends HttpServlet {
                     // Check if the file is a .csv file
                     if (!fileName.endsWith(".csv")) {
                         message = "Invalid file type. Please upload a .csv file.";
-                        request.setAttribute("errorMessage", message);
+                        request.setAttribute("message", message);
                         request.getRequestDispatcher("my-tour").forward(request, response);
                         return;  // Stop further execution if the file is not a .csv file
                     }
@@ -91,7 +91,7 @@ public class ImportTourServlet extends HttpServlet {
                 } else {
                     message = "No file selected for upload.";
                 }
-                request.setAttribute("errorMessage", message);
+                request.setAttribute("message", message);
                 request.getRequestDispatcher("import-tour?action=save-to-db").forward(request, response);
                 CSVReader fileReader = new CSVReader();
                 fileReader.deleteAllFilesInDir(getFolderUpload(request).toString());
