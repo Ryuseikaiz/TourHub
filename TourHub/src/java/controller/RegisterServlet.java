@@ -34,9 +34,12 @@ public class RegisterServlet extends HttpServlet {
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String phone = request.getParameter("phone");
-        String address = request.getParameter("address");
+        String province = request.getParameter("provinceName");
+        String district = request.getParameter("districtName");
+        String commune = request.getParameter("communeName");
+        String streetAddress = request.getParameter("streetAddress");  // Địa chỉ đường phố
         String role = request.getParameter("role");
-        String avatar = null; 
+        String avatar = null;
 
         UserDB userDB = new UserDB();
         String error = "";
@@ -46,31 +49,24 @@ public class RegisterServlet extends HttpServlet {
             error += "Email already exists. ";
         }
 
-        // Validate password
-        if (!isValidPassword(password)) {
-            error += "Password must be 8-16 characters long, include uppercase, lowercase letters, and a number. ";
-        }
-
-        // Confirm password match
-        if (!password.equals(confirmPassword)) {
-            error += "Password confirmation does not match. ";
-        }
-
         if (!error.isEmpty()) {
             request.setAttribute("error", error);
             request.setAttribute("email", email);
             request.setAttribute("firstName", firstName);
             request.setAttribute("lastName", lastName);
             request.setAttribute("phone", phone);
-            request.setAttribute("address", address);
+            request.setAttribute("streetAddress", streetAddress);
+            request.setAttribute("province", province);
+            request.setAttribute("district", district);
+            request.setAttribute("commune", commune);
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
-
+        
+        String fullAddress = String.join(" - ", streetAddress, commune, district, province);
         // If no errors, proceed to register the user
         String hashedPassword = Encrypt.toSHA256(password);
-        boolean isRegistered = userDB.registerUser(new User(0, hashedPassword, firstName, lastName, phone, email, address, new Date(), "Unverified", role, avatar));
-
+        boolean isRegistered = userDB.registerUser(new User(0, hashedPassword, firstName, lastName, phone, email, fullAddress, new Date(), "Unverified", role, avatar));
 
         if (isRegistered) {
             // Generate OTP
@@ -93,14 +89,6 @@ public class RegisterServlet extends HttpServlet {
             request.setAttribute("error", "Registration failed. Please try again.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
-    }
-
-    private boolean isValidPassword(String password) {
-        return password.length() >= 8 && password.length() <= 16
-                && password.chars().anyMatch(Character::isUpperCase)
-                && password.chars().anyMatch(Character::isLowerCase)
-                && password.chars().anyMatch(Character::isDigit)
-                && !password.contains(" ");  // Ensure no whitespace
     }
 
     private void sendOtpEmail(String to, int otp) {

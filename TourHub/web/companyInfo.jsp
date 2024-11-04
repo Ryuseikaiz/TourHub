@@ -28,8 +28,19 @@
                             <input type="text" id="taxCode" name="taxCode" class="form-control" required/>
                         </div>
                         <div class="form-group">
-                            <label for="bankInformation">Bank Information:</label>
-                            <input type="text" id="bankInformation" name="bankInformation" class="form-control" required/>
+                            <label>Bank Information:</label>
+                            <div class="d-flex">
+                                <select id="bankInformation" name="bankInformation" class="form-control mr-2" required style="height: 100px;" >
+                                    <option value="">Select Bank</option>
+                                    <option value="VPBank">VPBank</option>
+                                    <option value="BIDV">BIDV</option>
+                                    <option value="MBbank">MBbank</option>
+                                    <option value="TPbank">TPbank</option>
+                                    <option value="ACBank">ACBank</option>
+                                    <!-- Add more banks as needed -->
+                                </select>
+                                <input type="text" id="accountNumber" name="accountNumber" class="form-control" placeholder="Account Number" required/>
+                            </div>
                         </div>
                         <div class="form-group text-center">
                             <input type="submit" class="button button-sm button-secondary" value="Submit"/>

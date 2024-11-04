@@ -33,26 +33,27 @@ public class GoogleRegisterServlet extends HttpServlet {
             return;
         }
 
+        // Lấy các trường từ form
         String phone = request.getParameter("phone");
-        String address = request.getParameter("address");
+        String province = request.getParameter("provinceName");
+        String district = request.getParameter("districtName");
+        String commune = request.getParameter("communeName");
+        String streetAddress = request.getParameter("address");
         String password = request.getParameter("password");
         String role = request.getParameter("role");
 
-        // Validate password
-        if (!isValidPassword(password)) {
-            System.out.println("Password validation failed.");
-            request.setAttribute("errorMessage", "Password must be 8-16 characters long, include at least 1 uppercase letter and 1 special character.");
-            request.getRequestDispatcher("googleregister.jsp").forward(request, response);
-            return;
-        }
+  
 
-        // Update user object with new information
+        // Kết hợp các trường địa chỉ
+        String fullAddress = String.join(" - ", streetAddress, commune, district, province );
+
+        // Cập nhật đối tượng user với thông tin mới
         user.setPhone(phone);
-        user.setAddress(address);
+        user.setAddress(fullAddress);  // Lưu địa chỉ kết hợp
         user.setPassword(Encrypt.toSHA256(password)); // Encrypt password
         user.setRole(role);
 
-        // Save the updated user info to the database
+        // Lưu thông tin người dùng đã cập nhật vào cơ sở dữ liệu
         UserDB userDB = new UserDB();
         boolean isUpdated = userDB.updateGoogleAccount(user);
 
@@ -61,13 +62,13 @@ public class GoogleRegisterServlet extends HttpServlet {
             session.setAttribute("currentUser", user);
             System.out.println("User information successfully updated and saved in session.");
 
-            // Redirect based on role
+            // Chuyển hướng dựa trên vai trò
             if ("Customer".equals(role)) {
                 response.sendRedirect("customerInfo.jsp");
             } else if ("Provider".equals(role)) {
                 response.sendRedirect("companyInfo.jsp");
             } else {
-                // Default redirection if no specific role match
+                // Chuyển hướng mặc định nếu không có vai trò nào
                 session.setAttribute("successMessage", "Registration completed successfully! Please log in.");
                 response.sendRedirect("login.jsp");
             }
@@ -76,13 +77,5 @@ public class GoogleRegisterServlet extends HttpServlet {
             request.setAttribute("errorMessage", "Failed to update your registration. Please try again.");
             request.getRequestDispatcher("googleregister.jsp").forward(request, response);
         }
-    }
-
-    private boolean isValidPassword(String password) {
-        return password.length() >= 8 && password.length() <= 16
-                && password.chars().anyMatch(Character::isUpperCase)
-                && password.chars().anyMatch(Character::isLowerCase)
-                && password.chars().anyMatch(Character::isDigit)
-                && !password.contains(" ");  // Ensure no whitespace
     }
 }

@@ -513,13 +513,13 @@
                             <!-- RD Navbar Toggle-->
                             <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
                             <!-- RD Navbar Brand-->
-                            <div class="rd-navbar-brand"><a class="brand-name" href="index.html"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
+                            <div class="rd-navbar-brand"><a class="brand-name" href="home"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
                         </div>
                         <div class="rd-navbar-aside-center">
                             <div class="rd-navbar-nav-wrap">
                                 <!-- RD Navbar Nav-->
                                 <ul class="rd-navbar-nav">
-                                    <li><a href="index.jsp">Home</a>
+                                    <li><a href="home">Home</a>
                                     </li>
                                     <li><a href="about-us.jsp">About Us</a>
                                     </li>
@@ -604,67 +604,76 @@
             </div>
 
         </div>
-
-        <!--Waves Container-->
-        <div>
-            <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                 viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-            <defs>
-            <path id="gentle-wave"
-                  d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-            </defs>
-            <g class="parallax">
-            <use xlink:href="#gentle-wave" x="30" y="0" fill="rgba(255,255,255,0.7)" />
-            <use xlink:href="#gentle-wave" x="30" y="3" fill="rgba(255,255,255,0.5)" />
-            <use xlink:href="#gentle-wave" x="30" y="5" fill="rgba(255,255,255,0.3)" />
-            <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
-            </g>
-            </svg>
-        </div>
-        <!--Waves end-->
-    </div>
-
-    <div class="content flex">
-        <div class="tour-gallery">
-            <div class="image-highlight">
-                <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 1">
-                <a href="javascript:void(0)" onclick="toggle('popup1')">
-                    <div class="img-viewmore">
-                        <h3>
-                            <i class="fa-solid fa-image"></i>
-                            View All Image
-                        </h3>
+        <div class="content flex">
+            <div class="tour-gallery">
+                <div class="image-highlight">
+                    <img class="tour-img" src="${tour.tour_Img.get(0)}" alt="Tour Image 1">
+                    <a href="javascript:void(0)" onclick="toggle('popup1')">
+                        <div class="img-viewmore">
+                            <h3>
+                                <i class="fa-solid fa-image"></i>
+                                View All Image
+                            </h3>
+                        </div>
+                    </a>
+                </div>
+            </c:if>
+                <c:if test="${not empty tour.tour_Img[1]}">
+                    <div class="image-1">
+                        <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
+                        <a href="javascript:void(0)" onclick="toggle('popup1')">
+                            <div class="img-viewmore">
+                                <h3>
+                                    <i class="fa-solid fa-image"></i>
+                                    View All Image
+                                </h3>
+                            </div>
+                        </a>
                     </div>
-                </a>
+                </c:if>
+
+                <c:if test="${not empty tour.tour_Img[2]}">
+                    <div class="image-2">
+                        <img class="tour-img" src="${tour.tour_Img.get(2)}" alt="Tour Image 3">
+                        <a href="javascript:void(0)" onclick="toggle('popup1')">
+                            <div class="img-viewmore">
+                                <h3>
+                                    <i class="fa-solid fa-image"></i>
+                                    View All Image
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </c:if>
+
+                <c:if test="${not empty tour.tour_Img[3]}">
+                    <div class="image-3">
+                        <img class="tour-img" src="${tour.tour_Img.get(3)}" alt="Tour Image 4">
+                        <a href="javascript:void(0)" onclick="toggle('popup1')">
+                            <div class="img-viewmore">
+                                <h3>
+                                    <i class="fa-solid fa-image"></i>
+                                    View All Image
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </c:if>
+
+                <c:if test="${not empty tour.tour_Img[4]}">
+                    <div class="image-4">
+                        <img class="tour-img" src="${tour.tour_Img.get(4)}" alt="Tour Image 5">
+                        <a href="javascript:void(0)" onclick="toggle('popup1')">
+                            <div class="img-viewmore">
+                                <h3>
+                                    <i class="fa-solid fa-image"></i>
+                                    View All Image
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </c:if>
             </div>
-
-            <c:if test="${not empty tour.tour_Img[0]}">
-                <div class="image-1">
-                    <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 2">
-                    <a href="javascript:void(0)" onclick="toggle('popup1')">
-                        <div class="img-viewmore">
-                            <h3>
-                                <i class="fa-solid fa-image"></i>
-                                View All Image
-                            </h3>
-                        </div>
-                    </a>
-                </div>
-            </c:if>
-
-            <c:if test="${not empty tour.tour_Img[0]}">
-                <div class="image-2">
-                    <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 3">
-                    <a href="javascript:void(0)" onclick="toggle('popup1')">
-                        <div class="img-viewmore">
-                            <h3>
-                                <i class="fa-solid fa-image"></i>
-                                View All Image
-                            </h3>
-                        </div>
-                    </a>
-                </div>
-            </c:if>
 
             <c:if test="${not empty tour.tour_Img[0]}">
                 <div class="image-3">
@@ -946,16 +955,34 @@
         </div>
     </div>
 </div>
+    <!--Popup1-->
+    <div id="popup1">
+        <div id="carouselExampleIndicators" class="carousel slide">
+            <div class="carousel-indicators">
+                <c:forEach var="i" begin="0" end="${fn:length(tour.tour_Img) - 1}">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
+                            class="${i == 0 ? 'active' : ''}" aria-current="${i == 0 ? 'true' : 'false'}"
+                            aria-label="Slide ${i + 1}"></button>
+                </c:forEach>
+            </div>
+            <div class="carousel-inner">
+                <c:forEach var="image" items="${tour.tour_Img}">
+                    <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
+                        <img src="${image}" class="carousel-img d-block w-100" alt="...">
+                    </div>
+                </c:forEach>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
 
-<!--Popup1-->
-<div id="popup1">
-    <div id="carouselExampleIndicators" class="carousel slide">
-        <div class="carousel-indicators">
-            <c:forEach var="i" begin="0" end="${fn:length(tour.tour_Img) - 1}">
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
-                        class="${i == 0 ? 'active' : ''}" aria-current="${i == 0 ? 'true' : 'false'}"
-                        aria-label="Slide ${i + 1}"></button>
-            </c:forEach>
         </div>
         <div class="carousel-inner">
             <c:forEach var="image" items="assests/images/tour-images/${tour.tour_Img}">
@@ -975,40 +1002,20 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup1')"></button>
-</div>
-
-<!--Popup2-->
-<div id="popup2">
-    <h3>More Information</h3>
-    <div class="information-wrapper">
-        <div class="language-service">
-            <h4>Service Language(s)</h4>
-            <span>Service available in:</span>
-            <ul>
-                <c:forEach var="language" items="${tourDetailDescription.languageService}">
-                    <li>${language}</li>
-                    </c:forEach>
-            </ul>
+    <!--Popup2-->
+    <div id="popup2">
+        <h3>More Information</h3>
+        <div class="information-wrapper">
+            <div class="language-service">
+                <h4>Service Language(s)</h4>
+                <span>Service available in:</span>
+                <ul>
+                    <c:forEach var="language" items="${tourDetailDescription.languageService}">
+                        <li>${language}</li>
+                        </c:forEach>
+                </ul>
+            </div>
         </div>
-
-        <div class="suitable">
-            <h4>Suitable for</h4>
-            <ul>
-                <c:forEach var="suggestion" items="${tourDetailDescription.suggestion}">
-                    <li>${suggestion}</li>
-                    </c:forEach>
-            </ul>
-        </div>
-
-        <div class="contact-information">
-            <h4>Contact Partner:</h4>
-            <ul>
-                <li>+${tourDetailDescription.contactNumber}</li>
-            </ul>
-
-        </div>
-
         <div class="extra-information">
             <h4>Additional Information</h4>
             <span>
@@ -1063,8 +1070,46 @@
                 </c:forEach>
         </ul>
     </div>
-    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
-</button>
+    <!--Popup3-->
+    <div id="popup3">
+        <h3>What You'll Experience</h3>
+        <div class="experiment-wrapper">
+            <ul>
+                <c:forEach var="experience" items="${tourDetailDescription.experiences}">
+                    <li>${experience}</li>
+                    </c:forEach>
+            </ul>
+<!--Popup5-->
+<div id="popup5">
+    <h4>Tour ghép</h4>
+    <div class="tour-option-detail-wrapper">
+        <div class="tour-time-popup">
+            <span>
+                Thời lượng tour:
+                ${tour.total_Time}
+            </span>
+
+            <span>
+                Thời gian và điểm đón:
+                <ul>
+                    <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
+                    <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
+                        thêm trên trang Sản phẩm để biết thêm chi tiết </li>
+                </ul>
+            </span>
+        </div>
+
+        <span class="refund-section-popup">
+            Easy Refund
+        </span>
+
+        <div class="price-wrapper">
+            <span class="price-wrapper-inner">1.216.867 VND</span>
+
+            <button>Chọn vé</button>
+        </div>
+        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
+    </button>
 </div>
 
 <!--Popup5-->
@@ -1133,7 +1178,6 @@
                     Vé vào cửa
                     Bảo hiểm du lịch
                     Hướng dẫn viên nói tiếng Việt - Anh
-
                 </span>
                 <h4 id="scrollspyHeading2">Second heading</h4>
                 <span>

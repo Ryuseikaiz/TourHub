@@ -23,7 +23,10 @@ import model.TourPeople;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import model.Booking;
+import model.Discount;
 import model.TourDetailDescription;
 import model.TourOptionDetail;
 
@@ -458,6 +461,39 @@ public class KhanhDB {
             ps.executeUpdate();
         }
     }
+    
+    public void importBill(BigDecimal amount, String billDate, String payMethod, int bookId) throws SQLException {
+
+        // Ensure amount is not null and positive
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive and not null");
+        }
+
+        // Define the date format pattern that matches your input date (e.g., "dd/MM/yyyy")
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        // Convert the bill date from string to java.sql.Date
+        Date billDateSql;
+        try {
+            billDateSql = Date.valueOf(LocalDate.parse(billDate, formatter));
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format for bill date: " + billDate);
+        }
+
+        // SQL statement to insert a record into the Bill table
+        String sql = "INSERT INTO Bill (amount, bill_Date, pay_Method, book_Id) VALUES (?, ?, ?, ?)";
+
+        // Using try-with-resources to manage resources and ensure closure
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBigDecimal(1, amount);
+            ps.setDate(2, billDateSql);
+            ps.setString(3, payMethod);
+            ps.setInt(4, bookId);
+
+            // Execute the insert
+            ps.executeUpdate();
+        }
+    }
 
     // Helper method to convert string to java.sql.Date
     private Date convertStringToDate(String dateString) {
@@ -577,6 +613,57 @@ public class KhanhDB {
             e.printStackTrace(); // Handle SQL exceptions
         }
         return null; // Return null if no tour_Id is found or if the input is invalid
+    }
+    
+    public List<Discount> getAllDiscountByTourId(String tourId) throws SQLException {
+        String sql = "SELECT * FROM Discount WHERE tour_Id = ?"; // SQL query to fetch discounts by tour_Id
+        List<Discount> discounts = new ArrayList<>(); // List to store all discount records
+
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tourId); // Set the tourId in the query
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Create and populate a Discount object with data from the result set
+                    Discount discount = new Discount();
+                    discount.setDiscount_Id(rs.getInt("discount_Id"));
+                    discount.setStart_Day(rs.getDate("start_Day"));
+                    discount.setEnd_Day(rs.getDate("end_Day"));
+                    discount.setCode(rs.getString("code"));
+                    discount.setQuantity(rs.getInt("quantity"));
+                    discount.setPercent_Discount(rs.getBigDecimal("percent_Discount").doubleValue());
+                    discount.setRequire(rs.getString("require"));
+                    discount.setTour_Id(rs.getString("tour_Id"));
+
+                    // Add the Discount object to the list
+                    discounts.add(discount);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle SQL exceptions
+        }
+
+        // Sort the discounts list by start_Day
+        discounts.sort(Comparator.comparing(Discount::getStart_Day));
+
+        return discounts; // Return the sorted list of discounts
+    }
+    
+    public void decrementDiscountQuantity(int discountId) throws SQLException {
+        String sql = "UPDATE Discount SET quantity = quantity - 1 WHERE discount_Id = ? AND quantity > 0"; // Cập nhật quantity
+
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, discountId); // Thiết lập discountId trong câu truy vấn
+            int affectedRows = ps.executeUpdate(); // Thực thi cập nhật và lấy số hàng bị ảnh hưởng
+
+            if (affectedRows == 0) {
+                System.out.println("Discount quantity is already at zero or discount does not exist.");
+            } else {
+                System.out.println("Quantity decremented successfully.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Xử lý ngoại lệ SQL
+        }
     }
 
     public static void main(String[] args) {

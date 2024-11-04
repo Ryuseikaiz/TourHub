@@ -161,13 +161,13 @@
                             <!-- RD Navbar Toggle-->
                             <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
                             <!-- RD Navbar Brand-->
-                            <div class="rd-navbar-brand"><a class="brand-name" href="index.html"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
+                            <div class="rd-navbar-brand"><a class="brand-name" href="home"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
                         </div>
                         <div class="rd-navbar-aside-center">
                             <div class="rd-navbar-nav-wrap">
                                 <!-- RD Navbar Nav-->
                                 <ul class="rd-navbar-nav">
-                                    <li><a href="index.jsp">Home</a>
+                                    <li><a href="home">Home</a>
                                     </li>
                                     <li><a href="about-us.jsp">About Us</a>
                                     </li>
@@ -227,7 +227,7 @@
                             <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseBK" role="button"
                                aria-expanded="false" aria-controls="collapseBK"
                                style="color: black; background-color: transparent; border: none;">
-                                <img class="logo-mb" src="Image/Logo MB Bank - MBB.png" alt="">
+                                <img class="logo-mb" src="assests/images/logo-favicon/Logo MB Bank - MBB.png" alt="">
                                 <i class="fa-solid fa-chevron-down"></i>
                             </a>
                         </div>
@@ -251,7 +251,7 @@
                                 </div>
                                 <div class="detail-item">
                                     <span>Transfer content:</span>
-                                    <span class="value amount">BK${book.book_Id}</span>
+                                    <span class="value amount1"></span>
                                 </div>
                             </div>
                         </div>
@@ -285,9 +285,18 @@
 
                                 </div>
 
-                                <div class="detail-price">
+                                <div class="detail-price" style="text-align: end;">
 
                                 </div>
+                            </div>
+                            <div class="detail-discount-container" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="detal-price-name" style="font-size: 17px; font-weight: 600; color: black;">Total</div>
+                                <div class="detail-price" style="font-size: 17px; font-weight: 700; color: #FF5E1F; text-align: end;">${totalNoDis} VND</div>
+                            </div>
+                            
+                            <div class="detail-discount-container" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;">
+                                <div class="detal-price-name">Discount</div>
+                                <div class="detail-price" style="text-align: end">${discountCost}</div>
                             </div>
                         </div>
                     </div>
@@ -322,21 +331,34 @@
                 BANK_ID: "MB",
                 ACCOUNT_NO: "0364173531"
             };
-            
-            var bookingId = "${book.book_Id}";  
+
+            // Set to store used booking IDs
+            let usedBookingIds = new Set();
+
+            function generateUniqueBookingId() {
+                let newId;
+                do {
+                    newId = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit number
+                } while (usedBookingIds.has(newId)); // Repeat if ID is already used
+
+                usedBookingIds.add(newId); // Store the new unique ID
+                return "BK" + newId;
+            }
+
+            var bookingId = generateUniqueBookingId();
             var bookingCost = "${book.total_Cost}";
-            console.log(bookingId);
-            console.log(bookingCost);
-            
-            const paidContentTest = "ABC123";
-            const paidPriceTest = "10000";
-            
-            const paidContent = "BK" + bookingId;
+
+            console.log("Unique Booking ID:", bookingId);
+            console.log("Booking Cost:", bookingCost);
+
+            const paidContent = bookingId;
             const paidPrice = bookingCost;
 
-            var totalcost = "${book.total_Cost}";
             const paid_content = document.getElementById("paid-content");
             const qr_img = document.querySelector(".tour-qr-img");
+            
+            const amountSpan = document.querySelector(".value.amount1");
+            amountSpan.innerHTML = paidContent;
 
             let QR = "https://img.vietqr.io/image/" + MY_BANK.BANK_ID + "-" + MY_BANK.ACCOUNT_NO + "-compact2.jpg?amount=" + paidPrice + "&addInfo=" + paidContent;
             qr_img.src = QR;
@@ -353,8 +375,6 @@
         let checkInterval = null;
 
         async function checkPaid(price, content) {
-            // Early exit if payment is already successful\
-//            clearInterval(checkInterval);
             if (isSuccess) {
                 return;
             }
@@ -371,15 +391,10 @@
                 console.log(lastContent);
                 console.log(content);
 
-
-
-                // Check if the last payment matches the expected price and content
                 if (lastPrice >= price && lastContent.includes(content)) {
-                    // Mark as success and clear the interval immediately
                     isSuccess = true;
                     clearInterval(checkInterval);
 
-                    // Show the success modal
                     const paymentSuccessModal = new bootstrap.Modal(document.getElementById('statusSuccessModal'));
                     paymentSuccessModal.show();
                 } else {

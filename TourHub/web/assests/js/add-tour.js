@@ -1,7 +1,34 @@
 
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
     calculateDuration();
-};
+    console.log("DOM fully loaded and parsed");
+
+    // Get the message from the data attribute
+    var toastContainer = document.getElementById('toastContainer');
+    var toastMessage = toastContainer.getAttribute('data-message');
+
+    // Debugging message value
+    console.log("Toast message:", toastMessage);
+
+    // Toastify message handling
+    if (toastMessage && toastMessage.trim() !== "") {
+        Toastify({
+            text: toastMessage,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+            close: true,
+            style: {
+                fontSize: "18px",
+                padding: "20px",
+                borderRadius: "8px"
+            }
+        }).showToast();
+    } else {
+        console.log("No valid toast message found.");
+    }
+});
 function validateDates() {
     const startDateInput = document.getElementById('start_Date');
     const endDateInput = document.getElementById('end_Date');

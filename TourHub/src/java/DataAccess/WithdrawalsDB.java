@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Withdrawals;
 import java.sql.ResultSet;
+import model.Booking;
 
 /**
  *
@@ -91,6 +92,8 @@ public class WithdrawalsDB implements DatabaseInfo {
         return withdrawals;
     }
 
+    
+    
     public static void main(String[] args) throws SQLException {
         List<Withdrawals> tours = new WithdrawalsDB().getWithdrawalsByProviderId(2);
         for (Withdrawals book : tours) {

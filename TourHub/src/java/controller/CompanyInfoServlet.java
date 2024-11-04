@@ -4,8 +4,8 @@ import DataAccess.UserDB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import model.Company;
 import model.User;
@@ -24,14 +24,17 @@ public class CompanyInfoServlet extends HttpServlet {
         User user = (User) session.getAttribute("currentUser");
 
         if (user == null || !user.getRole().equals("Provider")) {
-            // If the user is not logged in or not a provider, redirect to login
             response.sendRedirect("login.jsp");
             return;
         }
 
-        // Get company details from form
+        // Get tax code and bank information details from the form
         String taxCode = request.getParameter("taxCode");
-        String bankInformation = request.getParameter("bankInformation");
+        String bankName = request.getParameter("bankInformation");
+        String accountNumber = request.getParameter("accountNumber");
+
+        // Combine bank name and account number with a space
+        String bankInformation = bankName + " " + accountNumber;
 
         // Create a new Company object
         Company company = new Company();
@@ -50,9 +53,10 @@ public class CompanyInfoServlet extends HttpServlet {
             return;
         }
 
+        // Update user session data
         user.setTax_Code(taxCode);
         user.setBank_Information(bankInformation);
-        user.setBalance(BigDecimal.valueOf(0));
+        user.setBalance(BigDecimal.ZERO);
         session.setAttribute("currentUser", user);
 
         // Redirect to homepage or provider dashboard after successful update

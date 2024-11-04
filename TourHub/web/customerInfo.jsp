@@ -16,7 +16,7 @@
             }
             
             if (age < 18) {
-                alert("You must be at least 18 years old.");
+                alert("You must be at least 18 years old to create account.");
                 return false; // Prevent form submission
             }
             return true; // Allow form submission
