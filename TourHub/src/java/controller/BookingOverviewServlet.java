@@ -108,7 +108,9 @@ public class BookingOverviewServlet extends HttpServlet {
         System.out.println("Discount Id: " + discountId);
         System.out.println("Total no dis: " + totalNoDis);
 
+
         int discountIdInt = 0;
+
         System.out.println("Option ID: " + optionIdString);
 
         if (discountCost.contains("-0 VND")) {
