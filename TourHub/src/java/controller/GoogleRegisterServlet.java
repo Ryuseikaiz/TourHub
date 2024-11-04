@@ -17,11 +17,18 @@ public class GoogleRegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
+        // Retrieve the session and confirm it's active
+        HttpSession session = request.getSession(false);  // Avoid creating a new session
+        if (session == null) {
+            System.out.println("Session not found. Redirecting to login page.");
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
         User user = (User) session.getAttribute("currentUser");
 
         if (user == null) {
-            // Người dùng chưa đăng nhập, redirect về trang login
+            System.out.println("Session expired or user not logged in.");
             response.sendRedirect("login.jsp");
             return;
         }
@@ -31,54 +38,51 @@ public class GoogleRegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
         String role = request.getParameter("role");
 
-        // Kiểm tra mật khẩu
+        // Validate password
         if (!isValidPassword(password)) {
-            // Nếu mật khẩu không hợp lệ, gửi thông báo lỗi
+            System.out.println("Password validation failed.");
             request.setAttribute("errorMessage", "Password must be 8-16 characters long, include at least 1 uppercase letter and 1 special character.");
             request.getRequestDispatcher("googleregister.jsp").forward(request, response);
             return;
         }
 
-        // Cập nhật thông tin vào User object
+        // Update user object with new information
         user.setPhone(phone);
         user.setAddress(address);
-        user.setPassword(Encrypt.toSHA256(password)); // Mã hóa password
+        user.setPassword(Encrypt.toSHA256(password)); // Encrypt password
         user.setRole(role);
 
-        // Lưu thông tin cập nhật vào database
+        // Save the updated user info to the database
         UserDB userDB = new UserDB();
-        userDB.updateGoogleAccount(user);
+        boolean isUpdated = userDB.updateGoogleAccount(user);
 
-        // Cập nhật session
-        session.setAttribute("currentUser", user);
+        if (isUpdated) {
+            // Update session with the latest data
+            session.setAttribute("currentUser", user);
+            System.out.println("User information successfully updated and saved in session.");
 
-        // Kiểm tra role và điều hướng
-        if ("Customer".equalsIgnoreCase(role)) {
-            UserDB customerDB = new UserDB();
-            if (!customerDB.hasCustomerInfo(user.getUser_Id())) {
-                // Nếu chưa có thông tin customer thì điều hướng tới customerinfo.jsp
+            // Redirect based on role
+            if ("Customer".equals(role)) {
                 response.sendRedirect("customerInfo.jsp");
-            } else {
-                response.sendRedirect("home");
-            }
-        } else if ("provider".equalsIgnoreCase(role)) {
-            if (!userDB.hasCompanyInfo(user.getUser_Id())) {
-                // Nếu chưa có thông tin company thì điều hướng tới companyinfo.jsp
+            } else if ("Provider".equals(role)) {
                 response.sendRedirect("companyInfo.jsp");
             } else {
-                response.sendRedirect("home");
+                // Default redirection if no specific role match
+                session.setAttribute("successMessage", "Registration completed successfully! Please log in.");
+                response.sendRedirect("login.jsp");
             }
         } else {
-            // Nếu role không hợp lệ, điều hướng về trang chủ
-            response.sendRedirect("home");
+            System.out.println("Database update failed on first attempt.");
+            request.setAttribute("errorMessage", "Failed to update your registration. Please try again.");
+            request.getRequestDispatcher("googleregister.jsp").forward(request, response);
         }
     }
 
-// Phương thức kiểm tra mật khẩu
     private boolean isValidPassword(String password) {
-        // Biểu thức chính quy: 8-16 ký tự, ít nhất 1 ký tự in hoa và 1 ký tự đặc biệt
-        String passwordPattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$";
-        return password != null && password.matches(passwordPattern);
+        return password.length() >= 8 && password.length() <= 16
+                && password.chars().anyMatch(Character::isUpperCase)
+                && password.chars().anyMatch(Character::isLowerCase)
+                && password.chars().anyMatch(Character::isDigit)
+                && !password.contains(" ");  // Ensure no whitespace
     }
-
 }

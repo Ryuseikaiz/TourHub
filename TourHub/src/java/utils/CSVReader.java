@@ -23,52 +23,94 @@ public class CSVReader {
     public List<Tour> readTourFromFile(String filePath) {
         List<Tour> tours = new ArrayList<>();
         String line;
-        String csvSplitBy = ",";
+
+        // Define date formats with both `/` and `-` as separators
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format4 = new SimpleDateFormat("dd-MM-yyyy");
 
         // Use InputStreamReader with UTF-8 encoding to read the file
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
             // Skip the header line
             br.readLine();
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
             // Read each data line
             while ((line = br.readLine()) != null) {
-                String[] values = line.split(csvSplitBy);
+                // Parse line manually to handle quoted commas
+                List<String> values = parseCsvLine(line);
 
-                if (values.length < 7) {
+                if (values.size() < 6) {
                     System.out.println("Skipping line due to insufficient data: " + line);
                     continue;
                 }
 
-                // Parse the data into appropriate types
-                String tourName = values[0];
-                String tourDescription = values[1];
-                Date startDate = new Date(dateFormat.parse(values[2]).getTime());
-                Date endDate = new Date(dateFormat.parse(values[3]).getTime());
-                String location = values[4];
-                BigDecimal price = new BigDecimal(values[5]);
-                int slot = Integer.parseInt(values[6]);
-                LocalDate currentDate = LocalDate.now();
-                Date createAt = Date.valueOf(currentDate);
+                try {
+                    // Parse the data into appropriate types
+                    String tourName = values.get(0);
+                    String tourDescription = values.get(1);
+                    Date startDate = parseDate(values.get(2), format1, format2, format3, format4);
+                    Date endDate = parseDate(values.get(3), format1, format2, format3, format4);
+                    String location = values.get(4);
+                    int slot = Integer.parseInt(values.get(5));
+                    LocalDate currentDate = LocalDate.now();
+                    Date createAt = Date.valueOf(currentDate);
 
-                // Calculate the duration in days
-                long durationInMillis = endDate.getTime() - startDate.getTime();
-                long days = TimeUnit.MILLISECONDS.toDays(durationInMillis) + 1;
-                long nights = days - 1;
-                String duration = days + "N" + nights + "D";
+                    // Calculate the duration in days
+                    long durationInMillis = endDate.getTime() - startDate.getTime();
+                    long days = TimeUnit.MILLISECONDS.toDays(durationInMillis) + 1;
+                    long nights = days - 1;
+                    String duration = days + "D" + nights + "N";
 
-                // Add new Tour object to the list
-                tours.add(new Tour(tourName, tourDescription, startDate, endDate, location, duration, price, slot, "Pending", createAt));
+                    // Add new Tour object to the list
+                    tours.add(new Tour(tourName, tourDescription, startDate, endDate, location, duration, slot, "Pending", createAt));
+
+                } catch (ParseException e) {
+                    System.out.println("Skipping line due to date parse error: " + line);
+                }
             }
 
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return tours;
     }
 
+// Helper method to parse a line with quoted fields
+    private List<String> parseCsvLine(String line) {
+        List<String> values = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (char ch : line.toCharArray()) {
+            if (ch == '"') {
+                inQuotes = !inQuotes; // Toggle quotes flag
+            } else if (ch == ',' && !inQuotes) {
+                // If not in quotes and a comma is encountered, add the value to the list
+                values.add(current.toString().trim());
+                current.setLength(0); // Reset the current StringBuilder
+            } else {
+                current.append(ch);
+            }
+        }
+        // Add the last value after the loop ends
+        values.add(current.toString().trim());
+        return values;
+    }
+
+// Helper method to parse date in multiple formats
+    private Date parseDate(String dateStr, SimpleDateFormat... formats) throws ParseException {
+        for (SimpleDateFormat format : formats) {
+            try {
+                return new Date(format.parse(dateStr).getTime());
+            } catch (ParseException ignored) {
+                // Try the next format
+            }
+        }
+        throw new ParseException("Unparseable date: " + dateStr, 0);
+    }
 // Method to get the latest file in a directory
+
     public File getLatestFileFromDir(String dirPath) {
         File dir = new File(dirPath);
 

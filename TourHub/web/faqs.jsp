@@ -18,14 +18,14 @@
 <body>
     <!-- Page preloader-->
     <div class="page-loader"> 
-        <div class="page-loader-body"> 
+        <div class="page-loader-body "> 
             <div class="preloader-wrapper big active"> 
                 <div class="spinner-layer spinner-blue"> 
                     <div class="circle-clipper left">
-                        <div class="circle"></div>
+                        <div class="circle"> </div>
                     </div>
                     <div class="gap-patch">
-                        <div class="circle"></div>
+                        <div class="circle"> </div>
                     </div>
                     <div class="circle-clipper right">
                         <div class="circle"></div>
@@ -36,7 +36,7 @@
                         <div class="circle"></div>
                     </div>
                     <div class="gap-patch">
-                        <div class="circle"></div>
+                        <div class="circle"> </div>
                     </div>
                     <div class="circle-clipper right">
                         <div class="circle"></div>
@@ -50,7 +50,7 @@
                         <div class="circle"></div>
                     </div>
                     <div class="circle-clipper right">
-                        <div class="circle"></div>
+                        <div class="circle"> </div>
                     </div>
                 </div>
                 <div class="spinner-layer spinner-green"> 
@@ -73,26 +73,19 @@
         <header class="section page-header">
             <!-- RD Navbar-->
             <div class="rd-navbar-wrap rd-navbar-corporate">
-                <nav class="rd-navbar" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-fullwidth" data-xl-layout="rd-navbar-static" data-md-stick-up-offset="130px" data-lg-stick-up-offset="100px" data-stick-up="true">
+                <nav class="rd-navbar" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-fullwidth" data-xl-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-fixed" data-xl-device-layout="rd-navbar-static" data-md-stick-up-offset="130px" data-lg-stick-up-offset="100px" data-stick-up="true" data-sm-stick-up="true" data-md-stick-up="true" data-lg-stick-up="true" data-xl-stick-up="true">
                     <div class="rd-navbar-collapse-toggle" data-rd-navbar-toggle=".rd-navbar-collapse"><span></span></div>
                     <div class="rd-navbar-top-panel rd-navbar-collapse novi-background">
                         <div class="rd-navbar-top-panel-inner">
                             <ul class="list-inline">
-                                <li class="box-inline list-inline-item">
-                                    <span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-phone"></span>
+                                <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-phone"></span>
                                     <ul class="list-comma">
-                                        <li><a href="tel:18001234567">1-800-1234-567</a></li>
-                                        <li><a href="tel:18006780345">1-800-6780-345</a></li>
+                                        <li><a href="tel:#">0854719702</a></li>
+                                        <li><a href="tel:#">0828006916</a></li>
                                     </ul>
                                 </li>
-                                <li class="box-inline list-inline-item">
-                                    <span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-map-marker"></span>
-                                    <a href="#">2130 Fulton Street, San Diego, CA 94117-1080 USA</a>
-                                </li>
-                                <li class="box-inline list-inline-item">
-                                    <span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-email"></span>
-                                    <a href="mailto:mail@demolink.org">mail@demolink.org</a>
-                                </li>
+                                <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-map-marker"></span><a href="#">FPT University Da Nang</a></li>
+                                <li class="box-inline list-inline-item"><span class="icon novi-icon icon-md-smaller icon-secondary mdi mdi-email"></span><a href="mailto:#">tourhubforlife@gmail.com</a></li>
                             </ul>
                             <ul class="list-inline">
                                 <li class="list-inline-item"><a class="icon novi-icon icon-sm-bigger icon-gray-1 mdi mdi-facebook" href="#"></a></li>
@@ -102,9 +95,7 @@
                                 <li class="list-inline-item"><a class="icon novi-icon icon-sm-bigger icon-gray-1 mdi mdi-linkedin" href="#"></a></li>
                             </ul>
                         </div>
-                        <div class="rd-navbar-top-panel-inner">
-                            <a class="button button-sm button-secondary button-nina" href="https://www.templatemonster.com/website-templates/62466.html" target="_blank">Buy Template Now</a>
-                        </div>
+                        <div class="rd-navbar-top-panel-inner"></div>
                     </div>
                     <div class="rd-navbar-inner">
                         <!-- RD Navbar Panel-->
@@ -112,39 +103,56 @@
                             <!-- RD Navbar Toggle-->
                             <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
                             <!-- RD Navbar Brand-->
-                            <div class="rd-navbar-brand"><a class="brand-name" href="index.jsp"><img class="logo-default" src="assets/images/logo-default-208x46.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assets/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
+                            <div class="rd-navbar-brand"><a class="brand-name" href="home"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/>
+                                    <img class="logo-inverse" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/></a></div>
+
                         </div>
                         <div class="rd-navbar-aside-center">
                             <div class="rd-navbar-nav-wrap">
                                 <!-- RD Navbar Nav-->
                                 <ul class="rd-navbar-nav">
-                                    <li><a href="index.jsp">Home</a></li>
-                                    <li><a href="about-us.jsp">About Us</a></li>
-                                    <li><a href="contacts.jsp">Contacts</a></li>
-                                    <li><a href="typography.jsp">Typography</a></li>
-                                    <li class="active"><a href="faqs.jsp">FAQs</a></li>
-                                    <li><a href="reporterror.jsp">Report Error</a></li>
+                                    <li><a href="home">Home</a>
+                                    </li>
+                                    <li><a href="about-us.jsp">About Us</a>
+                                    </li>
+                                    <li><a href="contacts.jsp">Contacts</a>
+                                    </li>
+                                    <li><a href="typography.jsp">Typography</a>
+                                    </li>
+                                    <li class="active"><a href="faqs.jsp">FAQs</a>
+                                    </li>
+                                    <li><a href="reporterror.jsp">Report Error</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
-
-                        <c:choose>
-                            <c:when test="${currentUser == null}">
-                                <div class="rd-navbar-aside-right"><a class="button button-sm button-secondary button-nina" href="#">Book a Tour Now</a></div>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="dropdown">
-                                    <button class="avatar-button" onclick="toggleDropdown()">
-                                        <img src="assets/images/avatar.jpg" alt="User Avatar" class="avatar">
-                                    </button>
-                                    <div id="dropdownContent" class="dropdown-content">
+                        <c:if test="${sessionScope.currentUser == null}">
+                            <div class="rd-navbar-aside-right"><a class="button button-sm button-secondary button-nina" href="login">Login</a></div>
+                            <div class="rd-navbar-aside-right"><a class="button button-sm button-secondary button-nina" href="register.jsp">Register</a></div>
+                        </c:if>
+                        <c:if test="${sessionScope.currentUser != null}">
+                            <div class="dropdown">
+                                <button class="avatar-button" onclick="toggleDropdown()">
+                                    <img src="${currentUser.avatar}"  alt="User Avatar" class="avatar" style="width: 100px; height: 100px;">
+                                </button>
+                                <div id="dropdownContent" class="dropdown-content">
+                                    <c:if test="${sessionScope.currentUser.role.equals('Customer')}">
                                         <a href="user-profile.jsp">Profile</a>
-                                        <a href="settings.jsp">Settings</a>
-                                        <a href="logout">Logout</a>
-                                    </div>
+                                    </c:if>
+                                    <c:if test="${sessionScope.currentUser.role.equals('Provider')}">
+                                        <a href="user-profile.jsp">Profile</a>
+                                        <a href="provider-analys">Dashboard</a>
+                                    </c:if>
+                                    <c:if test="${sessionScope.currentUser.role.equals('Admin')}">
+                                        <a href="dashboard">Dashboard</a>
+                                        <a href="manage.jsp">System Management</a>
+                                        <a href="admin-chat.jsp">Chat with customer</a>
+                                    </c:if>
+
+                                    <a href="logout">Logout</a>
                                 </div>
-                            </c:otherwise>
-                        </c:choose>
+                            </div>
+                        </c:if>
                     </div>
                 </nav>
             </div>

@@ -197,12 +197,7 @@
                             <i class='bx bxs-briefcase-alt' ></i>
                             <span class="text">My Tour</span>
                         </a>
-                    </li>   
-                    <!-- Sub-menu -->
-                    <ul class="sub-menu">
-                        <li><a href="add-tour.jsp" class="active">Add Tour</a></li>                    
-                        <li><a href="#">Feature 3</a></li>
-                    </ul>
+                    </li>                       
                     <li class="active">
                         <a href="provider-management?action=show-withdraw-page">
                             <i class='bx bxs-credit-card'></i>

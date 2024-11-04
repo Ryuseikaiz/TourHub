@@ -1,8 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.nio.charset.StandardCharsets" %>
+<%@ page buffer="32kb" %>
+<% 
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setDateHeader("Expires", 0);
+%>
 <!DOCTYPE html>
 <html class="wide wow-animation" lang="en">
     <head>
@@ -101,7 +106,7 @@
           <script src="js/html5shiv.min.js"></script>
         <![endif]-->
         <style>
-           
+
         </style>
     </head>
 </html>
@@ -386,7 +391,7 @@
                         <c:forEach items="${requestScope.data}" var="c">
                             <div class="tour-card" data-price="${c.price}" data-location="${c.location}">
                                 <a href="displayTourDetail?id=${c.tour_Id}" style="text-decoration: none; color: inherit; cursor: pointer; width: 100%;">
-                                    <img src="assests/images/tour-images/${c.tour_Img[0]}" alt="Tour Image"/>
+                                    <img src="${c.tour_Img[0]}" alt="Tour Image"/>
                                     <div class="tour-card-info">
                                         <div class="tour-card-header">
                                             <p class="tour-location">

@@ -1,13 +1,23 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="model.User" %>
-<%@include file="includes/header.jsp" %> <!-- Reuse common header and styles -->
+<%@ include file="includes/header.jsp" %> <!-- Reuse common header and styles -->
 <html>
 <head>
     <title>Complete Your Registration</title>
     <script>
         function showError(message) {
-            // Hiển thị popup thông báo lỗi
+            // Display error popup
             alert(message);
+        }
+
+        function validateForm() {
+            const password = document.getElementById("password").value;
+            const passwordPattern = /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/;
+            if (!passwordPattern.test(password)) {
+                alert("Password must be 8-16 characters long, include at least 1 uppercase letter, and 1 special character.");
+                return false;
+            }
+            return true;
         }
     </script>
 </head>
@@ -29,14 +39,16 @@
                     <h2 class="text-center">Complete Your Registration</h2>
                     <hr class="divider divider-decorate">
 
-                    <form action="completeRegistration" method="POST" class="registration-form">
+                    <form action="completeRegistration" method="POST" class="registration-form" onsubmit="return validateForm();">
                         <div class="form-group">
                             <label for="phone">Phone Number:</label>
-                            <input type="text" id="phone" name="phone" class="form-control" required/>
+                            <input type="text" id="phone" name="phone" class="form-control" required
+                                   value="<%= request.getParameter("phone") != null ? request.getParameter("phone") : "" %>"/>
                         </div>
                         <div class="form-group">
                             <label for="address">Address:</label>
-                            <input type="text" id="address" name="address" class="form-control" required/>
+                            <input type="text" id="address" name="address" class="form-control" required
+                                   value="<%= request.getParameter("address") != null ? request.getParameter("address") : "" %>"/>
                         </div>
                         <div class="form-group">
                             <label for="password">Create Password:</label>
@@ -45,8 +57,8 @@
                         <div class="form-group">
                             <label for="role">Select Role:</label>
                             <select name="role" id="role" class="form-control" required style="height: 100px;">
-                                <option value="Provider">Provider</option>
-                                <option value="Customer">Customer</option>
+                                <option value="Provider" <%= "Provider".equals(request.getParameter("role")) ? "selected" : "" %>>Provider</option>
+                                <option value="Customer" <%= "Customer".equals(request.getParameter("role")) ? "selected" : "" %>>Customer</option>
                             </select>
                         </div>
 
@@ -59,13 +71,13 @@
         </div>
     </section>
 
-    <%-- Kiểm tra nếu có thông báo lỗi --%>
+    <%-- Check for and display error message --%>
     <% if (errorMessage != null) { %>
         <script>
-            showError('<%= errorMessage %>');
+            showError('<%= errorMessage.replace("'", "\\'") %>');
         </script>
     <% } %>
 
-    <%@include file="includes/footer.jsp" %> <!-- Reuse common footer and scripts -->
+    <%@ include file="includes/footer.jsp" %> <!-- Reuse common footer and scripts -->
 </body>
 </html>

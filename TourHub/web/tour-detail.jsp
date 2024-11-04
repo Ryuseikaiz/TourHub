@@ -588,7 +588,7 @@
                                 </div>                                                      
                             </div> 
                             <div class="tour-save-share">
-                                <button class="save-btn">
+                                <button class="save-btn" onclick="sharePage()">
                                     <i class="fa-regular fa-bookmark"></i>
                                 </button>
                                 <button class="share-btn" onclick="sharePage()">
@@ -624,7 +624,7 @@
         <div class="content flex">
             <div class="tour-gallery">
                 <div class="image-highlight">
-                    <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 1">
+                    <img class="tour-img" src="${tour.tour_Img.get(0)}" alt="Tour Image 1">
                     <a href="javascript:void(0)" onclick="toggle('popup1')">
                         <div class="img-viewmore">
                             <h3>
@@ -635,9 +635,9 @@
                     </a>
                 </div>
 
-                <c:if test="${not empty tour.tour_Img[0]}">
+                <c:if test="${not empty tour.tour_Img[1]}">
                     <div class="image-1">
-                        <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 2">
+                        <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
                         <a href="javascript:void(0)" onclick="toggle('popup1')">
                             <div class="img-viewmore">
                                 <h3>
@@ -649,9 +649,9 @@
                     </div>
                 </c:if>
 
-                <c:if test="${not empty tour.tour_Img[0]}">
+                <c:if test="${not empty tour.tour_Img[2]}">
                     <div class="image-2">
-                        <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 3">
+                        <img class="tour-img" src="${tour.tour_Img.get(2)}" alt="Tour Image 3">
                         <a href="javascript:void(0)" onclick="toggle('popup1')">
                             <div class="img-viewmore">
                                 <h3>
@@ -663,9 +663,9 @@
                     </div>
                 </c:if>
 
-                <c:if test="${not empty tour.tour_Img[0]}">
+                <c:if test="${not empty tour.tour_Img[3]}">
                     <div class="image-3">
-                        <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 4">
+                        <img class="tour-img" src="${tour.tour_Img.get(3)}" alt="Tour Image 4">
                         <a href="javascript:void(0)" onclick="toggle('popup1')">
                             <div class="img-viewmore">
                                 <h3>
@@ -677,9 +677,9 @@
                     </div>
                 </c:if>
 
-                <c:if test="${not empty tour.tour_Img[0]}">
+                <c:if test="${not empty tour.tour_Img[4]}">
                     <div class="image-4">
-                        <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 5">
+                        <img class="tour-img" src="${tour.tour_Img.get(4)}" alt="Tour Image 5">
                         <a href="javascript:void(0)" onclick="toggle('popup1')">
                             <div class="img-viewmore">
                                 <h3>
@@ -955,7 +955,7 @@
                 </c:forEach>
             </div>
             <div class="carousel-inner">
-                <c:forEach var="image" items="assests/images/tour-images/${tour.tour_Img}">
+                <c:forEach var="image" items="${tour.tour_Img}">
                     <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
                         <img src="${image}" class="carousel-img d-block w-100" alt="...">
                     </div>
@@ -974,7 +974,7 @@
         </div>
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup1')"></button>
     </div>
-    
+
     <!--Popup2-->
     <div id="popup2">
         <h3>More Information</h3>
@@ -1021,7 +1021,7 @@
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup2')">
         </button>
     </div>
-                
+
     <!--Popup3-->
     <div id="popup3">
         <h3>What You'll Experience</h3>
@@ -1062,113 +1062,113 @@
         </div>
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
     </button>
-    </div>
-    
-    <!--Popup5-->
-    <div id="popup5">
-        <h4>Tour ghép</h4>
-        <div class="tour-option-detail-wrapper">
-            <div class="tour-time-popup">
-                <span>
-                    Thời lượng tour:
-                    ${tour.total_Time}
-                </span>
+</div>
 
-                <span>
-                    Thời gian và điểm đón:
-                    <ul>
-                        <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
-                        <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
-                            thêm trên trang Sản phẩm để biết thêm chi tiết </li>
-                    </ul>
-                </span>
-            </div>
-
-            <span class="refund-section-popup">
-                Easy Refund
+<!--Popup5-->
+<div id="popup5">
+    <h4>Tour ghép</h4>
+    <div class="tour-option-detail-wrapper">
+        <div class="tour-time-popup">
+            <span>
+                Thời lượng tour:
+                ${tour.total_Time}
             </span>
 
-            <div class="price-wrapper">
-                <span class="price-wrapper-inner">1.216.867 VND</span>
+            <span>
+                Thời gian và điểm đón:
+                <ul>
+                    <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
+                    <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
+                        thêm trên trang Sản phẩm để biết thêm chi tiết </li>
+                </ul>
+            </span>
+        </div>
 
-                <button>Chọn vé</button>
-            </div>
+        <span class="refund-section-popup">
+            Easy Refund
+        </span>
 
-            <div>
-                <nav id="navbar-example2" class="navbar-inner bg-body-tertiary px-3 mb-3">
-                    <ul class="nav nav-pills">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#scrollspyHeading1">First</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#scrollspyHeading2">Second</a>
-                        </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="#scrollspyHeading3">Third</a>
-                        </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
-                        </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
-                        </li>
-                    </ul>
-                </nav>
-                <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%"
-                     data-bs-smooth-scroll="true" class="navbar-content scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
-                    <h4 id="scrollspyHeading1">First heading</h4>
-                    <span>
-                        Giá đã bao gồm
-                        Bữa ăn:
+        <div class="price-wrapper">
+            <span class="price-wrapper-inner">1.216.867 VND</span>
 
-                        1 buffet trưa
-                        Phương tiện di chuyển:
+            <button>Chọn vé</button>
+        </div>
 
-                        Xe có máy điều hoà để đưa đón và trung chuyển
-                        Dịch vụ khác:
+        <div>
+            <nav id="navbar-example2" class="navbar-inner bg-body-tertiary px-3 mb-3">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#scrollspyHeading1">First</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#scrollspyHeading2">Second</a>
+                    </li>
+                    <li class="nav-item"></li>
+                    <a class="nav-link" href="#scrollspyHeading3">Third</a>
+                    </li>
+                    <li class="nav-item"></li>
+                    <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
+                    </li>
+                    <li class="nav-item"></li>
+                    <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
+                    </li>
+                </ul>
+            </nav>
+            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%"
+                 data-bs-smooth-scroll="true" class="navbar-content scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+                <h4 id="scrollspyHeading1">First heading</h4>
+                <span>
+                    Giá đã bao gồm
+                    Bữa ăn:
 
-                        Vé vào cửa
-                        Bảo hiểm du lịch
-                        Hướng dẫn viên nói tiếng Việt - Anh
+                    1 buffet trưa
+                    Phương tiện di chuyển:
 
-                    </span>
-                    <h4 id="scrollspyHeading2">Second heading</h4>
-                    <span>
-                        Hiệu lực của voucher
+                    Xe có máy điều hoà để đưa đón và trung chuyển
+                    Dịch vụ khác:
 
-                        Sử dụng vào ngày đã chọn
-                        Có hiệu lực vào mọi ngày bình thường
-                        Có hiệu lực vào mọi ngày lễ
-                        Dành cho khách Việt Nam
-                    </span>
-                    <h4 id="scrollspyHeading3">Third heading</h4>
-                    <span>
-                        Nếu đặt chỗ của bạn đã được xác nhận, nhân viên điều hành tour sẽ liên hệ với bạn qua điện thoại
-                        ít nhất 24 giờ trước khi tour bắt đầu.
-                    </span>
-                    <h4 id="scrollspyHeading4">Fourth heading</h4>
-                    <span>
-                        Đặt chỗ này không thể thay đổi lịch.
-                        Yêu cầu hoàn tiền muộn nhất là 2 ngày trước ngày đi đã chọn của bạn để nhận được 100% hoàn tiền.
-                        Đặt chỗ của bạn sẽ không được hoàn lại nếu bạn yêu cầu hoàn tiền ít hơn 2 ngày trước ngày đi đã
-                        chọn.
-                    </span>
-                    <h4 id="scrollspyHeading5">Fifth heading</h4>
-                    <span>
-                        Điều khoản & Điều kiện
-                        Thông tin chung
-                        Phụ phí 100.000 VND/khách, thanh toán trực tiếp với nhà cung cấp tour, áp dụng vào các ngày khởi
-                        hành tour sau: 18 Th04, 30 Th04, 1 Th05, 31 Th08 – 3 Th09 2024.
-                        Dịch vụ đón trả miễn phí cho khách ở tại trung tâm thành phố Đà Nẵng.
-                        Phí đón trả khách sẽ được áp dụng nếu khách có nguyện vọng được đón trả tại những địa điểm sau:
-                    </span>
-                </div>
+                    Vé vào cửa
+                    Bảo hiểm du lịch
+                    Hướng dẫn viên nói tiếng Việt - Anh
+
+                </span>
+                <h4 id="scrollspyHeading2">Second heading</h4>
+                <span>
+                    Hiệu lực của voucher
+
+                    Sử dụng vào ngày đã chọn
+                    Có hiệu lực vào mọi ngày bình thường
+                    Có hiệu lực vào mọi ngày lễ
+                    Dành cho khách Việt Nam
+                </span>
+                <h4 id="scrollspyHeading3">Third heading</h4>
+                <span>
+                    Nếu đặt chỗ của bạn đã được xác nhận, nhân viên điều hành tour sẽ liên hệ với bạn qua điện thoại
+                    ít nhất 24 giờ trước khi tour bắt đầu.
+                </span>
+                <h4 id="scrollspyHeading4">Fourth heading</h4>
+                <span>
+                    Đặt chỗ này không thể thay đổi lịch.
+                    Yêu cầu hoàn tiền muộn nhất là 2 ngày trước ngày đi đã chọn của bạn để nhận được 100% hoàn tiền.
+                    Đặt chỗ của bạn sẽ không được hoàn lại nếu bạn yêu cầu hoàn tiền ít hơn 2 ngày trước ngày đi đã
+                    chọn.
+                </span>
+                <h4 id="scrollspyHeading5">Fifth heading</h4>
+                <span>
+                    Điều khoản & Điều kiện
+                    Thông tin chung
+                    Phụ phí 100.000 VND/khách, thanh toán trực tiếp với nhà cung cấp tour, áp dụng vào các ngày khởi
+                    hành tour sau: 18 Th04, 30 Th04, 1 Th05, 31 Th08 – 3 Th09 2024.
+                    Dịch vụ đón trả miễn phí cho khách ở tại trung tâm thành phố Đà Nẵng.
+                    Phí đón trả khách sẽ được áp dụng nếu khách có nguyện vọng được đón trả tại những địa điểm sau:
+                </span>
             </div>
         </div>
-        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
-    </button>
     </div>
     <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
+</button>
+</div>
+<button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
 </button>
 </div>
 
@@ -1201,7 +1201,7 @@
 
 
 </div>
-                                
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
@@ -1235,53 +1235,53 @@
 </script>-->
 
 <script>
-        function toggle(action) {
-            var blur = document.getElementById('blur');
+    function toggle(action) {
+        var blur = document.getElementById('blur');
 
-            if (action === 'blur') {
-                // Chỉ kích hoạt blur
-                blur.classList.toggle('active');
-            } else if (action === 'popup1') {
-                // Kích hoạt popup 1 và blur
-                blur.classList.toggle('active');
-                var popup1 = document.getElementById('popup1');
-                popup1.classList.toggle('active');
-            } else if (action === 'popup2') {
-                // Kích hoạt popup 2 và blur
-                blur.classList.toggle('active');
-                var popup2 = document.getElementById('popup2');
-                popup2.classList.toggle('active');
-            } else if (action === 'popup3') {
-                // Kích hoạt popup 2 và blur
-                blur.classList.toggle('active');
-                var popup3 = document.getElementById('popup3');
-                popup3.classList.toggle('active');
-            } else if (action === 'popup4') {
-                // Kích hoạt popup 2 và blur
-                blur.classList.toggle('active');
-                var popup4 = document.getElementById('popup4');
-                popup4.classList.toggle('active');
-            } else if (action === 'popup5') {
-                // Kích hoạt popup 2 và blur
-                blur.classList.toggle('active');
-                var popup5 = document.getElementById('popup5');
-                popup5.classList.toggle('active');
-            } else if (action === 'calendar') {
-                // Kích hoạt popup 2 và blur
-                blur.classList.toggle('active');
-                const section = document.getElementById('date-section');
-                if (section) {
-                    section.scrollLeft -= 600; // Di chuyển về phía trái
-                }
-            } else {
-                // Đóng popup (khi người dùng nhấn nút "Close")
-                var popups = document.getElementsByClassName('popup');
-                for (var i = 0; i < popups.length; i++) {
-                    popups[i].classList.remove('active');
-                }
-                blur.classList.remove('active');
+        if (action === 'blur') {
+            // Chỉ kích hoạt blur
+            blur.classList.toggle('active');
+        } else if (action === 'popup1') {
+            // Kích hoạt popup 1 và blur
+            blur.classList.toggle('active');
+            var popup1 = document.getElementById('popup1');
+            popup1.classList.toggle('active');
+        } else if (action === 'popup2') {
+            // Kích hoạt popup 2 và blur
+            blur.classList.toggle('active');
+            var popup2 = document.getElementById('popup2');
+            popup2.classList.toggle('active');
+        } else if (action === 'popup3') {
+            // Kích hoạt popup 2 và blur
+            blur.classList.toggle('active');
+            var popup3 = document.getElementById('popup3');
+            popup3.classList.toggle('active');
+        } else if (action === 'popup4') {
+            // Kích hoạt popup 2 và blur
+            blur.classList.toggle('active');
+            var popup4 = document.getElementById('popup4');
+            popup4.classList.toggle('active');
+        } else if (action === 'popup5') {
+            // Kích hoạt popup 2 và blur
+            blur.classList.toggle('active');
+            var popup5 = document.getElementById('popup5');
+            popup5.classList.toggle('active');
+        } else if (action === 'calendar') {
+            // Kích hoạt popup 2 và blur
+            blur.classList.toggle('active');
+            const section = document.getElementById('date-section');
+            if (section) {
+                section.scrollLeft -= 600; // Di chuyển về phía trái
             }
+        } else {
+            // Đóng popup (khi người dùng nhấn nút "Close")
+            var popups = document.getElementsByClassName('popup');
+            for (var i = 0; i < popups.length; i++) {
+                popups[i].classList.remove('active');
+            }
+            blur.classList.remove('active');
         }
+    }
 </script>
 
 <script>
@@ -1327,9 +1327,9 @@
         // Lấy danh sách ngày có tour và sắp xếp theo thứ tự
         const tourOptions = [...document.querySelectorAll('.tour-option')];
         const availableTourDates = tourOptions
-            .map(option => new Date(option.getAttribute('data-tour-date')))
-            .sort((a, b) => a - b)
-            .filter(date => date >= new Date()); // Chỉ lấy những ngày từ hiện tại trở đi
+                .map(option => new Date(option.getAttribute('data-tour-date')))
+                .sort((a, b) => a - b)
+                .filter(date => date >= new Date()); // Chỉ lấy những ngày từ hiện tại trở đi
 
         // Chỉ giữ lại 14 ngày gần nhất có tour
         const closestTourDates = availableTourDates.slice(0, 14);
@@ -1433,10 +1433,10 @@
             onChange: function (selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
                     // Chuyển selectedDate thành chuỗi không có múi giờ (YYYY-MM-DD)
-                    const selectedDate = selectedDates[0].toISOString().split('T')[0]; 
+                    const selectedDate = selectedDates[0].toISOString().split('T')[0];
 
                     // Lấy danh sách ngày có tour và chuyển thành chuỗi dạng YYYY-MM-DD
-                    const availableTourDates = getAvailableTourDates().map(date => 
+                    const availableTourDates = getAvailableTourDates().map(date =>
                         new Date(date).toISOString().split('T')[0]
                     );
 

@@ -10,6 +10,9 @@
         <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
         <link rel="stylesheet" href="assests/css/style_profile.css">
         <link rel="stylesheet" href="assests/css/manage-discounts.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+        <!-- Toasify JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
         <title>Manage Discounts</title>
         <style>
             /* Modal container */
@@ -373,7 +376,7 @@
                                             <button type="submit" class="btn btn-primary">Edit</button>
                                         </form>
 
-                                        <button class="btn btn-delete" onclick="showModal('<%= discount.getDiscount_Id() %>')" style="display: inline-block;">Delete</button>
+                                        <button class="btn btn-delete" onclick="showModal('<%= discount.getDiscount_Id() %>')" style="display: inline-block;" >Delete</button>
                                     </td>
 
                                 </tr>
@@ -401,7 +404,9 @@
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="id" id="discountId">
                     <button type="submit" class="btn-confirm">Yes, Delete</button>
-                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <div class="action-container">
+                        <button type="button" class="btn-cancel" onclick="closeModal()" class="action-link approve">Cancel</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -410,22 +415,39 @@
 
         <!-- Script cho popup xác nhận xóa -->
         <script>
-                        function showModal(discountId) {
-                            document.getElementById('discountId').value = discountId;
-                            document.getElementById('deleteModal').classList.add('show');
-                        }
-
-                        function closeModal() {
-                            document.getElementById('deleteModal').classList.remove('show');
-                        }
-
-                        // Close the modal if the user clicks outside of it
-                        window.onclick = function (event) {
-                            const modal = document.getElementById('deleteModal');
-                            if (event.target == modal) {
-                                closeModal();
+                            function showModal(discountId) {
+                                document.getElementById('discountId').value = discountId;
+                                document.getElementById('deleteModal').classList.add('show');
                             }
-                        }
+
+                            function closeModal() {
+                                document.getElementById('deleteModal').classList.remove('show');
+                            }
+
+                            // Close the modal if the user clicks outside of it
+                            window.onclick = function (event) {
+                                const modal = document.getElementById('deleteModal');
+                                if (event.target == modal) {
+                                    closeModal();
+                                }
+                            }
         </script>
+        <script>
+            window.onload = function () {
+                const message = '${message}';
+                if (message) {
+                    Toastify({
+                        text: message,
+                        duration: 3000, // Thời gian hiển thị (3 giây)
+                        gravity: "top", // Vị trí hiển thị (top/bottom)
+                        position: 'right', // Vị trí bên trái/bên phải
+                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // Màu nền
+                    }).showToast();
+
+                    // Xóa message sau khi đã hiển thị
+            <c:remove var="message" />
+                }
+            };
+        </script> 
     </body>
 </html>

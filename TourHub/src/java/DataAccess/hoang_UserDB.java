@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Booking;
 import model.BookingDetails;
 import model.Discount;
 import model.Review;
 import model.Tour;
 import utils.CSVReader;
+import utils.RemoveDiacritics;
 
 /**
  *
@@ -388,7 +390,7 @@ public class hoang_UserDB implements DatabaseInfo {
 
     public void updateTour(Tour updatedTour) throws SQLException {
         String sql = "UPDATE Tour SET tour_Name = ?, tour_Description = ?, start_Date = ?, end_Date = ?, location = ?, "
-                + "total_Time = ?, price = ?, slot = ?, tour_Img = ? WHERE tour_Id = ?";
+                + "total_Time = ?, price = ?, slot = ?, tour_Status = ?, tour_Img = ? WHERE tour_Id = ?";
 
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Set the parameters for the prepared statement
@@ -399,20 +401,20 @@ public class hoang_UserDB implements DatabaseInfo {
             stmt.setDate(3, new java.sql.Date(updatedTour.getStart_Date().getTime()));
             stmt.setDate(4, new java.sql.Date(updatedTour.getEnd_Date().getTime()));
 
-            stmt.setString(5, updatedTour.getLocation());
+            stmt.setString(5, new RemoveDiacritics().removeAccent(updatedTour.getLocation()));
             stmt.setString(6, updatedTour.getTotal_Time());
 
             // Assuming price is BigDecimal
             stmt.setBigDecimal(7, updatedTour.getPrice());
 
             stmt.setInt(8, updatedTour.getSlot());
-
+            stmt.setString(9, "Pending");
             // Assuming tour_Img is a List<String>, join them into a single string separated by semicolons
             List<String> images = updatedTour.getTour_Img();
             String imageFilenames = String.join(";", images);
-            stmt.setString(9, imageFilenames);
+            stmt.setString(10, imageFilenames);
 
-            stmt.setString(10, updatedTour.getTour_Id()); // Assuming tour_Id is String
+            stmt.setString(11, updatedTour.getTour_Id()); // Assuming tour_Id is String
 
             // Execute the update statement
             stmt.executeUpdate();
@@ -427,14 +429,16 @@ public class hoang_UserDB implements DatabaseInfo {
         String sql = "SELECT * "
                 + "FROM Tour "
                 + "WHERE tour_Id = ? "
-                + "OR tour_Name COLLATE Vietnamese_CI_AI LIKE '%' + ? + '%' "
+                + "OR tour_Name COLLATE Vietnamese_CI_AI LIKE '%' + ? + '%'"
+                + " OR location COLLATE Vietnamese_CI_AI LIKE '%' + ? + '%'"
                 + "AND company_Id = ?;";
 
         try (Connection con = getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
             // Set the parameters for the prepared statement
             stmt.setString(1, query);
             stmt.setString(2, query);
-            stmt.setInt(3, currentCompanyId);
+            stmt.setString(3, query);
+            stmt.setInt(4, currentCompanyId);
 
             // Execute the query
             try (ResultSet rs = stmt.executeQuery()) {
@@ -496,6 +500,15 @@ public class hoang_UserDB implements DatabaseInfo {
                 break;
             case "most-booking":
                 sql.append(" ORDER BY purchases_Time DESC"); // Default to purchases for most booking
+                break;
+            case "pending-only":
+                sql.append(" AND tour_Status = 'Pending'");
+                break;
+            case "active-only":
+                sql.append(" AND tour_Status = 'Active'");
+                break;
+            case "hidden-tour":
+                sql.append(" AND tour_Status = 'Hidden'");
                 break;
             default:
                 sql.append(" ORDER BY purchases_Time DESC"); // Fallback to purchases if no valid sortOrder is provided
@@ -681,9 +694,7 @@ public class hoang_UserDB implements DatabaseInfo {
         }
         return balance;
     }
-
-
-
+    
     public static void main(String[] args) {
         List<Discount> tours = new hoang_UserDB().getAllDiscounts();
         for (Discount book : tours) {

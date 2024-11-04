@@ -38,7 +38,7 @@ public class KhanhDB {
 
     public List<Tour> getAllTour(String sortOrder, String location, int minPrice, int maxPrice) {
         List<Tour> list = new ArrayList<>();
-        String sql = "SELECT * FROM Tour WHERE 1=1";
+        String sql = "SELECT * FROM Tour WHERE 1=1 AND tour_Status = 'Active' ";
 
         // Add location filter
         if (location != null && !location.equals("All")) {
@@ -153,7 +153,7 @@ public class KhanhDB {
         }
         return tour; // Return the Tour object or null if not found
     }
-    
+
     public TourDetailDescription getTourDetailDescriptionByTourId(String tourId) {
         TourDetailDescription tourDetailDescription = null;
         String sql = "SELECT * FROM TourDetailDescription WHERE tour_Id = ?";
@@ -191,11 +191,10 @@ public class KhanhDB {
         return tourDetailDescription; // Return the TourDetailDescription object or null if not found
     }
 
-
     public List<TourOption> getAllTourOptionsByTourId(String tourId) {
         List<TourOption> options = new ArrayList<>();
         String sql = "SELECT tourOpt.option_Id, tourOpt.tour_Id, tourOpt.option_Name, tourOpt.option_Price, tourOpt.option_Description, "
-                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date "  // Lấy thêm tour_Date
+                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date " // Lấy thêm tour_Date
                 + "FROM TourOption tourOpt "
                 + "LEFT JOIN TourSchedule ts ON tourOpt.option_Id = ts.option_Id "
                 + "WHERE tourOpt.tour_Id = ?";  // Sử dụng đúng tên trường
@@ -207,14 +206,14 @@ public class KhanhDB {
             while (rs.next()) {
                 // Tạo một đối tượng TourOption mới từ kết quả truy vấn
                 TourOption option = new TourOption(
-                        rs.getInt("option_Id"),             // optionId từ TourOption
-                        rs.getString("tour_Id"),            // tourId từ TourOption
-                        rs.getString("option_Name"),        // optionName từ TourOption
-                        rs.getBigDecimal("option_Price"),   // price từ TourOption
+                        rs.getInt("option_Id"), // optionId từ TourOption
+                        rs.getString("tour_Id"), // tourId từ TourOption
+                        rs.getString("option_Name"), // optionName từ TourOption
+                        rs.getBigDecimal("option_Price"), // price từ TourOption
                         rs.getString("option_Description"), // description từ TourOption
-                        rs.getString("day_Of_Week"),        // dayOfWeek từ TourSchedule
-                        rs.getInt("available_Slots"),       // availableSlots từ TourSchedule
-                        rs.getDate("tour_Date")             // Lấy thêm tour_Date từ TourSchedule
+                        rs.getString("day_Of_Week"), // dayOfWeek từ TourSchedule
+                        rs.getInt("available_Slots"), // availableSlots từ TourSchedule
+                        rs.getDate("tour_Date") // Lấy thêm tour_Date từ TourSchedule
                 );
 
                 options.add(option);  // Thêm option vào danh sách
@@ -225,11 +224,10 @@ public class KhanhDB {
         return options;  // Trả về danh sách TourOptions
     }
 
-
     public TourOption getTourOptionById(int optionId) {
         TourOption option = null;
         String sql = "SELECT tourOpt.option_Id, tourOpt.tour_Id, tourOpt.option_Name, tourOpt.option_Price, tourOpt.option_Description, "
-                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date "  // Lấy thêm tour_Date
+                + "ts.day_Of_Week, ts.available_Slots, ts.tour_Date " // Lấy thêm tour_Date
                 + "FROM TourOption tourOpt "
                 + "LEFT JOIN TourSchedule ts ON tourOpt.option_Id = ts.option_Id "
                 + "WHERE tourOpt.option_Id = ?";  // Sử dụng đúng tên trường
@@ -241,14 +239,14 @@ public class KhanhDB {
             if (rs.next()) {
                 // Tạo một đối tượng TourOption mới từ kết quả truy vấn
                 option = new TourOption(
-                        rs.getInt("option_Id"),             // optionId từ TourOption
-                        rs.getString("tour_Id"),            // tourId từ TourOption
-                        rs.getString("option_Name"),        // optionName từ TourOption
-                        rs.getBigDecimal("option_Price"),   // price từ TourOption
+                        rs.getInt("option_Id"), // optionId từ TourOption
+                        rs.getString("tour_Id"), // tourId từ TourOption
+                        rs.getString("option_Name"), // optionName từ TourOption
+                        rs.getBigDecimal("option_Price"), // price từ TourOption
                         rs.getString("option_Description"), // description từ TourOption
-                        rs.getString("day_Of_Week"),        // dayOfWeek từ TourSchedule
-                        rs.getInt("available_Slots"),       // availableSlots từ TourSchedule
-                        rs.getDate("tour_Date")             // Lấy thêm tour_Date từ TourSchedule
+                        rs.getString("day_Of_Week"), // dayOfWeek từ TourSchedule
+                        rs.getInt("available_Slots"), // availableSlots từ TourSchedule
+                        rs.getDate("tour_Date") // Lấy thêm tour_Date từ TourSchedule
                 );
             }
         } catch (SQLException e) {
@@ -260,8 +258,7 @@ public class KhanhDB {
     public int getScheduleId(int optionId, Date tourDate) throws SQLException {
         String query = "SELECT schedule_Id FROM TourSchedule WHERE option_Id = ? AND tour_Date = ?";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
 
             // Set parameters
             ps.setInt(1, optionId);
@@ -277,12 +274,12 @@ public class KhanhDB {
         // Trả về -1 nếu không có kết quả nào
         return -1;
     }
-    
+
     public List<TourOptionDetail> getTourOptionDetailsByOptionId(int optionId) {
         List<TourOptionDetail> optionDetails = new ArrayList<>();
-        String sql = "SELECT toc.detail_Description, toc.category_Id, toc.detail_Id, toc.option_Id " +
-                     "FROM TourOptionDetail toc " +
-                     "WHERE toc.option_Id = ?";
+        String sql = "SELECT toc.detail_Description, toc.category_Id, toc.detail_Id, toc.option_Id "
+                + "FROM TourOptionDetail toc "
+                + "WHERE toc.option_Id = ?";
 
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, optionId);
@@ -345,13 +342,12 @@ public class KhanhDB {
         // Trả về -1 nếu không có kết quả nào
         return -1;
     }
-    
+
     public int importTourOption(String tourId, String optionName, BigDecimal optionPrice, String optionDescription) throws SQLException {
 
         String sql = "INSERT INTO TourOption (tour_Id, option_Name, option_Price, option_Description) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             // Set the parameters for the prepared statement
             ps.setString(1, tourId);
@@ -372,13 +368,12 @@ public class KhanhDB {
             }
         }
     }
-    
+
     public void importTourOptionPeople(int optionId, String peopleType, int minCount, int maxCount, BigDecimal price, String description) throws SQLException {
 
         String sql = "INSERT INTO TourOptionPeople (option_Id, people_Type, min_Count, max_Count, price, description) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             // Set the parameters for the prepared statement
             ps.setInt(1, optionId);
@@ -393,7 +388,7 @@ public class KhanhDB {
             System.out.println("TourOptionPeople record inserted successfully for option ID: " + optionId);
         }
     }
-    
+
     public void importTourSchedule(int optionId, String startDate, String endDate, String dayOfWeek, int availableSlots) throws SQLException {
 
         String sql = "{CALL InsertTourSchedule(?, ?, ?, ?, ?)}";  // SQL to call the stored procedure
@@ -404,8 +399,7 @@ public class KhanhDB {
         Date sqlEndDate = Date.valueOf(LocalDate.parse(endDate, formatter));
 
         // Establish connection and prepare the CallableStatement
-        try (Connection conn = UserDB.getConnect();
-             CallableStatement cs = conn.prepareCall(sql)) {
+        try (Connection conn = UserDB.getConnect(); CallableStatement cs = conn.prepareCall(sql)) {
 
             // Set input parameters
             cs.setInt(1, optionId);
@@ -564,8 +558,7 @@ public class KhanhDB {
         // SQL query to update the book_Status to 'Booked' for the specified book_Id
         String sql = "UPDATE Booking SET book_Status = ? WHERE book_Id = ?";
 
-        try (Connection conn = UserDB.getConnect(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = UserDB.getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             // Set the parameters for the query
             ps.setString(1, "Booked");
@@ -586,7 +579,7 @@ public class KhanhDB {
             throw e;
         }
     }
-    
+
     public Integer getCusIdFromUserId(int userId) throws SQLException {
         String sql = "SELECT cus_Id FROM Customer WHERE user_Id = ?";
 
@@ -672,7 +665,6 @@ public class KhanhDB {
             e.printStackTrace(); // Xử lý ngoại lệ SQL
         }
     }
-    
 
     public static void main(String[] args) {
         KhanhDB userDB = new KhanhDB();
@@ -733,9 +725,7 @@ public class KhanhDB {
 //        }
 //        List<TourOption> tourOptions = userDB.getAllTourOptionsByTourId("T0000001");
 //        System.out.println(tourOptions);
-        
 //        TourOption to = userDB.getTourOptionById(1);
 //        System.out.println(to.toString());
-
     }
 }
