@@ -6,6 +6,7 @@ package controller;
 
 import DataAccess.BookingDB;
 import DataAccess.UserDB;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import model.User;
@@ -62,33 +65,78 @@ public class DashboardServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            BookingDB book = new BookingDB();
-            double totalBookings = book.getTotalBookings();
-            BigDecimal totalRevenue = book.getTotalRevenue();
-            double cancellationRate = book.getCancellationRate();
-            Map<String, Integer> bookingsByLocation = book.getBookingsByLocation();
-            Map<String, Integer> monthlyBookings = book.getMonthlyBookingsCount(); // Số lượng đặt tour theo tháng
-            List<User> recentUsers = book.getRecentUsers();
-
-            // Đặt số liệu vào request attribute để chuyển cho JSP
-            request.setAttribute("totalBookings", totalBookings);
-            request.setAttribute("totalRevenue", totalRevenue);
-            request.setAttribute("cancellationRate", cancellationRate);
-            request.setAttribute("bookingsByLocation", bookingsByLocation);
-            request.setAttribute("monthlyBookings", monthlyBookings);
-            request.setAttribute("recentUsers", recentUsers);
-
-            // Chuyển tiếp (dispatch) đến trang dashboard.jsp
-            request.getRequestDispatcher("includes/admin/dashboard.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Đã có lỗi xảy ra: " + e.getMessage());
-            request.getRequestDispatcher("error.jsp").forward(request, response);
-        }
+        throws ServletException, IOException {
+    String format = request.getParameter("format");
+    if ("json".equals(format)) {
+        // Handle JSON response
+        handleJsonRequest(request, response);
+    } else {
+        // Handle regular dashboard request
+        handleDashboardRequest(request, response);
     }
+}
+
+private void handleJsonRequest(HttpServletRequest request, HttpServletResponse response)
+        throws IOException {
+    try {
+        BookingDB book = new BookingDB();
+        // Lấy năm từ request
+        int year = 2023; // default year
+        String yearParam = request.getParameter("year");
+        if (yearParam != null) {
+            year = Integer.parseInt(yearParam);
+        }
+
+        // Lấy số lượng đặt tour theo tháng
+        Map<String, Integer> monthlyBookings = book.getMonthlyBookingsCount(year);
+
+        // Chuyển đổi dữ liệu thành JSON
+        String jsonResponse = new Gson().toJson(monthlyBookings);
+
+        // Gửi phản hồi JSON
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(jsonResponse);
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("{\"error\": \"Error fetching data.\"}");
+    }
+}
+
+private void handleDashboardRequest(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    try {
+        BookingDB book = new BookingDB();
+        double totalBookingsDouble = book.getTotalBookings();
+        BigDecimal totalRevenue = book.getTotalRevenue();
+        double cancellationRate = book.getCancellationRate();
+
+        int totalBookings = (int) totalBookingsDouble;
+        BigDecimal roundedCancellationRate = BigDecimal.valueOf(cancellationRate)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        DecimalFormat df = new DecimalFormat("#,##0");
+        String formattedTotalRevenue = df.format(totalRevenue.multiply(BigDecimal.valueOf(1000)));
+
+        Map<String, Integer> bookingsByCompany = book.getBookingsByCompany();
+        Map<String, Integer> bookingsByLocation = book.getBookingsByLocation();
+        List<User> recentUsers = book.getRecentUsers();
+
+        request.setAttribute("totalBookings", totalBookings);
+        request.setAttribute("totalRevenue", formattedTotalRevenue);
+        request.setAttribute("cancellationRate", roundedCancellationRate);
+        request.setAttribute("bookingsByCompany", bookingsByCompany);
+        request.setAttribute("bookingsByLocation", bookingsByLocation);
+        request.setAttribute("recentUsers", recentUsers);
+
+        request.getRequestDispatcher("includes/admin/dashboard.jsp").forward(request, response);
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.setAttribute("error", "Đã có lỗi xảy ra: " + e.getMessage());
+        request.getRequestDispatcher("error.jsp").forward(request, response);
+    }
+}
 
     /**
      * Handles the HTTP <code>POST</code> method.

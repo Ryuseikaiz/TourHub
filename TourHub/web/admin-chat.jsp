@@ -57,12 +57,7 @@
         </section>
         <script src="assests/js/script_profile.js"></script>
         <script src="assests/js/admin-chat.js"></script>
-        <script>
-                                                // Tự động tải lại tin nhắn mỗi 3 giây
-                                                setInterval(function () {
-                                                    fetchChatMessages(receiverId);
-                                                }, 3000);
-        </script>
+
     </body>
 </html>
 

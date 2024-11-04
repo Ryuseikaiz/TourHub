@@ -1,5 +1,6 @@
 package controller;
 
+import DataAccess.ThienDB;
 import DataAccess.UserDB;
 import model.User;
 import entity.GoogleAccount;
@@ -137,6 +138,10 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("companyInfo.jsp");
                     return;
                 }
+                
+                System.out.println(user.getUser_Id());
+                ThienDB message = new ThienDB();
+                message.AdminPreMessage(user.getUser_Id());
 //            request.getRequestDispatcher("/home").forward(request, response);
                 // Redirect to the homepage or user dashboard
                 response.sendRedirect("home");

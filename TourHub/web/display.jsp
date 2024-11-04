@@ -122,6 +122,30 @@
                 background-color: #c82333; /* Màu đỏ đậm hơn khi hover */
             }
 
+            .tab-container {
+                text-align: center; /* Căn giữa các tab theo chiều ngang */
+                margin-bottom: 20px; /* Khoảng cách giữa các tab và phần tử bên dưới */
+            }
+
+            .status-tab {
+                display: inline-block; /* Hiển thị các tab trong một hàng */
+                padding: 10px 15px; /* Khoảng cách xung quanh nội dung */
+                margin-right: 10px; /* Khoảng cách giữa các tab */
+                text-decoration: none; /* Bỏ gạch chân cho liên kết */
+                color: #fff; /* Màu chữ */
+                background-color: #ff7f50; /* Màu nền cho tab (màu cam) */
+                border-radius: 4px; /* Bo tròn các góc */
+                transition: background-color 0.3s; /* Hiệu ứng chuyển màu nền */
+            }
+
+            .status-tab:hover {
+                background-color: #e95e3c; /* Màu nền khi hover (màu cam đậm hơn) */
+            }
+
+            .status-tab.active {
+                background-color: #e95e3c; /* Màu nền cho tab đang hoạt động (màu cam đậm hơn) */
+                font-weight: bold; /* Đậm chữ cho tab đang hoạt động */
+            }
 
 
             /* Responsive styles */
@@ -131,6 +155,60 @@
                 }
             }
         </style>
+
+        <style>
+            .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+                margin-left: 10%;
+            }
+
+            .modal-content {
+                background-color: #fefefe;
+                margin: auto; /* Center the modal */
+                padding: 20px;
+                border: 1px solid #888;
+                border-radius: 10px; /* Tạo border cong hơn */
+                width: 80%; /* Could be more or less, depending on screen size */
+                max-width: 600px; /* Set a maximum width */
+                position: relative; /* Relative positioning for child elements */
+                top: 50%; /* Position the top 50% down */
+                transform: translateY(-50%); /* Move it back up by half its height */
+            }
+
+            .modal-content h2 {
+                text-align: center; /* Căn giữa tiêu đề */
+                font-size: 24px; /* Tăng kích thước chữ tiêu đề */
+            }
+
+            .modal-content p {
+                font-size: 18px; /* Tăng kích thước chữ nội dung */
+            }
+
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        </style>
+
+
 
 
     </head>
@@ -185,6 +263,12 @@
 
                             <c:when test="${type == 'tour'}">
                                 <h3>Tour Management</h3>
+                                <div class="tab-container">
+                                    <a href="manage?action=tour-manage&status=Pending" class="status-tab ${status == 'Pending' ? 'active' : ''}">Pending</a>
+                                    <a href="manage?action=tour-manage&status=Active" class="status-tab ${status == 'Active' ? 'active' : ''}">Approved</a>
+                                    <a href="manage?action=tour-manage&status=Cancelled" class="status-tab ${status == 'Cancelled' ? 'active' : ''}">Cancelled</a>
+                                    <a href="manage?action=tour-manage&status=Banned" class="status-tab ${status == 'Banned' ? 'active' : ''}">Banned</a>
+                                </div>
                                 <table>
                                     <thead>
                                         <tr>
@@ -193,9 +277,11 @@
                                             <th>Location</th>
                                             <th>Start Date</th>
                                             <th>End Date</th>
-                                            <th>Price</th>
+                                            <!--                                            <th>Price</th>-->
                                             <th>Tour Status</th>
-                                            <th>Action</th>
+                                                <c:if test="${status == 'Pending' || status == 'Active'}">
+                                                <th>Action</th>
+                                                </c:if>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -206,14 +292,23 @@
                                                 <td>${tour.location}</td>
                                                 <td>${tour.start_Date}</td>
                                                 <td>${tour.end_Date}</td>
-                                                <td>${tour.price}</td>
+<!--                                                <td>${tour.price}</td>-->
                                                 <td>${tour.tour_Status}</td>
-                                                <td>
-                                                    <div class="action-container">
-                                                        <a href="manage?action=approve-tour&id=${tour.tour_Id}" class="action-link approve">Approve</a>
-                                                        <a href="manage?action=cancel-tour&id=${tour.tour_Id}" class="action-link cancel">Cancel</a>
-                                                    </div>
-                                                </td>
+                                                <c:if test="${status == 'Pending'}">
+                                                    <td>
+                                                        <div class="action-container">
+                                                            <a href="manage?action=approve-tour&id=${tour.tour_Id}" class="action-link approve">Approve</a>
+                                                            <a href="manage?action=cancel-tour&id=${tour.tour_Id}" class="action-link cancel">Cancel</a>
+                                                        </div>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${status == 'Active'}">
+                                                    <td>
+                                                        <div class="action-container">
+                                                            <a href="manage?action=ban-tour&id=${tour.tour_Id}" class="action-link cancel">Ban</a>
+                                                        </div>
+                                                    </td>
+                                                </c:if>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
@@ -241,7 +336,7 @@
                                                 <td>${report.report_Date}</td>
                                                 <td>
                                                     <div class="action-container">
-                                                        <a href="manage?action=delete-report&id=${report.report_Id}" class="action-link approve">Delete</a>
+                                                        <a href="manage?action=delete-report&id=${report.report_Id}" class="action-link cancel">Delete</a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -259,6 +354,7 @@
                                             <th>Customer Name</th>
                                             <th>Tour Name</th>
                                             <th>Booking Date</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -266,17 +362,37 @@
                                         <c:forEach var="booking" items="${data}">
                                             <tr>
                                                 <td>${booking.book_Id}</td>
-                                                <td>${booking.cus_Id}</td>
-                                                <td>${booking.tour_Id}</td>
+                                                <td>${booking.cus_Name}</td>
+                                                <td>${booking.tour_Name}</td>
                                                 <td>${booking.created_At}</td>
+                                                <td>${booking.book_Status}</td>
                                                 <td>
-                                                    <a href="editBooking.jsp?id=${booking.book_Id}">Approve</a>
+                                                    <a class="action-link approve" 
+                                                       href="javascript:void(0);" 
+                                                       onclick="(function () {
+                                                                   console.log('Opening modal with:', '${booking.book_Id}', '${booking.cus_Name}', '${booking.tour_Name}', '${booking.created_At}', '${booking.slot_Order}', '${booking.total_Cost}', '${booking.book_Status}', '${booking.tour_Date}', '${booking.cancel_Date}', '${booking.booking_Detail}', '${booking.refundAmount}');
+                                                                   openModal('${booking.book_Id}', '${booking.cus_Name}', '${booking.tour_Name}', '${booking.created_At}', '${booking.slot_Order}', '${booking.total_Cost}', '${booking.book_Status}', '${booking.tour_Date}', '${booking.cancel_Date}', '${booking.booking_Detail}', '${booking.refundAmount}');
+                                                               })()">
+                                                        View Detail
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
                                 </table>
+
+                                <!-- Modal -->
+                                <div id="bookingModal" class="modal" style="display:none;">
+                                    <div class="modal-content">
+                                        <span class="close" onclick="closeModal()">&times;</span>
+                                        <h2>Booking Details</h2>
+                                        <div id="modalBookingDetails">
+                                            <!-- Booking details will be inserted here -->
+                                        </div>
+                                    </div>
+                                </div>
                             </c:when>
+
                         </c:choose>
                     </div>
                 </div>
@@ -286,22 +402,49 @@
         <!-- CONTENT -->
         <script src="assests/js/script_profile.js"></script>
         <script>
-            window.onload = function () {
-                const message = '${message}';
-                if (message) {
-                    Toastify({
-                        text: message,
-                        duration: 3000, // Thời gian hiển thị (3 giây)
-                        gravity: "top", // Vị trí hiển thị (top/bottom)
-                        position: 'right', // Vị trí bên trái/bên phải
-                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // Màu nền
-                    }).showToast();
+                                            window.onload = function () {
+                                                const message = '${message}';
+                                                if (message) {
+                                                    Toastify({
+                                                        text: message,
+                                                        duration: 3000, // Thời gian hiển thị (3 giây)
+                                                        gravity: "top", // Vị trí hiển thị (top/bottom)
+                                                        position: 'right', // Vị trí bên trái/bên phải
+                                                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // Màu nền
+                                                    }).showToast();
 
-                    // Xóa message sau khi đã hiển thị
+                                                    // Xóa message sau khi đã hiển thị
             <c:remove var="message" />
-                }
-            };
+                                                }
+                                            };
         </script>
+        <script>
+            function openModal(bookId, customerName, tourName, bookingDate, slotOrder, totalCost, bookingStatus, tourDate, cancelDate, bookingDetail, refundAmount) {
+                // Cập nhật nội dung trong modalBookingDetails trực tiếp
+                document.getElementById("modalBookingDetails").innerHTML =
+                        "<p><strong>Booking ID:</strong> " + (bookId || 'N/A') + "</p>" +
+                        "<p><strong>Customer Name:</strong> " + (customerName || 'N/A') + "</p>" +
+                        "<p><strong>Tour Name:</strong> " + (tourName || 'N/A') + "</p>" +
+                        "<p><strong>Booking Date:</strong> " + (bookingDate || 'N/A') + "</p>" +
+                        "<p><strong>Slot Order:</strong> " + (slotOrder || 'N/A') + "</p>" +
+                        "<p><strong>Total Cost:</strong> " + (totalCost || 'N/A') + "</p>" +
+                        "<p><strong>Status:</strong> " + (bookingStatus || 'N/A') + "</p>" +
+                        "<p><strong>Tour Date:</strong> " + (tourDate || 'N/A') + "</p>" +
+                        "<p><strong>Cancel Date:</strong> " + (cancelDate ? cancelDate : 'Not have yet') + "</p>" +
+                        "<p><strong>Booking Detail:</strong> " + (bookingDetail || 'N/A') + "</p>" +
+                        "<p><strong>Refund Amount:</strong> " + (refundAmount ? refundAmount : 'Not have yet') + "</p>";
+
+                // Hiển thị modal
+                document.getElementById("bookingModal").style.display = "block";
+            }
+
+            function closeModal() {
+                // Đóng modal
+                document.getElementById("bookingModal").style.display = "none";
+            }
+
+        </script>
+
     </body>
 </html>
 

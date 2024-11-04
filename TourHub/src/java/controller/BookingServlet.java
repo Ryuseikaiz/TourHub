@@ -13,10 +13,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import model.Booking;
+import model.Tour;
 import model.User;
 
 /**
@@ -57,19 +59,39 @@ public class BookingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Assuming you have logic to get the current user bookings from DB
-        User currentUser = (User) request.getSession().getAttribute("currentUser");
+        String action = request.getParameter("action");
 
-        System.out.println("Current User ID: " + currentUser.getUser_Id());
-        ThienDB book = new ThienDB();
-        int cus_Id = book.getCusIdFromUserId(currentUser.getUser_Id());
-        BookingDB booking = new BookingDB();
-        List<Booking> bookings = booking.getUser2Booking(cus_Id);
-        request.setAttribute("bookings", bookings);
+        if ("viewtour".equals(action)) {
+            handleViewTour(request, response);
+        } else {
+            // Lấy người dùng hiện tại từ session
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("currentUser");
 
-        // Forward the request to user-booking.jsp
-        RequestDispatcher dispatcher = request.getRequestDispatcher("user-booking.jsp");
-        dispatcher.forward(request, response);
+            if (currentUser != null) {
+                ThienDB bookingDB = new ThienDB();
+
+                // Lấy tham số status từ request
+                String status = request.getParameter("status");
+                List<Booking> bookings;
+
+                // Kiểm tra nếu có status, lọc các bookings theo status
+                if (status != null && !status.isEmpty()) {
+                    bookings = bookingDB.getUserStatusBookingDetails(currentUser.getUser_Id(), status);
+                } else {
+                    // Nếu không có status, lấy tất cả bookings
+                    bookings = bookingDB.getUserBookingDetails(currentUser.getUser_Id());
+                }
+
+                // Gửi danh sách bookings và status hiện tại đến JSP
+                request.setAttribute("bookings", bookings);
+                request.setAttribute("selectedStatus", status);
+            }
+
+            // Chuyển tiếp đến trang JSP để hiển thị bookings
+            RequestDispatcher dispatcher = request.getRequestDispatcher("user-booking.jsp");
+            dispatcher.forward(request, response);
+        }
     }
 
     @Override
@@ -85,24 +107,87 @@ public class BookingServlet extends HttpServlet {
             case "cancelbook":
                 handleCancelBook(request, response);
                 break;
+            case "refundbook":
+                handleRefundBook(request, response);
+                break;
             default:
                 response.sendRedirect("error.jsp");
                 break;
         }
     }
 
-    public void handleCancelBook(HttpServletRequest request, HttpServletResponse response)
+    protected void handleCancelBook(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String bookingId = request.getParameter("id");
         User currentUser = (User) request.getSession().getAttribute("currentUser");
 
-        ThienDB book = new ThienDB();
-        int cus_Id = book.getCusIdFromUserId(currentUser.getUser_Id());
+        ThienDB bookingDB = new ThienDB();
+        int customerId = bookingDB.getCusIdFromUserId(currentUser.getUser_Id());
 
-        boolean updateSuccess = book.updateBookingStatus(cus_Id, bookingId);
+        // Prepare a JSON response
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
 
-        book.updateBookingStatus(cus_Id, bookingId);
-        response.sendRedirect("booking");
+        try {
+            boolean updateSuccess = bookingDB.updateBookingStatus(customerId, bookingId, "Cancelled");
+            String message = updateSuccess ? "Booking cancelled successfully!" : "Failed to cancel booking.";
+
+            // Directly output the JSON response
+            String jsonResponse = "{\"message\": \"" + message + "\"}";
+            out.print(jsonResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Return an error message in JSON format
+            String jsonResponse = "{\"message\": \"An error occurred: " + e.getMessage() + "\"}";
+            out.print(jsonResponse);
+        } finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    protected void handleRefundBook(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String bookingId = request.getParameter("id");
+        User currentUser = (User) request.getSession().getAttribute("currentUser");
+
+        ThienDB bookingDB = new ThienDB();
+        int customerId = bookingDB.getCusIdFromUserId(currentUser.getUser_Id());
+
+        // Prepare a JSON response
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+
+        try {
+            boolean updateSuccess = bookingDB.updateBookingStatus(customerId, bookingId, "Refund");
+            String message = updateSuccess ? "Booking refunded successfully!" : "Failed to refund booking.";
+
+            // Directly output the JSON response
+            String jsonResponse = "{\"message\": \"" + message + "\"}";
+            out.print(jsonResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Return an error message in JSON format
+            String jsonResponse = "{\"message\": \"An error occurred: " + e.getMessage() + "\"}";
+            out.print(jsonResponse);
+        } finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    public void handleViewTour(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String tourName = request.getParameter("name");
+
+        ThienDB bookingDB = new ThienDB();
+        String id = bookingDB.getTourIdByName(tourName); // Phương thức này lấy thông tin tour theo tên
+
+        if (id != null) {
+            response.sendRedirect("displayTourDetail?id=" + id);
+        } else {
+            response.sendRedirect("error.jsp"); // Nếu tour không tồn tại, chuyển hướng đến trang lỗi
+        }
     }
 
     @Override

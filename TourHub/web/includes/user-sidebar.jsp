@@ -5,7 +5,7 @@
     </a>
     <ul class="side-menu top">
         <li>
-            <a href="user-profile.jsp">
+            <a href="user">
                 <i class='bx bxs-dashboard' ></i>
                 <span class="text">User Information</span>
             </a>

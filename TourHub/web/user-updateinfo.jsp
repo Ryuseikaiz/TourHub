@@ -60,6 +60,8 @@
 
                             <input type="hidden" name="action" value="updateemail" />
                             <input type="hidden" name="userId" value="${currentUser.user_Id}" />
+                            <input type="hidden" name="avatar" value="${currentUser.avatar}" />
+
                             <div class="profile-info">
                                 <label>Email:</label>
                                 <input type="email" name="email"/>
@@ -99,7 +101,7 @@
                             <div class="row">
                                 <div class="profile-info">
                                     <label>Birthday:</label>
-                                    <input type="text" name="birthday" value="${currentUser.cus_Birth}" />
+                                    <input type="date" name="birthday" value="${currentUser.cus_Birth}" />
                                 </div>
                             </div>
 

@@ -64,6 +64,10 @@ public class ManagementServlet extends HttpServlet {
                 tourManage(request, response);
                 break;
 
+            case "ban-tour":
+                tourManage(request, response);
+                break;
+
             case "report-manage":
                 viewReportList(request, response);
                 break;
@@ -127,10 +131,13 @@ public class ManagementServlet extends HttpServlet {
 
     protected void viewTourList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String status = request.getParameter("status");
+
         ThienDB tour = new ThienDB();
-        List<Tour> tourList = tour.getPendingTours();
+        List<Tour> tourList = tour.getStatusTours(status);
         request.setAttribute("data", tourList);
         request.setAttribute("type", "tour");
+        request.setAttribute("status", status);
         System.out.println("Day là" + tourList);
         request.getRequestDispatcher("display.jsp").forward(request, response);
     }
@@ -148,6 +155,9 @@ public class ManagementServlet extends HttpServlet {
                 request.getSession().setAttribute("message", "Tour approved successfully!");
             } else if ("cancel-tour".equals(action)) {
                 tourDAO.cancelTour(tourId);
+                request.getSession().setAttribute("message", "Tour cancelled successfully!");
+            } else if ("ban-tour".equals(action)) {
+                tourDAO.banTour(tourId);
                 request.getSession().setAttribute("message", "Tour cancelled successfully!");
             }
             response.sendRedirect("manage?action=tour-manage");
@@ -188,8 +198,8 @@ public class ManagementServlet extends HttpServlet {
 
     protected void viewBookingList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        BookingDB booking = new BookingDB();
-        List<Booking> bookingList = booking.getAllBookings();
+        ThienDB booking = new ThienDB();
+        List<Booking> bookingList = booking.getBookingDetails();
         request.setAttribute("data", bookingList);
         request.setAttribute("type", "booking");
         System.out.println("Day là" + bookingList);

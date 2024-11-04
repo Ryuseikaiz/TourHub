@@ -33,6 +33,9 @@
         <link rel="stylesheet" href="assests/css/index.css" />
         <link rel="stylesheet" href="assests/css/search-page.css" />
 
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
         <!-- Owl Carousel CSS -->
         <link
             rel="stylesheet"
@@ -586,41 +589,21 @@
                                         <span class="tour-duration">${tour.total_Time} Hours</span>
                                     </div>
                                 </div>                                                      
-                            </div> 
-                            <div class="tour-save-share">
-                                <button class="save-btn" onclick="sharePage()">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </button>
-                                <button class="share-btn" onclick="sharePage()">
-                                    <i class="fa-regular fa-share-from-square"></i>
-                                </button>
                             </div>
+                            <button class="save-btn" data-tour-id="${tour.tour_Id}">
+                                <i class="fa-regular fa-bookmark"></i>
+                            </button>
+
+                            <button class="share-btn" onclick="sharePage()">
+                                <i class="fa-regular fa-share-from-square"></i>
+                            </button>
                         </div>
                     </div>
-
                 </div>
 
             </div>
 
-            <!--Waves Container-->
-            <div>
-                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                     viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
-                <defs>
-                <path id="gentle-wave"
-                      d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-                </defs>
-                <g class="parallax">
-                <use xlink:href="#gentle-wave" x="30" y="0" fill="rgba(255,255,255,0.7)" />
-                <use xlink:href="#gentle-wave" x="30" y="3" fill="rgba(255,255,255,0.5)" />
-                <use xlink:href="#gentle-wave" x="30" y="5" fill="rgba(255,255,255,0.3)" />
-                <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
-                </g>
-                </svg>
-            </div>
-            <!--Waves end-->
         </div>
-
         <div class="content flex">
             <div class="tour-gallery">
                 <div class="image-highlight">
@@ -634,7 +617,7 @@
                         </div>
                     </a>
                 </div>
-
+            </c:if>
                 <c:if test="${not empty tour.tour_Img[1]}">
                     <div class="image-1">
                         <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
@@ -692,258 +675,286 @@
                 </c:if>
             </div>
 
-
-            <div class="tour-detail">
-                <div class="tour-detail-left-section">
-                    <div class="left-section-above">
-                        <div class="average-rating">
-                            <span class="average-rating-point">${tour.average_Review_Rating}</span>
-
-                            <div class="rank">
-                                <span class="rank-type">Excellent</span>
-                                <br>
-                                <span class="number-rating">From ${tour.number_Of_Review} Review</span>
-                            </div>
+            <c:if test="${not empty tour.tour_Img[0]}">
+                <div class="image-3">
+                    <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 4">
+                    <a href="javascript:void(0)" onclick="toggle('popup1')">
+                        <div class="img-viewmore">
+                            <h3>
+                                <i class="fa-solid fa-image"></i>
+                                View All Image
+                            </h3>
                         </div>
+                    </a>
+                </div>
+            </c:if>
 
-                        <div class="map">
-                            <i class="fa-solid fa-map-location-dot"></i>
-                            <div class="map-content">
-                                <span class="view-map">Show map</span>
-                                <br>
-                                <span>${tour.location}</span>
-                            </div>
+            <c:if test="${not empty tour.tour_Img[0]}">
+                <div class="image-4">
+                    <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 5">
+                    <a href="javascript:void(0)" onclick="toggle('popup1')">
+                        <div class="img-viewmore">
+                            <h3>
+                                <i class="fa-solid fa-image"></i>
+                                View All Image
+                            </h3>
+                        </div>
+                    </a>
+                </div>
+            </c:if>
+        </div>
 
+
+        <div class="tour-detail">
+            <div class="tour-detail-left-section">
+                <div class="left-section-above">
+                    <div class="average-rating">
+                        <span class="average-rating-point">${tour.average_Review_Rating}</span>
+
+                        <div class="rank">
+                            <span class="rank-type">Excellent</span>
+                            <br>
+                            <span class="number-rating">From ${tour.number_Of_Review} Review</span>
                         </div>
                     </div>
 
-                    <div class="left-section-below">
-                        <div class="experiment">
-                            <h5>What You'll Experience</h5>
-                            <ul>
-                                <c:forEach var="experience" items="${tourDetailDescription.experiences}">
-                                    <li>${experience}</li>
-                                    </c:forEach>
-                            </ul>
-                            <a href="javascript:void(0)" class="view-more-experiment" onclick="toggle('popup3')">Read More</a>
+                    <div class="map">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <div class="map-content">
+                            <span class="view-map">Show map</span>
+                            <br>
+                            <span>${tour.location}</span>
                         </div>
-                        <div class="split"></div>
 
-                        <div class="more-information">
-                            <a href="javascript:void(0)" onclick="toggle('popup2')">Contacts, Facilities, Service Language and More</a>
-                        </div>
                     </div>
                 </div>
 
-                <div class="tour-detail-right-section">
-                    <div class="price-section">
-                        <div class="price">
-                            <span class="start-from">Start From</span>
-                            <h4>${tour.price}</h4>
+                <div class="left-section-below">
+                    <div class="experiment">
+                        <h5>What You'll Experience</h5>
+                        <ul>
+                            <c:forEach var="experience" items="${tourDetailDescription.experiences}">
+                                <li>${experience}</li>
+                                </c:forEach>
+                        </ul>
+                        <a href="javascript:void(0)" class="view-more-experiment" onclick="toggle('popup3')">Read More</a>
+                    </div>
+                    <div class="split"></div>
+
+                    <div class="more-information">
+                        <a href="javascript:void(0)" onclick="toggle('popup2')">Contacts, Facilities, Service Language and More</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tour-detail-right-section">
+                <div class="price-section">
+                    <div class="price">
+                        <span class="start-from">Start From</span>
+                        <h4>${tour.price}</h4>
+                    </div>
+
+                    <button class="find-tour-btn">Find Options</button>
+                </div>
+
+                <div class="view-review">
+
+                    <span class="view-review-content">What Travelers Say</span>
+                    <a href="#" id="viewAllReviewsBtn">See All Reviews</a>
+
+                </div>
+
+                <!-- Popup để hiển thị tất cả các đánh giá -->
+                <div id="reviewPopup" class="popup">
+                    <div class="popup-content card shadow-lg">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h2 class="mb-0">All Reviews</h2>
+                            <span class="close-btn" id="closePopup">&times;</span>
                         </div>
-
-                        <button class="find-tour-btn">Find Options</button>
-                    </div>
-
-                    <div class="view-review">
-
-                        <span class="view-review-content">What Travelers Say</span>
-                        <a href="#" id="viewAllReviewsBtn">See All Reviews</a>
-
-                    </div>
-
-                    <!-- Popup để hiển thị tất cả các đánh giá -->
-                    <div id="reviewPopup" class="popup">
-                        <div class="popup-content card shadow-lg">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h2 class="mb-0">All Reviews</h2>
-                                <span class="close-btn" id="closePopup">&times;</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="all-reviews">
-                                    <c:forEach var="review" items="${allReviews}">
-                                        <div class="card mb-3 review-item">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <h5 class="card-title text-primary mb-0">${review.first_Name} ${review.last_Name}</h5>
-                                                    <div class="review-stars text-warning">
-                                                        <c:forEach var="i" begin="1" end="${review.rating_Star}">
-                                                            ★
-                                                        </c:forEach>
-                                                    </div>
+                        <div class="card-body">
+                            <div class="all-reviews">
+                                <c:forEach var="review" items="${allReviews}">
+                                    <div class="card mb-3 review-item">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="card-title text-primary mb-0">${review.first_Name} ${review.last_Name}</h5>
+                                                <div class="review-stars text-warning">
+                                                    <c:forEach var="i" begin="1" end="${review.rating_Star}">
+                                                        ★
+                                                    </c:forEach>
                                                 </div>
-                                                <p class="card-text text-secondary">${review.comment}</p>
                                             </div>
+                                            <p class="card-text text-secondary">${review.comment}</p>
                                         </div>
-                                    </c:forEach>
-                                </div>
+                                    </div>
+                                </c:forEach>
                             </div>
-                        </div>
-                    </div>
-
-
-
-                    <div class="highlight-review container mt-4">
-                        <div class="review-list">
-                            <c:choose>
-                                <c:when test="${not empty reviews}">
-                                    <c:forEach var="review" items="${reviews}">
-                                        <div class="card review-item mb-3 shadow-sm">
-                                            <div class="card-body">
-                                                <h5 class="card-title text-primary">${review.first_Name} ${review.last_Name}</h5>
-                                                <p class="card-text text-secondary mb-2"><i class="fas fa-star text-warning"></i> ${review.rating_Star} / 5</p>
-                                                <p class="card-text"><strong>Comment:</strong> ${review.comment}</p>
-                                            </div>
-                                        </div>
-                                    </c:forEach>
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="alert alert-info text-center">No review for this tour.</div>
-                                </c:otherwise>
-                            </c:choose>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="tour-itinerary">
-                <h4>Tour Itinerary</h4>
-                <span>
-                    <ul>
-                        <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
-                            <li>${itinerary}</li>
-                            </c:forEach>
-                    </ul>
-                </span>
-                <a href="javascript:void(0)" onclick="toggle('popup4')">See Complete Itinerary</a>
-            </div>
-
-            <div class="tour-booking">
-                <h4>Available Ticket(s) for You</h4>
-                <div id="notification" style="display: none; color: red;">Ngày được chọn không có tour nào!</div>
-                <div class="date-picking">
-                    <button class="calendar" onclick="openCalendar(); toggle('blur');">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        See Calendar
-                    </button>
-
-                    <input type="text" id="calendarInput" style="display: none;" />
-                    <div class="date-wrapper">
-                        <button class="scroll-left" onclick="scrollLeft1()">
-                            <i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>
-                        </button>
-
-                        <div class="date-section" id="date-section">
-                            <!-- Tạo 14 khung ngày -->
-                            <div class="date-container" data-index="0" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="0"></span>
-                                <span class="date" data-formatteddate="0"></span>
-                            </div>
-
-                            <div class="date-container" data-index="1" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="1"></span>
-                                <span class="date" data-formatteddate="1"></span>
-
-                            </div>
-                            <div class="date-container" data-index="2" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="2"></span>
-                                <span class="date" data-formatteddate="2"></span>
-                            </div>
-                            <div class="date-container" data-index="3" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="3"></span>
-                                <span class="date" data-formatteddate="3"></span>
-                            </div>
-                            <div class="date-container" data-index="4" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="4"></span>
-                                <span class="date" data-formatteddate="4"></span>
-                            </div>
-                            <div class="date-container" data-index="5" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="5"></span>
-                                <span class="date" data-formatteddate="5"></span>
-                            </div>
-                            <div class="date-container" data-index="6" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="6"></span>
-                                <span class="date" data-formatteddate="6"></span>
-                            </div>
-                            <div class="date-container" data-index="7" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="7"></span>
-                                <span class="date" data-formatteddate="7"></span>
-                            </div>
-                            <div class="date-container" data-index="8" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="8"></span>
-                                <span class="date" data-formatteddate="8"></span>
-                            </div>
-                            <div class="date-container" data-index="9" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="9"></span>
-                                <span class="date" data-formatteddate="9"></span>
-                            </div>
-                            <div class="date-container" data-index="10" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="10"></span>
-                                <span class="date" data-formatteddate="10"></span>
-                            </div>
-                            <div class="date-container" data-index="11" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="11"></span>
-                                <span class="date" data-formatteddate="11"></span>
-                            </div>
-                            <div class="date-container" data-index="12" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="12"></span>
-                                <span class="date" data-formatteddate="12"></span>
-                            </div>
-                            <div class="date-container" data-index="13" onclick="selectDate(this)">
-                                <span class="day-of-week" data-dayofweek="13"></span>
-                                <span class="date" data-formatteddate="13"></span>
-                            </div>
-                        </div>
 
 
-                        <button class="scroll-right" onclick="scrollRight()">
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
+
+                <div class="highlight-review container mt-4">
+                    <div class="review-list">
+                        <c:choose>
+                            <c:when test="${not empty reviews}">
+                                <c:forEach var="review" items="${reviews}">
+                                    <div class="card review-item mb-3 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">${review.first_Name} ${review.last_Name}</h5>
+                                            <p class="card-text text-secondary mb-2"><i class="fas fa-star text-warning"></i> ${review.rating_Star} / 5</p>
+                                            <p class="card-text"><strong>Comment:</strong> ${review.comment}</p>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="alert alert-info text-center">No review for this tour.</div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
-                </div>                  
-
-                <div class="tour-options-section">
-                    <c:forEach items="${tourOptions}" var="option">
-                        <div class="tour-option" data-tour-date="${option.tour_Date}">
-                            <div class="tour-option-left-section">
-                                <span class="option-name">${option.option_Name}</span>
-                                <span class="option-note">${option.option_Description}</span>
-                                <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">Xem chi tiết</a>
-                                <span class="refund-section">${option.day_Of_Week}</span>
-                            </div>
-                            <div class="tour-option-right-section">
-                                <div class="top-pick-logo">Top pick ${option.available_Slots}</div>
-                                <div class="option-price-section">
-                                    <div class="option-price">${option.option_Price}</div>
-
-                                    <!-- Kiểm tra available_Slots -->
-                                    <c:choose>
-                                        <c:when test="${option.available_Slots > 0}">
-                                            <button class="option-pick-btn" 
-                                                    onclick="window.location.href = 'optionAdjustment?id=${option.option_Id}&selectedDate=' + selectedDate.toISOString().split('T')[0]">
-                                                Chọn vé
-                                            </button>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <button class="option-pick-btn" disabled>Hết lượt</button>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
-                            </div>                            
-                        </div>
-                    </c:forEach>
                 </div>
-            </div>
-            <jsp:include page="CommentServlet">
-                <jsp:param name="tourId" value="${tourId}" />
-            </jsp:include>
-
-            <div class="tour-rating">
-
             </div>
         </div>
-    </div>
 
+        <div class="tour-itinerary">
+            <h4>Tour Itinerary</h4>
+            <span>
+                <ul>
+                    <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
+                        <li>${itinerary}</li>
+                        </c:forEach>
+                </ul>
+            </span>
+            <a href="javascript:void(0)" onclick="toggle('popup4')">See Complete Itinerary</a>
+        </div>
+
+        <div class="tour-booking">
+            <h4>Available Ticket(s) for You</h4>
+            <div id="notification" style="display: none; color: red;">Ngày được chọn không có tour nào!</div>
+            <div class="date-picking">
+                <button class="calendar" onclick="openCalendar(); toggle('blur');">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    See Calendar
+                </button>
+
+                <input type="text" id="calendarInput" style="display: none;" />
+                <div class="date-wrapper">
+                    <button class="scroll-left" onclick="scrollLeft1()">
+                        <i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>
+                    </button>
+
+                    <div class="date-section" id="date-section">
+                        <!-- Tạo 14 khung ngày -->
+                        <div class="date-container" data-index="0" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="0"></span>
+                            <span class="date" data-formatteddate="0"></span>
+                        </div>
+
+                        <div class="date-container" data-index="1" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="1"></span>
+                            <span class="date" data-formatteddate="1"></span>
+
+                        </div>
+                        <div class="date-container" data-index="2" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="2"></span>
+                            <span class="date" data-formatteddate="2"></span>
+                        </div>
+                        <div class="date-container" data-index="3" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="3"></span>
+                            <span class="date" data-formatteddate="3"></span>
+                        </div>
+                        <div class="date-container" data-index="4" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="4"></span>
+                            <span class="date" data-formatteddate="4"></span>
+                        </div>
+                        <div class="date-container" data-index="5" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="5"></span>
+                            <span class="date" data-formatteddate="5"></span>
+                        </div>
+                        <div class="date-container" data-index="6" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="6"></span>
+                            <span class="date" data-formatteddate="6"></span>
+                        </div>
+                        <div class="date-container" data-index="7" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="7"></span>
+                            <span class="date" data-formatteddate="7"></span>
+                        </div>
+                        <div class="date-container" data-index="8" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="8"></span>
+                            <span class="date" data-formatteddate="8"></span>
+                        </div>
+                        <div class="date-container" data-index="9" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="9"></span>
+                            <span class="date" data-formatteddate="9"></span>
+                        </div>
+                        <div class="date-container" data-index="10" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="10"></span>
+                            <span class="date" data-formatteddate="10"></span>
+                        </div>
+                        <div class="date-container" data-index="11" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="11"></span>
+                            <span class="date" data-formatteddate="11"></span>
+                        </div>
+                        <div class="date-container" data-index="12" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="12"></span>
+                            <span class="date" data-formatteddate="12"></span>
+                        </div>
+                        <div class="date-container" data-index="13" onclick="selectDate(this)">
+                            <span class="day-of-week" data-dayofweek="13"></span>
+                            <span class="date" data-formatteddate="13"></span>
+                        </div>
+                    </div>
+
+
+                    <button class="scroll-right" onclick="scrollRight()">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>                  
+
+            <div class="tour-options-section">
+                <c:forEach items="${tourOptions}" var="option">
+                    <div class="tour-option" data-tour-date="${option.tour_Date}">
+                        <div class="tour-option-left-section">
+                            <span class="option-name">${option.option_Name}</span>
+                            <span class="option-note">${option.option_Description}</span>
+                            <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">Xem chi tiết</a>
+                            <span class="refund-section">${option.day_Of_Week}</span>
+                        </div>
+                        <div class="tour-option-right-section">
+                            <div class="top-pick-logo">Top pick ${option.available_Slots}</div>
+                            <div class="option-price-section">
+                                <div class="option-price">${option.option_Price}</div>
+
+                                <!-- Kiểm tra available_Slots -->
+                                <c:choose>
+                                    <c:when test="${option.available_Slots > 0}">
+                                        <button class="option-pick-btn" 
+                                                onclick="window.location.href = 'optionAdjustment?id=${option.option_Id}&selectedDate=' + selectedDate.toISOString().split('T')[0]">
+                                            Chọn vé
+                                        </button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button class="option-pick-btn" disabled>Hết lượt</button>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>                            
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
+        <jsp:include page="CommentServlet">
+            <jsp:param name="tourId" value="${tourId}" />
+        </jsp:include>
+
+        <div class="tour-rating">
+
+        </div>
+    </div>
+</div>
     <!--Popup1-->
     <div id="popup1">
         <div id="carouselExampleIndicators" class="carousel slide">
@@ -971,10 +982,26 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
-        </div>
-        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup1')"></button>
-    </div>
 
+        </div>
+        <div class="carousel-inner">
+            <c:forEach var="image" items="assests/images/tour-images/${tour.tour_Img}">
+                <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
+                    <img src="${image}" class="carousel-img d-block w-100" alt="...">
+                </div>
+            </c:forEach>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
     <!--Popup2-->
     <div id="popup2">
         <h3>More Information</h3>
@@ -988,40 +1015,61 @@
                         </c:forEach>
                 </ul>
             </div>
-
-            <div class="suitable">
-                <h4>Suitable for</h4>
+        </div>
+        <div class="extra-information">
+            <h4>Additional Information</h4>
+            <span>
                 <ul>
-                    <c:forEach var="suggestion" items="${tourDetailDescription.suggestion}">
-                        <li>${suggestion}</li>
+                    <c:forEach var="info" items="${tourDetailDescription.additionalInformation}">
+                        <li>${info}</li>
                         </c:forEach>
                 </ul>
-            </div>
-
-            <div class="contact-information">
-                <h4>Contact Partner:</h4>
-                <ul>
-                    <li>+${tourDetailDescription.contactNumber}</li>
-                </ul>
-
-            </div>
-
-            <div class="extra-information">
-                <h4>Additional Information</h4>
-                <span>
-                    <ul>
-                        <c:forEach var="info" items="${tourDetailDescription.additionalInformation}">
-                            <li>${info}</li>
-                            </c:forEach>
-                    </ul>
-                </span>
-            </div>
+            </span>
         </div>
-
-        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup2')">
-        </button>
     </div>
 
+    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup2')">
+    </button>
+</div>
+
+<!--Popup3-->
+<div id="popup3">
+    <h3>What You'll Experience</h3>
+    <div class="experiment-wrapper">
+        <ul>
+            <c:forEach var="experience" items="${tourDetailDescription.experiences}">
+                <li>${experience}</li>
+                </c:forEach>
+        </ul>
+
+        <!--            <span>Bà Nà Hills là khu phức hợp giải trí và resort lớn nhất tại Việt Nam. Cùng nhau đi tour và xả láng cả
+                        ngày tại Bà Nà Hills ngay nào! Tận hưởng không khí mát lạnh cùng phong cảnh tuyệt vời, ăn hết mình với
+                        đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
+                        tất cả đều ngay tại đây!</span>
+        
+                    <img src="assests/images/new-image/jojo1.jpg" alt="">
+                    <span>Tận hưởng bầu không khí mát lạnh khi bạn "lướt" mây lên đến đỉnh Bà Nà </span>
+        
+                    <img src="assests/images/new-image/jojo2.jpg" alt="">
+                    <span>Đừng quên "đua tốc độ" và tham gia rất nhiều trò chơi hấp dẫn khác tại Bà Nà nhé! </span>
+        
+                    <img src="assests/images/new-image/jojo3.jpg" alt="">
+                    <span>Ngắm nhìn Bà Nà lấp lánh trong ánh đèn khi hoàng hôn buông xuống</span>-->
+    </div>
+
+    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup3')"></button>
+</div>
+
+<!--Popup4-->
+<div id="popup4">
+    <h3>Tour Itinerary</h3>
+    <div class="tour-itinerary-wrapper">
+        <ul>
+            <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
+                <li>${itinerary}</li>
+                </c:forEach>
+        </ul>
+    </div>
     <!--Popup3-->
     <div id="popup3">
         <h3>What You'll Experience</h3>
@@ -1031,34 +1079,34 @@
                     <li>${experience}</li>
                     </c:forEach>
             </ul>
+<!--Popup5-->
+<div id="popup5">
+    <h4>Tour ghép</h4>
+    <div class="tour-option-detail-wrapper">
+        <div class="tour-time-popup">
+            <span>
+                Thời lượng tour:
+                ${tour.total_Time}
+            </span>
 
-            <!--            <span>Bà Nà Hills là khu phức hợp giải trí và resort lớn nhất tại Việt Nam. Cùng nhau đi tour và xả láng cả
-                            ngày tại Bà Nà Hills ngay nào! Tận hưởng không khí mát lạnh cùng phong cảnh tuyệt vời, ăn hết mình với
-                            đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
-                            tất cả đều ngay tại đây!</span>
-            
-                        <img src="assests/images/new-image/jojo1.jpg" alt="">
-                        <span>Tận hưởng bầu không khí mát lạnh khi bạn "lướt" mây lên đến đỉnh Bà Nà </span>
-            
-                        <img src="assests/images/new-image/jojo2.jpg" alt="">
-                        <span>Đừng quên "đua tốc độ" và tham gia rất nhiều trò chơi hấp dẫn khác tại Bà Nà nhé! </span>
-            
-                        <img src="assests/images/new-image/jojo3.jpg" alt="">
-                        <span>Ngắm nhìn Bà Nà lấp lánh trong ánh đèn khi hoàng hôn buông xuống</span>-->
+            <span>
+                Thời gian và điểm đón:
+                <ul>
+                    <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
+                    <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
+                        thêm trên trang Sản phẩm để biết thêm chi tiết </li>
+                </ul>
+            </span>
         </div>
 
-        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup3')"></button>
-    </div>
+        <span class="refund-section-popup">
+            Easy Refund
+        </span>
 
-    <!--Popup4-->
-    <div id="popup4">
-        <h3>Tour Itinerary</h3>
-        <div class="tour-itinerary-wrapper">
-            <ul>
-                <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
-                    <li>${itinerary}</li>
-                    </c:forEach>
-            </ul>
+        <div class="price-wrapper">
+            <span class="price-wrapper-inner">1.216.867 VND</span>
+
+            <button>Chọn vé</button>
         </div>
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
     </button>
@@ -1130,7 +1178,6 @@
                     Vé vào cửa
                     Bảo hiểm du lịch
                     Hướng dẫn viên nói tiếng Việt - Anh
-
                 </span>
                 <h4 id="scrollspyHeading2">Second heading</h4>
                 <span>
@@ -1496,6 +1543,58 @@
         });
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const saveBtn = document.querySelector('.save-btn');
+
+        saveBtn.addEventListener('click', function () {
+            const tourId = this.getAttribute('data-tour-id'); // Get tourId from data attribute
+            const returnUrl = window.location.href; // Current URL
+
+            addWishlist(tourId, returnUrl);
+        });
+    });
+
+    function addWishlist(tourId, returnUrl) {
+        const request = new XMLHttpRequest();
+        request.open('POST', 'wishlist', true);
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        const data = `action=add&tourId=${tourId}&returnUrl=${returnUrl}`;
+
+        request.onreadystatechange = function () {
+            if (request.readyState === XMLHttpRequest.DONE) {
+                if (request.status === 200) {
+                    const response = JSON.parse(request.responseText);
+                    Toastify({
+                        text: response.message,
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: response.message.includes("Failed") ? 
+                            "linear-gradient(to right, #ff5f6d, #ffc371)" : 
+                            "linear-gradient(to right, #00b09b, #96c93d)",
+                    }).showToast();
+                } else {
+                    Toastify({
+                        text: "An error occurred while processing your request.",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    }).showToast();
+                }
+            }
+        };
+
+        request.send(data);
+    }
+</script>
+
+
+
+
 <script>
     function sharePage() {
         var pageUrl = encodeURIComponent(window.location.href); // Get the current page URL
@@ -1503,6 +1602,10 @@
         // Open the share URL in a new window
         window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
     }
+</script>
+
+<script>
+
 </script>
 
 <script>

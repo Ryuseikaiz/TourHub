@@ -215,7 +215,7 @@
                                             <c:choose>
                                                 <c:when test="${empty wishlistItems}">
                                                     <tr>
-                                                        <td colspan="4">No wishlist found.</td>
+                                                        <td colspan="3">No wishlist found.</td>
                                                     </tr>
                                                 </c:when>
                                                 <c:otherwise>
