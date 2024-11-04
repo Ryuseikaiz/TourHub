@@ -108,13 +108,14 @@ public class BookingOverviewServlet extends HttpServlet {
         System.out.println("Discount Id: " + discountId);
         System.out.println("Total no dis: " + totalNoDis);
         
-        int discountIdInt = Integer.parseInt(discountId);
+        int discountIdInt = 0;
         
         System.out.println("Option ID: " + optionIdString);
         
         if (discountCost.contains("-0 VND")) {
             System.out.println("Not using discount");
         } else {
+            discountIdInt = Integer.parseInt(discountId);
             System.out.println("Using discount");
             try {
                 khanhDB.decrementDiscountQuantity(discountIdInt);
