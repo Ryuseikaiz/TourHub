@@ -68,7 +68,7 @@ public class BookingOverviewServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         HttpSession session = request.getSession();
         UserDB userDB = new UserDB();
         KhanhDB khanhDB = new KhanhDB();
@@ -107,14 +107,15 @@ public class BookingOverviewServlet extends HttpServlet {
         System.out.println("Discount Cost: " + discountCost);
         System.out.println("Discount Id: " + discountId);
         System.out.println("Total no dis: " + totalNoDis);
-        
-        int discountIdInt = Integer.parseInt(discountId);
-        
+
+        int discountIdInt = 0;
         System.out.println("Option ID: " + optionIdString);
-        
+
         if (discountCost.contains("-0 VND")) {
+
             System.out.println("Not using discount");
         } else {
+            discountIdInt = Integer.parseInt(discountId);
             System.out.println("Using discount");
             try {
                 khanhDB.decrementDiscountQuantity(discountIdInt);
@@ -166,7 +167,6 @@ public class BookingOverviewServlet extends HttpServlet {
         String bookDate = selectedDateString;
         BigDecimal refundAmount = BigDecimal.ZERO;
 
-
         // Convert selectedDateString to java.sql.Date
         java.sql.Date sqlDate = null;
         try {
@@ -176,7 +176,7 @@ public class BookingOverviewServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/error.jsp?message=Invalid date format");
             return;
         }
-        
+
         System.out.println(sqlDate);
 
         int scheduleId = 0;
@@ -185,21 +185,20 @@ public class BookingOverviewServlet extends HttpServlet {
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(BookingOverviewServlet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
+
         System.out.println(scheduleId);
 
         // Now, you can use tourId in your booking process or elsewhere.
         try {
             // Import the booking using the updated tourId
             khanhDB.importBooking(tourId, selectedDateString, totalCost, bookingDetail, bookStatus, String.valueOf(optionId), scheduleId, cusId, slotOrder, selectedDateString, cancelDate, selectedDateString, refundAmount);
-            System.out.println("Booking successfully imported.");          
+            System.out.println("Booking successfully imported.");
         } catch (SQLException e) {
             System.err.println("Error importing booking: " + e.getMessage());
         }
 
-
         // Get booking id, cần chỉnh lại cách lấy, vẫn bị trùng
-        int bookingId = 0;             
+        int bookingId = 0;
 
         try {
             bookingId = khanhDB.getLatestBookingId();
@@ -207,18 +206,14 @@ public class BookingOverviewServlet extends HttpServlet {
             java.util.logging.Logger.getLogger(BookingOverviewServlet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-
         // Check booking id
-
         if (bookingId != -1) {
             System.out.println("Booking inserted with ID: " + bookingId);
         } else {
             System.out.println("Failed to retrieve booking ID.");
         }
 
-
         // Get booking by id
-
         Booking book = new Booking();
         try {
             book = khanhDB.getBookingById(bookingId);
@@ -245,6 +240,7 @@ public class BookingOverviewServlet extends HttpServlet {
         // Chuyển từ java.util.Date sang java.sql.Date
         return new java.sql.Date(parsedDate.getTime());
     }
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
