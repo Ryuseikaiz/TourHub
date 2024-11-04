@@ -4,6 +4,7 @@
  */
 package DataAccess;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import model.Tour;
 import model.User;
 import model.Wishlist;
 import java.util.Date;
+import model.Booking;
 
 /**
  *
@@ -196,14 +198,154 @@ public class ThienDB implements DatabaseInfo {
         return result;
     }
 
-    public boolean updateBookingStatus(int cus_Id, String book_Id) {
-        String updateQuery = "UPDATE Booking SET book_Status = 'Cancelled' WHERE book_Status = 'Pending' AND cus_Id = ? AND book_Id = ?";
+    public List<Booking> getBookingDetails() {
+        List<Booking> bookingDetailsList = new ArrayList<>();
+        String sql = "SELECT B.book_Id, CONCAT(U.first_Name, ' ', U.last_Name) AS CustomerName, "
+                + "T.tour_Name, B.book_Date, B.book_Status, B.total_Cost, B.created_At, "
+                + "B.cancel_Date, B.slot_Order, B.refund_Amount, B.booking_Detail "
+                + "FROM Booking B "
+                + "JOIN Customer C ON B.cus_Id = C.cus_Id "
+                + "JOIN [User] U ON C.user_Id = U.user_Id "
+                + "JOIN Tour T ON B.tour_Id = T.tour_Id ORDER BY B.book_Date DESC";
+
+        try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int bookingId = rs.getInt("book_Id");
+                String customerName = rs.getString("CustomerName");
+                String tourName = rs.getString("tour_Name");
+                Date bookingDate = rs.getDate("created_At");
+                String bookingStatus = rs.getString("book_Status"); // New field
+                BigDecimal totalCost = rs.getBigDecimal("total_Cost"); // New field
+                Date tourDate = rs.getDate("tour_Date"); // New field
+                Date cancelDate = rs.getDate("cancel_Date"); // New field
+                int slotOrder = rs.getInt("slot_Order"); // New field
+                BigDecimal refundAmount = rs.getBigDecimal("refund_Amount"); // New field
+                String bookingDetail = rs.getString("booking_Detail"); // New field
+
+                bookingDetailsList.add(new Booking(bookingId, bookingDate, slotOrder, totalCost, bookingStatus,
+                        tourName, tourDate, cancelDate, bookingDetail, customerName, refundAmount));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching booking details: " + e.getMessage());
+        }
+        return bookingDetailsList;
+    }
+
+    public List<Booking> getUserBookingDetails(int userId) {
+        List<Booking> bookingDetailsList = new ArrayList<>();
+        String sql = "SELECT B.book_Id, CONCAT(U.first_Name, ' ', U.last_Name) AS CustomerName, "
+                + "T.tour_Name, B.book_Date, B.book_Status, B.total_Cost, B.tour_Date, "
+                + "B.cancel_Date, B.slot_Order, B.refund_Amount, B.booking_Detail, B.created_At "
+                + "FROM Booking B "
+                + "JOIN Customer C ON B.cus_Id = C.cus_Id "
+                + "JOIN [User] U ON C.user_Id = U.user_Id "
+                + "JOIN Tour T ON B.tour_Id = T.tour_Id "
+                + "WHERE U.user_Id = ? "
+                + "ORDER BY B.book_Date DESC"; // Moved ORDER BY after WHERE
+
+        try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Set parameters
+            pstmt.setInt(1, userId); // Assuming userId is of type int
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int bookingId = rs.getInt("book_Id");
+                    Date created_At = rs.getDate("created_At");
+                    String customerName = rs.getString("CustomerName");
+                    String tourName = rs.getString("tour_Name");
+                    String status = rs.getString("book_Status"); // Changed variable name to avoid confusion
+                    BigDecimal totalCost = rs.getBigDecimal("total_Cost");
+                    Date tourDate = rs.getDate("tour_Date");
+                    Date cancelDate = rs.getDate("cancel_Date");
+                    int slotOrder = rs.getInt("slot_Order");
+                    BigDecimal refundAmount = rs.getBigDecimal("refund_Amount");
+                    String bookingDetail = rs.getString("booking_Detail");
+
+                    // Correct the constructor call (removed duplicate bookingStatus)
+                    bookingDetailsList.add(new Booking(bookingId, created_At, slotOrder, totalCost, status,
+                            tourName, tourDate, cancelDate, bookingDetail, customerName, refundAmount));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching booking details: " + e.getMessage());
+        }
+        return bookingDetailsList;
+    }
+
+    public List<Booking> getUserStatusBookingDetails(int userId, String Bookstatus) {
+        List<Booking> bookingDetailsList = new ArrayList<>();
+        String sql = "SELECT B.book_Id, CONCAT(U.first_Name, ' ', U.last_Name) AS CustomerName, "
+                + "T.tour_Name, B.book_Date, B.book_Status, B.total_Cost, B.tour_Date, "
+                + "B.cancel_Date, B.slot_Order, B.refund_Amount, B.booking_Detail, B.created_At "
+                + "FROM Booking B "
+                + "JOIN Customer C ON B.cus_Id = C.cus_Id "
+                + "JOIN [User] U ON C.user_Id = U.user_Id "
+                + "JOIN Tour T ON B.tour_Id = T.tour_Id "
+                + "WHERE U.user_Id = ? AND B.book_Status = ? "
+                + "ORDER BY B.book_Date DESC"; // Moved ORDER BY after WHERE
+
+        try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Set parameters
+            pstmt.setInt(1, userId); // Assuming userId is of type int
+            pstmt.setString(2, Bookstatus);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int bookingId = rs.getInt("book_Id");
+                    Date created_At = rs.getDate("created_At");
+                    String customerName = rs.getString("CustomerName");
+                    String tourName = rs.getString("tour_Name");
+                    String status = rs.getString("book_Status"); // Changed variable name to avoid confusion
+                    BigDecimal totalCost = rs.getBigDecimal("total_Cost");
+                    Date tourDate = rs.getDate("tour_Date");
+                    Date cancelDate = rs.getDate("cancel_Date");
+                    int slotOrder = rs.getInt("slot_Order");
+                    BigDecimal refundAmount = rs.getBigDecimal("refund_Amount");
+                    String bookingDetail = rs.getString("booking_Detail");
+
+                    // Correct the constructor call (removed duplicate bookingStatus)
+                    bookingDetailsList.add(new Booking(bookingId, created_At, slotOrder, totalCost, status,
+                            tourName, tourDate, cancelDate, bookingDetail, customerName, refundAmount));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching booking details: " + e.getMessage());
+        }
+        return bookingDetailsList;
+    }
+
+    // Method to get Tour ID by Tour Name
+    public String getTourIdByName(String tourName) {
+        String tourId = null;
+        String query = "SELECT tour_Id FROM Tour WHERE tour_Name = ?";
+
+        try (Connection conn = getConnect(); // Make sure you have a method to get the connection
+                 PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, tourName);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                tourId = rs.getString("tour_Id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tourId;
+    }
+
+    public boolean updateBookingStatus(int cus_Id, String book_Id, String status) {
+        String updateQuery = "UPDATE Booking SET book_Status = ? WHERE book_Status = 'Pending' AND cus_Id = ? AND book_Id = ?";
 
         try (Connection con = getConnect(); PreparedStatement ps = con.prepareStatement(updateQuery)) {
 
             // Set the cus_Id and tour_Id in the query
-            ps.setInt(1, cus_Id);
-            ps.setString(2, book_Id);
+            ps.setString(1, status);
+            ps.setInt(2, cus_Id);
+            ps.setString(3, book_Id);
 
             // Execute the update query
             int rowsUpdated = ps.executeUpdate();
@@ -233,52 +375,47 @@ public class ThienDB implements DatabaseInfo {
         }
     }
 
-    public static List<Tour> getPendingTours() {
+    public List<Tour> getStatusTours(String status) {
         List<Tour> tourList = new ArrayList<>();
-        String sql = "SELECT * FROM Tour WHERE tour_Status = 'Pending'";
+        String sql = "SELECT * FROM Tour WHERE tour_Status = ?";
 
         // Get the connection from your getConnect() method
-        Connection con = getConnect();
+        try (Connection con = getConnect(); PreparedStatement stmt = con.prepareStatement(sql)) {
 
-        if (con == null) {
-            System.out.println("Unable to establish a database connection.");
-            return tourList; // Return an empty list if connection failed
-        }
+            if (con == null) {
+                System.out.println("Unable to establish a database connection.");
+                return tourList; // Return an empty list if connection failed
+            }
 
-        try (PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            // Set the status parameter for the prepared statement
+            stmt.setString(1, status);
 
-            while (rs.next()) {
-                // Create a Tour object from the result set
-                Tour tour = new Tour();
-                tour.setTour_Id(rs.getString("tour_Id"));
-                tour.setTour_Name(rs.getString("tour_Name"));
-                tour.setTour_Description(rs.getString("tour_Description"));
-                tour.setStart_Date(rs.getDate("start_Date"));
-                tour.setEnd_Date(rs.getDate("end_Date"));
-                tour.setLocation(rs.getString("location"));
-                tour.setPurchases_Time(rs.getInt("purchases_Time"));
-                tour.setAverage_Review_Rating(rs.getDouble("average_Review_Rating"));
-                tour.setNumber_Of_Review(rs.getInt("number_Of_Review"));
-                tour.setTotal_Time(rs.getString("total_Time"));
-                tour.setPrice(rs.getBigDecimal("price"));
-                tour.setSlot(rs.getInt("slot"));
-                tour.setTour_Status(rs.getString("tour_Status"));
-                tour.setCreated_At(rs.getDate("created_At"));
-                tour.setCompany_Id(rs.getInt("company_Id"));
-                // Add the Tour object to the list
-                tourList.add(tour);
+            // Execute the query
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Create a Tour object from the result set
+                    Tour tour = new Tour();
+                    tour.setTour_Id(rs.getString("tour_Id"));
+                    tour.setTour_Name(rs.getString("tour_Name"));
+                    tour.setTour_Description(rs.getString("tour_Description"));
+                    tour.setStart_Date(rs.getDate("start_Date"));
+                    tour.setEnd_Date(rs.getDate("end_Date"));
+                    tour.setLocation(rs.getString("location"));
+                    tour.setPurchases_Time(rs.getInt("purchases_Time"));
+                    tour.setAverage_Review_Rating(rs.getDouble("average_Review_Rating"));
+                    tour.setNumber_Of_Review(rs.getInt("number_Of_Review"));
+                    tour.setTotal_Time(rs.getString("total_Time"));
+                    tour.setPrice(rs.getBigDecimal("price"));
+                    tour.setSlot(rs.getInt("slot"));
+                    tour.setTour_Status(rs.getString("tour_Status"));
+                    tour.setCreated_At(rs.getDate("created_At"));
+                    tour.setCompany_Id(rs.getInt("company_Id"));
+                    // Add the Tour object to the list
+                    tourList.add(tour);
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error while fetching tours: " + e.getMessage());
-        } finally {
-            // Ensure the connection is closed after usage
-            try {
-                if (con != null && !con.isClosed()) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Error closing connection: " + e.getMessage());
-            }
         }
 
         return tourList;
@@ -294,6 +431,14 @@ public class ThienDB implements DatabaseInfo {
 
     public void approveTour(String tourId) throws Exception {
         String sql = "UPDATE Tour SET tour_Status = 'Active' WHERE tour_Id = ?";
+        try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, tourId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void banTour(String tourId) throws Exception {
+        String sql = "UPDATE Tour SET tour_Status = 'Banned' WHERE tour_Id = ?";
         try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, tourId);
             pstmt.executeUpdate();
@@ -384,7 +529,7 @@ public class ThienDB implements DatabaseInfo {
         return activeUsers;
     }
 
-    // Phương thức để lấy kênh chat với admin ( 12 là id của admin trong database )
+    // Phương thức để lấy kênh chat với admin
     public static List<User> getAdminChat() {
         List<User> activeUsers = new ArrayList<>();
         String query = "SELECT user_Id, first_Name, last_Name FROM [User] WHERE role = 'Admin'";
@@ -462,13 +607,6 @@ public class ThienDB implements DatabaseInfo {
         return messages;
     }
 
-    /**
-     * Cập nhật đường dẫn avatar cho người dùng.
-     *
-     * @param userId ID của người dùng
-     * @param avatarPath Đường dẫn của avatar (ví dụ: "/images/avatar.jpg")
-     * @return true nếu cập nhật thành công, ngược lại trả về false
-     */
     public static boolean updateUserAvatar(int userId, String avatarPath) {
         String sql = "UPDATE [User] SET avatar = ? WHERE user_Id = ?";
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -533,6 +671,24 @@ public class ThienDB implements DatabaseInfo {
         return wishlistItems;
     }
 
+    public Wishlist getWishlistItem(int cus_Id, String tour_Id) {
+        Wishlist wishlist = new Wishlist();
+        String query = "SELECT * FROM Wishlist WHERE cus_Id= ? AND tour_Id = ?";
+        try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, cus_Id);
+            ps.setString(12, tour_Id);
+            try (ResultSet rs = ps.executeQuery()) {
+                wishlist.setWish_Id(rs.getInt("wish_Id"));
+                wishlist.setCus_Id(rs.getInt("cus_Id"));
+                wishlist.setTour_Id(rs.getString("tour_Id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return wishlist;
+    }
+
     public boolean deleteWishlistItem(int wishId) {
         String query = "DELETE FROM Wishlist WHERE wish_Id = ?";
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(query)) {
@@ -545,12 +701,57 @@ public class ThienDB implements DatabaseInfo {
         }
     }
 
+    public List<Wishlist> getWishlistItemsForUser(int userId) {
+        List<Wishlist> wishlistItems = new ArrayList<>();
+        String query = "SELECT w.cus_Id, w.wish_Id, w.tour_Id, t.tour_Name FROM Wishlist w "
+                + "               JOIN Tour t ON w.tour_Id = t.tour_Id "
+                + "			   JOIN Customer c ON w.cus_Id = c.cus_Id"
+                + "                WHERE c.user_Id = ?"; // Adjust the query based on your actual database schema
+
+        try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                int wishId = rs.getInt("wish_Id");
+                int cus_Id = rs.getInt("cus_Id");
+                String tourId = rs.getString("tour_Id");
+                String tourName = rs.getString("tour_Name");
+
+                Wishlist item = new Wishlist(wishId, cus_Id, tourId, tourName);
+                wishlistItems.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception or handle it accordingly
+        }
+
+        return wishlistItems;
+    }
+
+    public boolean checkIfWishlistItemExists(int cusId, String tourId) {
+        String sql = "SELECT COUNT(*) FROM Wishlist WHERE cus_Id = ? AND tour_Id = ?";
+        try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, cusId);
+            stmt.setString(2, tourId);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Return true if count > 0, indicating it exists
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle exception properly in production code
+        }
+        return false; // Return false if not found or an error occurred
+    }
+
     public static boolean addToWishlist(int userId, String tourId) {
+        System.out.println("day la addToWishlist");
         boolean added = false;
 
         // Using try-with-resources for automatic resource management
         try (Connection conn = getConnect(); // Get a connection to your database
-                 PreparedStatement pstmt = conn.prepareStatement("INSERT INTO Wishlist (user_id, tour_id) VALUES (?, ?)")) {
+                 PreparedStatement pstmt = conn.prepareStatement("INSERT INTO Wishlist (cus_Id, tour_Id) VALUES (?, ?)")) {
 
             pstmt.setInt(1, userId);
             pstmt.setString(2, tourId);
@@ -632,5 +833,43 @@ public class ThienDB implements DatabaseInfo {
         }
 
         return notifications;
+    }
+
+    public static Integer getAdminUserId() {
+        String sql = "SELECT TOP 1 user_Id FROM [User] WHERE role = 'Admin'";
+
+        try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("user_Id"); // Lấy user_Id đầu tiên với vai trò Admin
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error retrieving admin user ID: " + e.getMessage());
+        }
+
+        return null; // Trả về null nếu không tìm thấy
+    }
+
+    public void AdminPreMessage(int receiverId) {
+        int senderId = getAdminUserId();
+
+        String sql = "INSERT INTO Messages (sender_id, receiver_id, message_text, message_time) VALUES (?, ?, 'Hello! What is your problem ?', GETDATE())";
+
+        try (Connection conn = getConnect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, senderId);
+            pstmt.setInt(2, receiverId);
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Message inserted successfully.");
+            } else {
+                System.out.println("Message insertion failed.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error inserting message: " + e.getMessage());
+        }
     }
 }

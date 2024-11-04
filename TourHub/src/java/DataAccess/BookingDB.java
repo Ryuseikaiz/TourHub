@@ -149,23 +149,6 @@ public class BookingDB implements DatabaseInfo {
         return null;
     }
 
-    //Số lượng khách hàng mới: Số lượng khách hàng đã đăng ký tài khoản trong khoảng thời gian.
-    public int getNewCustomersCount(Connection conn, Date startDate, Date endDate, String role) throws SQLException {
-        role = "customer";
-        String sql = "SELECT COUNT(*) FROM [User] WHERE created_At BETWEEN ? AND ? AND Role = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDate(1, new java.sql.Date(startDate.getTime()));
-            stmt.setDate(2, new java.sql.Date(endDate.getTime()));
-            stmt.setString(3, role);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        }
-        return 0;
-    }
-
     //Tỷ lệ hủy tour: Tỷ lệ phần trăm các tour bị hủy so với tổng số tour đã đặt.
     public double getCancellationRate() throws SQLException {
         try (Connection con = getConnect()) {
@@ -193,40 +176,33 @@ public class BookingDB implements DatabaseInfo {
         return 0;
     }
 
-    //Đánh giá và phản hồi: Điểm trung bình đánh giá từ khách hàng về các tour. Chưa có review = null
-    public double getAverageReviewRating(Connection conn) throws SQLException {
-        String sql = "SELECT AVG(rating_Star) FROM Review";
-        try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getDouble(1);
-            }
-        }
-        return 0;
-    }
+    public Map<String, Integer> getBookingsByCompany() throws SQLException {
+        try (Connection con = getConnect()) {
+            String sql = "SELECT \n"
+                    + "    CONCAT(u.first_Name, ' ', u.last_Name) AS Company_Name, \n"
+                    + "    COUNT(b.book_Id) AS Booking_Count\n"
+                    + "FROM \n"
+                    + "    Booking b \n"
+                    + "INNER JOIN \n"
+                    + "    Tour t ON b.tour_Id = t.tour_Id \n"
+                    + "INNER JOIN \n"
+                    + "    Company c ON t.company_Id = c.company_Id \n"
+                    + "INNER JOIN \n"
+                    + "    [User] u ON c.user_Id = u.user_Id \n"
+                    + "GROUP BY \n"
+                    + "    u.first_Name, u.last_Name";
+            Map<String, Integer> bookingsByCompany = new HashMap<>();
 
-    //Số lượng tour được xem: Số lần khách hàng xem các tour trên website. Chưa có biến view trong database, sẽ thêm
-    public int getTourViewsCount(Connection conn) throws SQLException {
-        // Giả sử bạn có một bảng lưu trữ số lần xem tour
-        String sql = "SELECT SUM(views) FROM Tour"; // Bạn cần tạo cột views trong bảng Tour
-        try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    bookingsByCompany.put(rs.getString("Company_Name"), rs.getInt(2));
+                }
             }
+            return bookingsByCompany;
+        } catch (Exception ex) {
+            Logger.getLogger(BookingDB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return 0;
-    }
-
-    //Số lượng đặt tour theo loại: Phân loại theo các loại tour (du lịch biển, du lịch núi, văn hóa, ...).// chưa thêm data type 
-    public Map<String, Integer> getBookingsCountByType(Connection conn) throws SQLException {
-        String sql = "SELECT tour_Id, COUNT(*) FROM Booking GROUP BY tour_Id";
-        Map<String, Integer> bookingsByType = new HashMap<>();
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                bookingsByType.put(rs.getString("tour_Id"), rs.getInt(2));
-            }
-        }
-        return bookingsByType;
+        return null;
     }
 
     //Thống kê theo vùng miền: Số lượng đặt tour theo từng thành phố hoặc vùng miền.
@@ -248,14 +224,17 @@ public class BookingDB implements DatabaseInfo {
     }
 
     //Liệt kê số lượng đặt tour theo từng tháng
-    public Map<String, Integer> getMonthlyBookingsCount() throws SQLException {
+    public Map<String, Integer> getMonthlyBookingsCount(int year) throws SQLException {
         try (Connection con = getConnect()) {
             String sql = "SELECT MONTH(book_Date) AS month, COUNT(*) AS booking_count "
                     + "FROM Booking "
+                    + "WHERE YEAR(book_Date) = ? "
                     + "GROUP BY MONTH(book_Date)";
             Map<String, Integer> bookingsByMonth = new HashMap<>();
 
-            try (PreparedStatement stmt = con.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            try (PreparedStatement stmt = con.prepareStatement(sql)) {
+                stmt.setInt(1, year); // Set giá trị năm vào câu truy vấn
+                ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
                     String month = String.valueOf(rs.getInt("month"));
                     int bookingCount = rs.getInt("booking_count");
@@ -295,4 +274,5 @@ public class BookingDB implements DatabaseInfo {
         }
         return null;
     }
+
 }

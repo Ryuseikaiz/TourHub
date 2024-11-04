@@ -1,8 +1,12 @@
 /* General styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('https://golden-lotus-hotel.s3.ap-southeast-1.amazonaws.com/uploads/2021/04/013d407166ec4fa56eb1e1f8cbe183b9/images1089892_1.jpg');
     background-color: #f4f7fc;
-    padding: 20px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 70px;
     margin: 0;
     color: #333;
 }
@@ -42,7 +46,7 @@ label {
     color: #555;
 }
 
-input[type="text"], input[type="password"], input[type="email"], button {
+input[type="text"], input[type="password"], input[type="email"], input[type="date"], button {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -53,7 +57,7 @@ input[type="text"], input[type="password"], input[type="email"], button {
     transition: all 0.3s ease;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="date"]:focus {
     border-color: #1b3661;
     box-shadow: 0 0 10px rgba(27, 54, 97, 0.2);
     outline: none;

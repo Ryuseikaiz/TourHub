@@ -1,4 +1,5 @@
 var user1, user2;
+var receiverId = user1;
 
 function fetchActiveChatUsers() {
     $.ajax({
@@ -28,7 +29,7 @@ function fetchAdminChat() {
             var userList = $('#activeAdmin');
             userList.empty();
             $.each(data, function (index, user) {
-                userList.append('<div class="user" onclick="openChat(' + user.user_Id + ')">' + user.first_Name + user.last_Name + ' (ID: ' + user.user_Id + ')</div>');
+                userList.append('<div class="user" onclick="openChat(' + user.user_Id + ')">' + user.first_Name + user.last_Name + '</div>');
             });
         },
         error: function (xhr, status, error) {
@@ -40,10 +41,12 @@ function fetchAdminChat() {
 
 function openChat(userId) {
     currentUserId = userId;
+    receiverId = userId;
     fetchChatMessages(userId);
 }
 
 function fetchChatMessages(userId) {
+    console.log("Đang lấy tin nhắn cho userId:", userId);
     $.ajax({
         url: 'ChatController',
         method: 'GET',
@@ -96,7 +99,7 @@ function sendMessage() {
             console.error('Lỗi khi gửi tin nhắn:', error);
         }
     });
-}                                 
+}
 
 // Gọi hàm fetchActiveChatUsers mỗi 5 giây
 setInterval(function () {
@@ -106,3 +109,7 @@ setInterval(function () {
 setInterval(function () {
     fetchAdminChat();
 }, 2000);
+
+setInterval(function () {
+    fetchChatMessages(receiverId);
+}, 3000);

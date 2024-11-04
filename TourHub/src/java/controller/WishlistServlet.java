@@ -5,11 +5,14 @@
 package controller;
 
 import DataAccess.ThienDB;
+import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -90,10 +93,13 @@ public class WishlistServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
+        String tourId = request.getParameter("tourId");
+        String returnUrl = request.getParameter("returnUrl");
+
         if ("delete".equals(action)) {
             deleteWishlistItem(request, response);
         } else if ("add".equals(action)) {
-            addWishlistItem(request, response);
+            addWishlistItem(request, response, tourId, returnUrl);
         } else {
             processRequest(request, response);
         }
@@ -101,50 +107,62 @@ public class WishlistServlet extends HttpServlet {
 
     private void deleteWishlistItem(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Retrieve the wishlist item ID from the request
+        User currentUser = (User) request.getSession().getAttribute("currentUser");
         String wishIdStr = request.getParameter("wishId");
-        int wishId = Integer.parseInt(wishIdStr);
-
-        // Call the method to delete the wishlist item
+        String message;
         ThienDB wishlistdb = new ThienDB();
-        boolean isDeleted = wishlistdb.deleteWishlistItem(wishId);
 
-        // Optionally, you can set a message to indicate success or failure
-        if (isDeleted) {
-            request.setAttribute("message", "Wishlist item deleted successfully.");
+        if (wishIdStr != null) {
+            int wishId = Integer.parseInt(wishIdStr);
+
+            boolean isDeleted = wishlistdb.deleteWishlistItem(wishId);
+
+            if (isDeleted) {
+                message = "Wishlist item deleted successfully.";
+            } else {
+                message = "Failed to delete wishlist item.";
+            }
         } else {
-            request.setAttribute("message", "Failed to delete wishlist item.");
+            message = "Missing wishlist ID.";
         }
 
-        // Redirect back to the wishlist page to show the updated list
-        User currentUser = (User) request.getSession().getAttribute("currentUser");
-        int cus_Id = wishlistdb.getCusIdFromUserId(currentUser.getUser_Id());
-        List<Wishlist> wishlistItems = wishlistdb.getWishlistFromDB(cus_Id);
-        request.setAttribute("wishlistItems", wishlistItems);
-
-        // Forward the request to the JSP
+        // Fetch the updated wishlist items
+        List<Wishlist> updatedWishlistItems = wishlistdb.getWishlistItemsForUser(currentUser.getUser_Id());
+        request.setAttribute("wishlistItems", updatedWishlistItems);
+        request.setAttribute("message", message);
         request.getRequestDispatcher("user-wishlist.jsp").forward(request, response);
     }
 
-    private void addWishlistItem(HttpServletRequest request, HttpServletResponse response)
+    private void addWishlistItem(HttpServletRequest request, HttpServletResponse response, String tourId, String returnUrl)
             throws ServletException, IOException {
-        String tourId = request.getParameter("tourId");
         User currentUser = (User) request.getSession().getAttribute("currentUser");
-        String returnUrl = request.getParameter("returnUrl");
         ThienDB wishlistdb = new ThienDB();
         int cus_Id = wishlistdb.getCusIdFromUserId(currentUser.getUser_Id());
 
-        // Call a method to add the tour to the user's wishlist
-        boolean success = wishlistdb.addToWishlist(cus_Id, tourId);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8"); // Set the response encoding
+        PrintWriter out = response.getWriter();
+        Gson gson = new Gson();
+        JsonObject jsonResponse = new JsonObject();
 
-        if (success) {
-            // Redirect or set a success message
-            response.sendRedirect(returnUrl); // Redirect to the wishlist page
+        // Check if the item already exists in the wishlist
+        boolean itemExists = wishlistdb.checkIfWishlistItemExists(cus_Id, tourId);
+
+        if (!itemExists) {
+            // Attempt to add to wishlist
+            boolean success = wishlistdb.addToWishlist(cus_Id, tourId);
+            if (success) {
+                jsonResponse.addProperty("message", "Item added to wishlist successfully.");
+            } else {
+                jsonResponse.addProperty("message", "Failed to add item to wishlist.");
+            }
         } else {
-            // Handle the case where adding failed
-            request.setAttribute("errorMessage", "Could not add to wishlist. Please try again.");
-            request.getRequestDispatcher("errorPage.jsp").forward(request, response);
+            jsonResponse.addProperty("message", "Item is already in the wishlist.");
         }
+
+        // Write the JSON response
+        out.print(gson.toJson(jsonResponse));
+        out.flush();
     }
 
     @Override

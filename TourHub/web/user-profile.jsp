@@ -3,6 +3,7 @@
 <%@ page import="DataAccess.UserDB"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%--<jsp:useBean id="currentUser" class="model.User" scope="session" />--%>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,14 +77,17 @@
                 position: relative;
                 display: inline-block;
                 text-align: center;
+                border: 2px solid black; /* Thêm viền đen */
+                border-radius: 50%; /* Để viền cũng có hình tròn */
+                overflow: hidden; /* Ẩn phần viền ra ngoài nếu có */
             }
 
             /* Style for the avatar image */
             .avatar {
-                width: 250px; /* Adjust the width as needed */
-                height: 250px; /* Adjust the height as needed */
-                border-radius: 50%;
-                object-fit: cover;
+                width: 250px; /* Điều chỉnh chiều rộng */
+                height: 250px; /* Điều chỉnh chiều cao */
+                border-radius: 50%; /* Hình tròn */
+                object-fit: cover; /* Giữ tỷ lệ hình ảnh */
             }
 
             /* Style for the overlay */
@@ -94,7 +98,7 @@
                 width: 100%;
                 height: 100%;
                 background-color: rgba(0, 0, 0, 0.6);
-                border-radius: 50%;
+                border-radius: 50%; /* Hình tròn */
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -115,9 +119,9 @@
                 border-radius: 5px;
                 cursor: pointer;
                 display: inline-block;
-                width: 150px; /* Set width to ensure they are equal */
+                width: 150px; /* Đặt chiều rộng để đảm bảo chúng bằng nhau */
                 text-align: center;
-                margin: 5px; /* Space between the buttons */
+                margin: 5px; /* Khoảng cách giữa các nút */
             }
 
             /* Style for the "Change Avatar" label */
@@ -140,6 +144,7 @@
             input[type="file"] {
                 display: none;
             }
+
 
         </style>
     </head>
@@ -168,7 +173,7 @@
                     <!-- <span class="num">8</span> -->
                 </a>
                 <div class="image-container">
-                    <img src="${currentUser.avatar}" alt="User Avatar" class="avatar">
+                    <img src="${user.avatar}" alt="User Avatar" class="avatar">
                 </div>
 
             </nav>
@@ -183,7 +188,7 @@
                         </div>
                         <!-- Enter data here -->
                         <c:choose>
-                            <c:when test="${sessionScope.currentUser == null}">
+                            <c:when test="${user == null}">
                                 <c:redirect url="home" />
                             </c:when>
                             <c:otherwise>
@@ -191,72 +196,69 @@
                                     <div class="profile-info-left">
                                         <div class="profile-info">
                                             <label>Full Name:</label>
-                                            <p><span>${currentUser.first_Name} ${currentUser.last_Name}</span></p>
+                                            <p><span>${user.first_Name} ${user.last_Name}</span></p>
                                         </div>
                                         <div class="profile-info">
                                             <label>Email:</label>
-                                            <p><span>${sessionScope.currentUser.email}</span></p>
+                                            <p><span>${user.email}</span></p>
                                             <form class="changeform" action="user-updateinfo.jsp" method="get">
                                                 <button type="submit" name="buttonChange" value="email">Change email</button>
                                             </form>
                                         </div>
                                         <div class="profile-info">
                                             <label>Phone Number:</label>
-                                            <p><span>${currentUser.phone}</span></p>
+                                            <p><span>${user.phone}</span></p>
                                         </div>
                                         <div class="profile-info">
                                             <label>Address:</label>
-                                            <p><span>${currentUser.address}</span></p>
+                                            <p><span>${user.address}</span></p>
                                         </div>
                                         <div class="profile-info">
                                             <label>Password:</label>
                                             <p>
                                                 <span id="passwordDisplay">********</span>
-                                                <button onclick="togglePassword()">Show</button>
+                                                <button type="button" onclick="togglePassword()">Show</button>
                                             </p>
                                             <form class="changeform" action="user-updateinfo.jsp" method="get">
                                                 <button type="submit" name="buttonChange" value="pass">Change password</button>
                                             </form>
                                         </div>
-                                        <c:if test="${sessionScope.currentUser.role == 'Customer'}">
+                                        <c:if test="${user.role == 'Customer'}">
                                             <div class="profile-info">
                                                 <label>Birthday: </label>
-                                                <p><span>${currentUser.cus_Birth}</span></p>
+                                                <p><span>${formattedBirthday}</span></p>
                                             </div>
                                         </c:if>
-                                        <c:if test="${sessionScope.currentUser.role == 'Provider'}">
+                                        <c:if test="${user.role == 'Provider'}">
                                             <div class="profile-info">
                                                 <label>Tax Code: </label>
-                                                <p><span>${currentUser.tax_Code}</span></p>
+                                                <p><span>${user.tax_Code}</span></p>
                                             </div>
                                             <div class="profile-info">
                                                 <label>Balance: </label>
-                                                <p><span>${currentUser.balance}</span></p>
+                                                <p><span>${user.balance}</span></p>
                                             </div>
                                             <div class="profile-info">
                                                 <label>Bank Information: </label>
-                                                <p><span>${currentUser.bank_Information}</span></p>
+                                                <p><span>${user.bank_Information}</span></p>
                                             </div>
                                         </c:if>
-
                                     </div>
                                     <div class="profile-info-right">
                                         <div class="profile-info">
-                                            <!-- Avatar container -->
                                             <div class="avatar-container">
-                                                <!-- Display the current avatar -->
-                                                <img id="avatarImg" src="${currentUser.avatar}" class="avatar" />
+                                                <img id="avatarImg" src="${user.avatar}" class="avatar" alt="${user.avatar}" />
 
-                                                <!-- Overlay that appears on hover -->
                                                 <div class="avatar-overlay">
-                                                    <!-- Upload form inside the overlay -->
-                                                    <form action="UploadAvatarServlet" method="post" enctype="multipart/form-data">
+                                                    <form id="uploadForm" action="UploadAvatarServlet" method="post" enctype="multipart/form-data">
                                                         <label for="file-input" class="upload-label">Change Avatar</label>
-                                                        <input id="file-input" type="file" name="avatar" accept="image/*" required>
-                                                        <button type="submit" class="upload-btn">Upload</button>
+                                                        <input id="file-input" type="file" name="avatar" accept="image/*" required onchange="previewImage(event)">
+                                                        <button type="submit" class="upload-btn" id="uploadBtn" style="display:none;">Upload</button>
+                                                        <button type="button" class="upload-btn" id="cancelBtn" style="display:none;" onclick="cancelUpload()">Cancel</button>
                                                     </form>
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -277,31 +279,58 @@
 
         <script src="assests/js/script_profile.js"></script>
         <script>
-                                                    function togglePassword() {
-                                                        var passwordField = document.getElementById('passwordDisplay');
-                                                        var button = event.target;
-                                                        if (passwordField.innerHTML === "********") {
-                                                            passwordField.innerHTML = "${currentUser.password}";
-                                                            button.textContent = "Hide";
-                                                        } else {
-                                                            passwordField.innerHTML = "********";
-                                                            button.textContent = "Show";
-                                                        }
-                                                    }
+                                                            function togglePassword() {
+                                                                var passwordField = document.getElementById('passwordDisplay');
+                                                                var button = event.target;
+                                                                if (passwordField.innerHTML === "********") {
+                                                                    passwordField.innerHTML = "${user.password}";
+                                                                    button.textContent = "Hide";
+                                                                } else {
+                                                                    passwordField.innerHTML = "********";
+                                                                    button.textContent = "Show";
+                                                                }
+                                                            }
 
-                                                    document.addEventListener('DOMContentLoaded', function () {
-                                                        const burger = document.querySelector('.burger');
-                                                        const navigation = document.querySelector('.navigation-admin');
-                                                        const main = document.querySelector('.main-admin');
-                                                        const profileCard = document.querySelector('.profile-card'); // Select the profile card
+                                                            document.addEventListener('DOMContentLoaded', function () {
+                                                                const burger = document.querySelector('.burger');
+                                                                const navigation = document.querySelector('.navigation-admin');
+                                                                const main = document.querySelector('.main-admin');
+                                                                const profileCard = document.querySelector('.profile-card'); // Select the profile card
 
-                                                        burger.addEventListener('click', function () {
-                                                            navigation.classList.toggle('active');
-                                                            main.classList.toggle('active');
-                                                            profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                                                        });
-                                                    });
+                                                                burger.addEventListener('click', function () {
+                                                                    navigation.classList.toggle('active');
+                                                                    main.classList.toggle('active');
+                                                                    profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+                                                                });
+                                                            });
+                                                            function previewImage(event) {
+                                                                const file = event.target.files[0];
+                                                                const imgElement = document.getElementById('avatarImg');
+
+                                                                if (file) {
+                                                                    const reader = new FileReader();
+                                                                    reader.onload = function (e) {
+                                                                        imgElement.src = e.target.result; // Hiển thị ảnh đã chọn
+                                                                        document.getElementById('uploadBtn').style.display = 'inline-block'; // Hiện nút Upload
+                                                                        document.getElementById('cancelBtn').style.display = 'inline-block'; // Hiện nút Cancel
+                                                                    };
+                                                                    reader.readAsDataURL(file);
+                                                                }
+                                                            }
+
+                                                            var userAvatarPath = "${user.avatar}";
+
+                                                            userAvatarPath = userAvatarPath.replace("assestsimages", "assests/images").replace("avatar", "avatar/").replace("imagesavatar", "images/avatar");
+                                                            function cancelUpload() {
+                                                                document.getElementById('file-input').value = ''; // Reset file input
+                                                                document.getElementById('uploadBtn').style.display = 'none'; // Ẩn nút Upload
+                                                                document.getElementById('cancelBtn').style.display = 'none'; // Ẩn nút Cancel
+
+                                                                // Đặt lại ảnh về hình ảnh đã lưu
+                                                                document.getElementById('avatarImg').src = userAvatarPath; // Gán lại đường dẫn ảnh
+                                                            }
 
         </script>
+
     </body>
 </html>

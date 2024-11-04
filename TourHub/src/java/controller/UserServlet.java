@@ -119,7 +119,7 @@ public class UserServlet extends HttpServlet {
         if (isUpdated) {
             HttpSession session = request.getSession();
             session.setAttribute("currentUser", user);
-            response.sendRedirect("user-profile.jsp");
+            response.sendRedirect("user");
         } else {
             response.sendRedirect("user-updateinfo.jsp?error=UpdateFailed");
         }
@@ -152,7 +152,7 @@ public class UserServlet extends HttpServlet {
         if (isUpdated) {
             HttpSession session = request.getSession();
             session.setAttribute("currentUser", user);
-            response.sendRedirect("user-profile.jsp");
+            response.sendRedirect("user");
         } else {
             response.sendRedirect("user-updateinfo.jsp?error=UpdateFailed");
         }
@@ -161,14 +161,14 @@ public class UserServlet extends HttpServlet {
     private void handleUpdatePassword(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Lấy thông tin từ form
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        String currentPassword = request.getParameter("password");
+        UserDB userDb = new UserDB();
+        User currentUser = (User) request.getSession().getAttribute("currentUser");
+        int userId = currentUser.getUser_Id();
+
+        String inputPassword = request.getParameter("password");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
-
-        // Lấy đối tượng User hiện tại từ cơ sở dữ liệu
-        UserDB userDb = new UserDB();
-        User currentUser = userDb.getUser(userId);
+        String currentPassword = Encrypt.toSHA256(inputPassword);
 
         RequestDispatcher dispatcher;
 
@@ -199,7 +199,7 @@ public class UserServlet extends HttpServlet {
             session.setAttribute("currentUser", userDb.getUser(userId)); // Lấy user mới sau khi update
 
             // Chuyển hướng trở lại trang thông tin người dùng
-            response.sendRedirect("user-profile.jsp");
+            response.sendRedirect("user");
         } else {
             // Xử lý nếu cập nhật thất bại
             request.setAttribute("error", "UpdateFailed");
@@ -211,6 +211,7 @@ public class UserServlet extends HttpServlet {
     private void handleUpdateEmail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int userId = Integer.parseInt(request.getParameter("userId"));
+        String avatar = request.getParameter("avatar");
         String email = request.getParameter("email");
 
         RequestDispatcher dispatcher = null;
@@ -258,6 +259,7 @@ public class UserServlet extends HttpServlet {
                 request.setAttribute("message", "OTP is sent to your email id");
                 mySession.setAttribute("otp", otpvalue);
                 mySession.setAttribute("email", email);
+                mySession.setAttribute("avatar", avatar);
                 mySession.setAttribute("userId", userId);  // Set type for password reset
                 dispatcher.forward(request, response);
             } else {
@@ -291,7 +293,7 @@ public class UserServlet extends HttpServlet {
             User newUser = userDb.getUser(userId);
 
             session.setAttribute("currentUser", newUser);
-            response.sendRedirect("user-profile.jsp");
+            response.sendRedirect("user");
 
         } else {
             request.setAttribute("message", "Invalid OTP. Please try again.");
@@ -330,12 +332,35 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDB userdb = new UserDB();
+        ThienDB userdb = new ThienDB();
+        User currentUser = (User) request.getSession().getAttribute("currentUser");
 
-        List<User> users = userdb.getAllUsers();
-        request.setAttribute("users", users);
-        request.getRequestDispatcher("includes/admin/user.jsp").forward(request, response);
+        if (currentUser == null) {
+            response.sendRedirect("home"); // Redirect to home if the user is not logged in
+            return;
+        }
 
+        int userId = currentUser.getUser_Id();
+        String role = currentUser.getRole();
+
+        User user = null;
+
+        // Use .equals() for string comparison in Java
+        if ("Customer".equals(role)) {
+            user = userdb.getCustomer(userId);
+
+            Date birthdayDate = user.getCus_Birth();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            String birthdayString = dateFormat.format(birthdayDate);
+            request.setAttribute("formattedBirthday", birthdayString);
+
+        } else if ("Provider".equals(role)) {
+            user = userdb.getProvider(userId);
+        }
+
+        request.setAttribute("user", user);
+        request.getSession().setAttribute("currentUser", user);
+        request.getRequestDispatcher("user-profile.jsp").forward(request, response);
     }
 
     /**

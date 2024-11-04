@@ -127,7 +127,7 @@
                                 </button>
                                 <div id="dropdownContent" class="dropdown-content">
                                     <c:if test="${sessionScope.currentUser.role.equals('Customer')}">
-                                        <a href="user-profile.jsp">Profile</a>
+                                        <a href="user">Profile</a>
                                     </c:if>
                                     <c:if test="${sessionScope.currentUser.role.equals('Provider')}">
                                         <a href="user-profile.jsp">Profile</a>

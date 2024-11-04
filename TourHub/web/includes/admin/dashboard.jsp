@@ -29,6 +29,37 @@
             .head button:hover {
                 background-color: #e64a19; /* Optional: Darken button on hover */
             }
+
+            h3 {
+                text-align: center; /* Center the heading */
+                color: #333; /* Dark color for the heading */
+                margin-bottom: 15px; /* Space below the heading */
+            }
+
+            .select-container {
+                display: flex; /* Use flexbox */
+                justify-content: center; /* Center horizontally */
+            }
+
+            select {
+                padding: 20px; /* Padding inside the select */
+                padding-left:2%;
+                padding-right:2%;
+                border: 1px solid #ccc; /* Border around the select */
+                border-radius: 5px; /* Rounded corners */
+                font-size: 16px; /* Increase font size */
+                appearance: none; /* Remove default arrow for better customization */
+                background-color: #fff; /* White background for the select */
+            }
+
+            #monthlyBookingsChart {
+                width: 100% !important; /* Ensure the canvas takes full width */
+                height: 100% !important; /* Ensure the canvas takes full height */
+            }
+
+            .ye {
+                margin-top: 10px;
+            }
         </style>
     </head>
     <body>
@@ -44,9 +75,9 @@
                 <div class="table-data">
                     <div class="order">
                         <div class="head">
-                            <h3>My Bookings</h3>
+                            <h3>View Website Statistic</h3>
                             <div>
-                                <form method="post" action="exportCsv">
+                                <form method="post" action="exportfile">
                                     <button type="submit">Export File</button>
                                 </form>
                             </div>
@@ -76,16 +107,32 @@
                                             <p>${cancellationRate}%</p>
                                         </div>
                                     </div>
-
                                     <!-- Container cho cả hai biểu đồ -->
                                     <div class="charts-container">
+
+
                                         <div class="chart-container">
-                                            <h3>Số Lượng Đặt Tour Theo Từng Tháng</h3>
-                                            <canvas id="monthlyBookingsChart"></canvas>
+                                            <canvas id="bookingsByCompanyChart"></canvas>
                                         </div>
 
                                         <div class="chart-container">
                                             <canvas id="bookingsByLocationChart"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <h3>Số Lượng Đặt Tour Theo Từng Tháng</h3>
+                                    <div class="select-container">
+                                        <select id="yearSelect" onchange="updateChart()">
+                                            <option value="2023">2023</option>
+                                            <option value="2024">2024</option>
+                                            <!-- Thêm các năm khác nếu cần -->
+                                        </select>
+                                    </div>
+
+                                    <div class="charts-container ye">
+
+                                        <div class="chart-container">
+                                            <canvas id="monthlyBookingsChart"></canvas>
                                         </div>
                                     </div>
 
@@ -165,6 +212,42 @@
                 }
             });
 
+            //
+            var ctxCompany = document.getElementById('bookingsByCompanyChart').getContext('2d');
+            var CompanyLabels = [];
+            var CompanyData = [];
+
+            <c:if test="${not empty bookingsByCompany}">
+                <c:forEach var="entry" items="${bookingsByCompany}">
+            CompanyLabels.push('${entry.key}');
+            CompanyData.push(${entry.value});
+                </c:forEach>
+            </c:if>
+
+            var bookingsByCompanyChart = new Chart(ctxCompany, {
+                type: 'pie',
+                data: {
+                    labels: CompanyLabels,
+                    datasets: [{
+                            label: 'Số lượng đặt tour theo từng công ty',
+                            data: CompanyData,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.6)',
+                                'rgba(54, 162, 235, 0.6)',
+                                'rgba(255, 206, 86, 0.6)',
+                                'rgba(75, 192, 192, 0.6)',
+                                'rgba(153, 102, 255, 0.6)',
+                                'rgba(255, 159, 64, 0.6)'
+                            ],
+                            borderWidth: 1
+                        }]
+                },
+                options: {
+                    responsive: true,
+                }
+            });
+            //
+
             var ctxMonth = document.getElementById('monthlyBookingsChart').getContext('2d');
             var monthlyLabels = [];
             var monthlyData = [];
@@ -207,7 +290,39 @@
                     }
                 }
             });
+
+            function updateChart() {
+                var selectedYear = document.getElementById('yearSelect').value;
+
+                // Gửi yêu cầu đến server để lấy dữ liệu mới cho năm đã chọn
+                fetch('/Project_SWP/dashboard?year=' + selectedYear + '&format=json')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            monthlyLabels = [];
+                            monthlyData = [];
+
+                            // Giả định dữ liệu trả về là một đối tượng với thuộc tính month và bookingCount
+                            for (const month in data) {
+                                monthlyLabels.push(month);
+                                monthlyData.push(data[month]);
+                            }
+
+                            // Vẽ lại biểu đồ
+                            monthlyBookingsChart.data.labels = monthlyLabels;
+                            monthlyBookingsChart.data.datasets[0].data = monthlyData;
+                            monthlyBookingsChart.update();
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+            }
+
         </script>
+
+
         <script src="assests/js/script_profile.js"></script>
     </body>
 </html>
