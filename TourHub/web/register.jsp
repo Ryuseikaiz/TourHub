@@ -32,6 +32,113 @@
                 background-color: rgba(255, 255, 255, 0.8) !important;
             }
         </style>
+        <script>
+            function showError(message) {
+                alert(message);
+            }
+
+            function isVietnamesePhoneNumberValid(number) {
+                return /(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b/.test(number);
+            }
+
+
+            function validateForm() {
+                const phone = document.getElementById("phone").value;
+                const password = document.getElementById("password").value;
+                const confirmPassword = document.getElementById("confirmPassword").value;
+
+                // Kiểm tra số điện thoại hợp lệ
+                if (!isVietnamesePhoneNumberValid(phone)) {
+                    alert("Please enter a valid phone number.");
+                    return false;
+                }
+
+                // Kiểm tra mật khẩu hợp lệ
+                const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/;
+                if (!passwordPattern.test(password)) {
+                    alert("Password must be 8-16 characters long, include at least 1 lowercase, 1 uppercase letter, and 1 special character.");
+                    return false;
+                }
+                // Kiểm tra mật khẩu và xác nhận mật khẩu có giống nhau không
+                if (password !== confirmPassword) {
+                    alert("Password and confirm password must match.");
+                    return false;
+                }
+                return true;
+            }
+
+            async function loadAddresses() {
+                try {
+                    const response = await fetch('db.json');
+                    const data = await response.json();
+
+                    // Tải và hiển thị danh sách tỉnh
+                    const provinceSelect = document.getElementById("province");
+                    data.province.forEach(province => {
+                        const option = document.createElement("option");
+                        option.value = province.idProvince;
+                        option.textContent = province.name;
+                        provinceSelect.appendChild(option);
+                    });
+
+                    // Xử lý khi người dùng chọn tỉnh
+                    provinceSelect.addEventListener("change", function () {
+                        const selectedProvince = this.value;
+                        const provinceName = provinceSelect.options[provinceSelect.selectedIndex].text;
+                        document.getElementById("provinceName").value = provinceName;
+                        populateDistricts(data.district, data.commune, selectedProvince);
+                    });
+                } catch (error) {
+                    console.error("Failed to load address data:", error);
+                }
+            }
+
+// Hàm hiển thị danh sách huyện dựa trên tỉnh được chọn
+            function populateDistricts(districts, communes, provinceId) {
+                const districtSelect = document.getElementById("district");
+                districtSelect.innerHTML = "<option value=''>Select District</option>";
+
+                // Lọc huyện theo tỉnh và hiển thị
+                districts
+                        .filter(district => district.idProvince === provinceId)
+                        .forEach(district => {
+                            const option = document.createElement("option");
+                            option.value = district.idDistrict;
+                            option.textContent = district.name;
+                            districtSelect.appendChild(option);
+                        });
+
+                // Xử lý khi chọn huyện
+                districtSelect.addEventListener("change", function () {
+                    const selectedDistrict = this.value;
+                    const districtName = districtSelect.options[districtSelect.selectedIndex].text;
+                    document.getElementById("districtName").value = districtName;
+                    populateCommunes(communes, selectedDistrict);
+                });
+            }
+
+// Hàm hiển thị danh sách xã dựa trên huyện được chọn
+            function populateCommunes(communes, districtId) {
+                const communeSelect = document.getElementById("commune");
+                communeSelect.innerHTML = "<option value=''>Select Commune</option>";
+
+                communes
+                        .filter(commune => commune.idDistrict === districtId)
+                        .forEach(commune => {
+                            const option = document.createElement("option");
+                            option.value = commune.idCommune;
+                            option.textContent = commune.name;
+                            communeSelect.appendChild(option);
+                        });
+                communeSelect.addEventListener("change", function () {
+                    const communeName = communeSelect.options[communeSelect.selectedIndex].text;
+                    document.getElementById("communeName").value = communeName;
+                });
+            }
+
+            window.onload = loadAddresses;
+
+        </script>
     </head>
     <body>
         <section class="py-3 py-md-5 py-xl-8">
@@ -41,7 +148,7 @@
                         <div class="mb-5 text-center">
                             <h2 class="display-5 fw-bold">Sign Up</h2>
                         </div>
-                        <form action="register" method="post">
+                        <form action="register" method="post" onsubmit="return validateForm();">
                             <div class="row gy-3">
                                 <!-- First Name -->
                                 <div class="col-12 col-md-6">
@@ -78,8 +185,40 @@
                                 <!-- Address -->
                                 <div class="col-12">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="address" name="address" placeholder="Address" value="${param.address}" required>
-                                        <label for="address">Address</label>
+                                        <select class="form-select" id="province" required>
+                                            <option value="">Select Province</option>
+                                        </select>
+                                        <label for="province">Province</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="district" required>
+                                            <option value="">Select District</option>
+                                        </select>
+                                        <label for="district">District</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="commune" required>
+                                            <option value="">Select Commune</option>
+                                        </select>
+                                        <label for="commune">Commune</label>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden fields to store selected names -->
+                                <input type="hidden" id="provinceName" name="provinceName">
+                                <input type="hidden" id="districtName" name="districtName">
+                                <input type="hidden" id="communeName" name="communeName">
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="streetAddress" name="streetAddress" placeholder="Street Address" value="${param.streetAddress}" required>
+                                        <label for="streetAddress">Street Address</label>
                                     </div>
                                 </div>
 
