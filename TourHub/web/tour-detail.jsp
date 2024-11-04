@@ -620,6 +620,7 @@
                         </a>
                     </div>
                 </c:if>
+
                 <c:if test="${not empty tour.tour_Img[1]}">
                     <div class="image-1">
                         <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
@@ -678,6 +679,7 @@
             </div>
 
 
+
             <div class="tour-detail">
                 <div class="tour-detail-left-section">
                     <div class="left-section-above">
@@ -726,10 +728,8 @@
                             <span class="start-from">Start From</span>
                             <h4>${tour.price}</h4>
                         </div>
-
                         <button class="find-tour-btn">Find Options</button>
                     </div>
-
                     <div class="view-review">
 
                         <span class="view-review-content">What Travelers Say</span>
@@ -1015,6 +1015,7 @@
                     </c:forEach>
             </ul>
 
+
             <!--            <span>Bà Nà Hills là khu phức hợp giải trí và resort lớn nhất tại Việt Nam. Cùng nhau đi tour và xả láng cả
                             ngày tại Bà Nà Hills ngay nào! Tận hưởng không khí mát lạnh cùng phong cảnh tuyệt vời, ăn hết mình với
                             đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
@@ -1146,7 +1147,10 @@
                     </span>
                 </div>
             </div>
+
         </div>
+
+
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
     </div>
 <!--    <div id="popup5" class="popup">
@@ -1173,30 +1177,85 @@
 </div>
 </div>-->
 
-<div class="tour-content">
-
-
-
-</div>
-
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-</script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-<!--<script>
-    function fetchDetails(optionId) {
-        // Construct the URL using window.location.origin
-        const origin = window.location.origin;
-        var url = origin + `/Project_SWP/getTourOptionDetails?optionId=` + optionId;
-        console.log("Fetching from url: " + url);
-        // Fetch data from the server
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
+        <script>
+            function scrollRight() {
+                const section = document.getElementById('date-section');
+                if (section) {
+                    section.scrollLeft += 200; // Di chuyển về phía phải
                 }
+            }
+
+            function scrollLeft1() {
+                const section = document.getElementById('date-section');
+                if (section) {
+                    section.scrollLeft -= 200; // Di chuyển về phía trái
+                }
+            }
+
+            // Lắng nghe sự kiện click ra ngoài popup để tắt hiệu ứng mờ
+            document.addEventListener('click', function (event) {
+                var calendarElement = document.querySelector('.flatpickr-calendar');
+                var blurElement = document.getElementById('blur');
+
+                // Kiểm tra sự tồn tại của các phần tử trước khi xử lý
+                if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar')) {
+                    if (blurElement && blurElement.classList.contains('active')) {
+                        toggle(null);
+                    }
+                }
+            }, true);
+        </script>
+
+        <script>
+            // Biến lưu ngày được chọn, mặc định là ngày hiện tại
+            let selectedDate = new Date();
+
+            // Function để hiển thị 14 ngày với ngày hiện tại hoặc đã chọn ở giữa
+            function displayDateRange() {
+                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+                // Tìm tất cả các phần tử .date-container
+                let dateContainers = document.querySelectorAll('.date-container');
+
+                // Lấy danh sách ngày có tour và sắp xếp theo thứ tự
+                const tourOptions = [...document.querySelectorAll('.tour-option')];
+                const availableTourDates = tourOptions
+                        .map(option => new Date(option.getAttribute('data-tour-date')))
+                        .sort((a, b) => a - b)
+                        .filter(date => date >= new Date()); // Chỉ lấy những ngày từ hiện tại trở đi
+
+                // Chỉ giữ lại 14 ngày gần nhất có tour
+                const closestTourDates = availableTourDates.slice(0, 14);
+
+                // Nếu có ít hơn 14 ngày, ẩn các date-container còn lại
+                for (let i = 0; i < dateContainers.length; i++) {
+                    if (i < closestTourDates.length) {
+                        const date = closestTourDates[i];
+                        const dayOfWeek = daysOfWeek[date.getDay()];
+                        const formattedDate = date.getDate() + ' thg ' + (date.getMonth() + 1);
+
+                        // Cập nhật nội dung của phần tử date-container
+                        dateContainers[i].querySelector('[data-dayofweek]').innerText = dayOfWeek;
+                        dateContainers[i].querySelector('[data-formatteddate]').innerText = formattedDate;
+
+                        // Cập nhật sự kiện onclick với giá trị ngày mới
+                        dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
+
+                        // Hiển thị date-container nếu có tour
+                        dateContainers[i].style.display = 'flex';
+
+                        // Đặt class 'selected' vào ngày đầu tiên trong danh sách
+                        if (i === 0) {
+                            dateContainers[i].classList.add('selected');
+                            selectedDate = date;
+                        } else {
+                            dateContainers[i].classList.remove('selected');
+                        }
+                    } else {
+                        dateContainers[i].style.display = 'none';
+                    }
+                }
+
                 return response.text();
             })
             .then(data => {
@@ -1284,191 +1343,189 @@
         if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar')) {
             if (blurElement && blurElement.classList.contains('active')) {
                 toggle(null);
+
             }
-        }
-    }, true);
-</script>
 
-<script>
-    // Biến lưu ngày được chọn, mặc định là ngày hiện tại
-    let selectedDate = new Date();
 
-    // Function để hiển thị 14 ngày với ngày hiện tại hoặc đã chọn ở giữa
-    function displayDateRange() {
-        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            // Function để xử lý việc chọn ngày trong date-wrapper
+            function selectDate(element, dateStr) {
+                console.log("Date string selected:", dateStr);
+                // Xóa class 'selected' khỏi tất cả các ngày
+                let allDates = document.querySelectorAll('.date-container');
+                allDates.forEach(date => date.classList.remove('selected'));
 
-        // Tìm tất cả các phần tử .date-container
-        let dateContainers = document.querySelectorAll('.date-container');
+                // Thêm class 'selected' vào phần tử được nhấp vào
+                element.classList.add('selected');
 
-        // Lấy danh sách ngày có tour và sắp xếp theo thứ tự
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-        const availableTourDates = tourOptions
-                .map(option => new Date(option.getAttribute('data-tour-date')))
-                .sort((a, b) => a - b)
-                .filter(date => date >= new Date()); // Chỉ lấy những ngày từ hiện tại trở đi
+                // Cập nhật ngày đã chọn
+                selectedDate = new Date(dateStr);
 
-        // Chỉ giữ lại 14 ngày gần nhất có tour
-        const closestTourDates = availableTourDates.slice(0, 14);
+                console.log("Updated selectedDate:", selectedDate);
 
-        // Nếu có ít hơn 14 ngày, ẩn các date-container còn lại
-        for (let i = 0; i < dateContainers.length; i++) {
-            if (i < closestTourDates.length) {
-                const date = closestTourDates[i];
-                const dayOfWeek = daysOfWeek[date.getDay()];
-                const formattedDate = date.getDate() + ' thg ' + (date.getMonth() + 1);
-
-                // Cập nhật nội dung của phần tử date-container
-                dateContainers[i].querySelector('[data-dayofweek]').innerText = dayOfWeek;
-                dateContainers[i].querySelector('[data-formatteddate]').innerText = formattedDate;
-
-                // Cập nhật sự kiện onclick với giá trị ngày mới
-                dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
-
-                // Hiển thị date-container nếu có tour
-                dateContainers[i].style.display = 'flex';
-
-                // Đặt class 'selected' vào ngày đầu tiên trong danh sách
-                if (i === 0) {
-                    dateContainers[i].classList.add('selected');
-                    selectedDate = date;
-                } else {
-                    dateContainers[i].classList.remove('selected');
-                }
-            } else {
-                dateContainers[i].style.display = 'none';
+                filterTourOptions(selectedDate);
             }
-        }
 
-        // Cập nhật các lựa chọn tour dựa trên selectedDate ban đầu
-        filterTourOptions(selectedDate);
-    }
+            // Function để mở lịch và đặt ngày mặc định
+            function openCalendar() {
+                flatpickr("#calendarInput", {
+                    dateFormat: "Y-m-d",
+                    defaultDate: new Date(), // Ngày mặc định là ngày hiện tại
+                    minDate: "today",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        if (selectedDates.length > 0) {
+                            // Chuyển selectedDate thành chuỗi không có múi giờ (YYYY-MM-DD)
+                            const selectedDate = selectedDates[0].toISOString().split('T')[0];
 
+                            // Lấy danh sách ngày có tour và chuyển thành chuỗi dạng YYYY-MM-DD
+                            const availableTourDates = getAvailableTourDates().map(date =>
+                                new Date(date).toISOString().split('T')[0]
+                            );
 
-    const daysMapping = {
-        'Sunday': 0,
-        'Monday': 1,
-        'Tuesday': 2,
-        'Wednesday': 3,
-        'Thursday': 4,
-        'Friday': 5,
-        'Saturday': 6
-    };
-
-
-    function filterTourOptions(selectedDate) {
-        const dayOfWeek = selectedDate.getDay(); // Lấy số ngày trong tuần từ selectedDate
-        console.log("Selected day of week:", dayOfWeek); // Kiểm tra giá trị ngày đã chọn
-
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-
-        tourOptions.forEach(option => {
-            const refundSection = option.querySelector('.refund-section').innerText;
-            console.log("Refund section text:", refundSection); // In ra nội dung refund-section
-            const optionDayOfWeek = daysMapping[refundSection]; // Sử dụng ánh xạ để lấy số
-
-            console.log("Option day of week:", optionDayOfWeek); // Kiểm tra giá trị dayOfWeek trong mỗi option
-
-            // Lấy tour_Date từ option
-            const tourDateStr = option.getAttribute('data-tour-date'); // Giả sử bạn lưu trữ tour_Date trong thuộc tính data
-            const tourDate = new Date(tourDateStr); // Chuyển đổi chuỗi ngày thành đối tượng Date
-
-            // Kiểm tra nếu ngày đã chọn và tour_Date cùng ngày
-            if (optionDayOfWeek === dayOfWeek && selectedDate.toDateString() === tourDate.toDateString()) {
-                option.style.display = 'flex'; // Hiển thị tourOption
-            } else {
-                option.style.display = 'none'; // Ẩn tourOption
-            }
-        });
-    }
-
-
-    // Function để xử lý việc chọn ngày trong date-wrapper
-    function selectDate(element, dateStr) {
-        console.log("Date string selected:", dateStr);
-        // Xóa class 'selected' khỏi tất cả các ngày
-        let allDates = document.querySelectorAll('.date-container');
-        allDates.forEach(date => date.classList.remove('selected'));
-
-        // Thêm class 'selected' vào phần tử được nhấp vào
-        element.classList.add('selected');
-
-        // Cập nhật ngày đã chọn
-        selectedDate = new Date(dateStr);
-
-        console.log("Updated selectedDate:", selectedDate);
-
-        filterTourOptions(selectedDate);
-    }
-
-    // Function để mở lịch và đặt ngày mặc định
-    function openCalendar() {
-        flatpickr("#calendarInput", {
-            dateFormat: "Y-m-d",
-            defaultDate: new Date(), // Ngày mặc định là ngày hiện tại
-            minDate: "today",
-            onChange: function (selectedDates, dateStr, instance) {
-                if (selectedDates.length > 0) {
-                    // Chuyển selectedDate thành chuỗi không có múi giờ (YYYY-MM-DD)
-                    const selectedDate = selectedDates[0].toISOString().split('T')[0];
-
-                    // Lấy danh sách ngày có tour và chuyển thành chuỗi dạng YYYY-MM-DD
-                    const availableTourDates = getAvailableTourDates().map(date =>
-                        new Date(date).toISOString().split('T')[0]
-                    );
-
-                    // Kiểm tra xem selectedDate có nằm trong availableTourDates không
-                    if (!availableTourDates.includes(selectedDate)) {
-                        // Hiển thị thông báo ngay lập tức
-                        const notification = document.getElementById('notification');
-                        notification.innerText = "Ngày được chọn không có tour nào!";
-                        notification.style.display = 'block';
-                    } else {
-                        // Nếu có tour, cập nhật UI và ẩn thông báo nếu có
-                        displayDateRange(new Date(selectedDate));
-                        const notification = document.getElementById('notification');
-                        notification.style.display = 'none';
+                            // Kiểm tra xem selectedDate có nằm trong availableTourDates không
+                            if (!availableTourDates.includes(selectedDate)) {
+                                // Hiển thị thông báo ngay lập tức
+                                const notification = document.getElementById('notification');
+                                notification.innerText = "Ngày được chọn không có tour nào!";
+                                notification.style.display = 'block';
+                            } else {
+                                // Nếu có tour, cập nhật UI và ẩn thông báo nếu có
+                                displayDateRange(new Date(selectedDate));
+                                const notification = document.getElementById('notification');
+                                notification.style.display = 'none';
+                            }
+                        }
+                    },
+                    onClose: function () {
+                        toggle('calendar');
                     }
-                }
-            },
-            onClose: function () {
-                toggle('calendar');
+                }).open();
             }
-        }).open();
-    }
 
-    // Function để lấy danh sách ngày có tour
-    function getAvailableTourDates() {
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-        return tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
-    }
+            // Function để lấy danh sách ngày có tour
+            function getAvailableTourDates() {
+                const tourOptions = [...document.querySelectorAll('.tour-option')];
+                return tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
+            }
 
-    // Function để tìm ngày gần nhất có tour
-    function getClosestTourDate() {
-        const availableTourDates = getAvailableTourDates();
-        return new Date(availableTourDates[0]); // Giả sử ngày gần nhất có tour là ngày đầu tiên trong danh sách
-    }
+            // Function để tìm ngày gần nhất có tour
+            function getClosestTourDate() {
+                const availableTourDates = getAvailableTourDates();
+                return new Date(availableTourDates[0]); // Giả sử ngày gần nhất có tour là ngày đầu tiên trong danh sách
+            }
 
-    // Khi trang tải, hiển thị dải ngày với ngày đầu tiên là ngày hiện tại
-    window.onload = function () {
-        displayDateRange();
-    };
-</script>
+            // Khi trang tải, hiển thị dải ngày với ngày đầu tiên là ngày hiện tại
+            window.onload = function () {
+                displayDateRange();
+            };
+        </script>
 
-<script>
-    const options = document.querySelectorAll('.tour-option');
-    options.forEach(option => {
-        const dayOfWeek = option.getAttribute('data-dayofweek');
-        console.log(dayOfWeek); // Kiểm tra xem giá trị có được in ra không
-    });
-</script>
-<script>
-    document.querySelectorAll('.nav-link').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+        <script>
+            const options = document.querySelectorAll('.tour-option');
+            options.forEach(option => {
+                const dayOfWeek = option.getAttribute('data-dayofweek');
+                console.log(dayOfWeek); // Kiểm tra xem giá trị có được in ra không
             });
+        </script>
+        <script>
+            document.querySelectorAll('.nav-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const saveBtn = document.querySelector('.save-btn');
+
+                saveBtn.addEventListener('click', function () {
+                    const tourId = this.getAttribute('data-tour-id'); // Get tourId from data attribute
+                    const returnUrl = window.location.href; // Current URL
+
+                    addWishlist(tourId, returnUrl);
+                });
+            });
+
+            function addWishlist(tourId, returnUrl) {
+                const request = new XMLHttpRequest();
+                request.open('POST', 'wishlist', true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                const data = `action=add&tourId=${tourId}&returnUrl=${returnUrl}`;
+
+                request.onreadystatechange = function () {
+                    if (request.readyState === XMLHttpRequest.DONE) {
+                        if (request.status === 200) {
+                            const response = JSON.parse(request.responseText);
+                            Toastify({
+                                text: response.message,
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: response.message.includes("Failed") ?
+                                        "linear-gradient(to right, #ff5f6d, #ffc371)" :
+                                        "linear-gradient(to right, #00b09b, #96c93d)",
+                            }).showToast();
+                        } else {
+                            Toastify({
+                                text: "An error occurred while processing your request.",
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                            }).showToast();
+                        }
+                    }
+                };
+
+                request.send(data);
+            }
+        </script>
+
+
+
+
+        <script>
+            function sharePage() {
+                var pageUrl = encodeURIComponent(window.location.href); // Get the current page URL
+                var facebookShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + pageUrl;
+                // Open the share URL in a new window
+                window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
+            }
+        </script>
+
+        <script>
+
+        </script>
+
+        <script>
+            // Mở popup khi nhấn vào "Xem tất cả đánh giá"
+            document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
+                event.preventDefault();
+                var popup = document.getElementById("reviewPopup");
+                var popupContent = document.querySelector(".popup-content");
+
+                popup.classList.add("show");
+                setTimeout(function () {
+                    popupContent.classList.add("show");
+                }, 100); // Delay để popup hiện ra mượt mà
+            });
+
+            // Đóng popup khi nhấn vào nút đóng (x)
+            document.getElementById("closePopup").addEventListener("click", function () {
+                var popup = document.getElementById("reviewPopup");
+                var popupContent = document.querySelector(".popup-content");
+
+                popupContent.classList.remove("show");
+                setTimeout(function () {
+                    popup.classList.remove("show");
+                }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
+            });
+
         });
     });
 </script>
@@ -1513,69 +1570,12 @@
                         position: "right",
                         backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
                     }).showToast();
+
                 }
-            }
-        };
+            });
+        </script>
 
-        request.send(data);
-    }
-</script>
+        <script src="assests/js/searchpage-test.js"></script>
+        </body>
 
-
-
-
-<script>
-    function sharePage() {
-        var pageUrl = encodeURIComponent(window.location.href); // Get the current page URL
-        var facebookShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + pageUrl;
-        // Open the share URL in a new window
-        window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
-    }
-</script>
-
-<script>
-
-</script>
-
-<script>
-    // Mở popup khi nhấn vào "Xem tất cả đánh giá"
-    document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
-        event.preventDefault();
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
-
-        popup.classList.add("show");
-        setTimeout(function () {
-            popupContent.classList.add("show");
-        }, 100); // Delay để popup hiện ra mượt mà
-    });
-
-    // Đóng popup khi nhấn vào nút đóng (x)
-    document.getElementById("closePopup").addEventListener("click", function () {
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
-
-        popupContent.classList.remove("show");
-        setTimeout(function () {
-            popup.classList.remove("show");
-        }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
-    });
-
-    // Đóng popup khi nhấn bên ngoài popup
-    window.addEventListener("click", function (event) {
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
-
-        if (event.target == popup) {
-            popupContent.classList.remove("show");
-            setTimeout(function () {
-                popup.classList.remove("show");
-            }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
-        }
-    });
-</script>
-
-<script src="assests/js/searchpage-test.js"></script>
-</body>
-
-<%@include file="includes/footer.jsp" %>
+        <%@include file="includes/footer.jsp" %>

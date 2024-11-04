@@ -647,13 +647,13 @@ public class hoang_UserDB implements DatabaseInfo {
     //REVIEW
     public List<Review> getTop5ReviewsByLikes() {
         List<Review> reviews = new ArrayList<>();
-        String sql = "SELECT TOP 5 r.review_Id, r.comment, r.rating_Star, r.cus_Id, r.tour_Id, r.likes, u.first_Name, u.last_Name "
+        String sql = "SELECT TOP 5 r.review_Id, r.comment, r.rating_Star, r.cus_Id, r.tour_Id, u.first_Name, u.last_Name "
                 + "FROM Review r "
-                + "JOIN [User] u ON r.user_Id = u.user_Id "
-                + "ORDER BY r.likes DESC";
+                + "JOIN Customer c ON c.cus_Id = r.cus_Id "
+                + "JOIN [User] u ON c.user_Id = u.user_Id "
+                + "ORDER BY r.rating_Star DESC";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Review review = new Review();
@@ -662,7 +662,6 @@ public class hoang_UserDB implements DatabaseInfo {
                     review.setRating_Star(rs.getInt("rating_Star"));
                     review.setCus_Id(rs.getInt("cus_Id"));
                     review.setTour_Id(rs.getString("tour_Id"));
-                    review.setLikeCount(rs.getInt("likes")); // Set the like_Count field
                     review.setFirst_Name(rs.getString("first_Name"));
                     review.setLast_Name(rs.getString("last_Name"));
                     reviews.add(review);
@@ -694,7 +693,7 @@ public class hoang_UserDB implements DatabaseInfo {
         }
         return balance;
     }
-    
+
     public static void main(String[] args) {
         List<Discount> tours = new hoang_UserDB().getAllDiscounts();
         for (Discount book : tours) {
