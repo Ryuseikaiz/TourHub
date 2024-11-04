@@ -634,7 +634,7 @@ public class hoang_UserDB implements DatabaseInfo {
     //REVIEW
     public List<Review> getTop5ReviewsByLikes() {
         List<Review> reviews = new ArrayList<>();
-        String sql = "SELECT TOP 5 r.review_Id, r.comment, r.rating_Star, r.user_Id, r.tour_Id, r.likes, u.first_Name, u.last_Name "
+        String sql = "SELECT TOP 5 r.review_Id, r.comment, r.rating_Star, r.cus_Id, r.tour_Id, r.likes, u.first_Name, u.last_Name "
                 + "FROM Review r "
                 + "JOIN [User] u ON r.user_Id = u.user_Id "
                 + "ORDER BY r.likes DESC";
@@ -647,7 +647,7 @@ public class hoang_UserDB implements DatabaseInfo {
                     review.setReview_Id(rs.getInt("review_Id"));
                     review.setComment(rs.getString("comment"));
                     review.setRating_Star(rs.getInt("rating_Star"));
-                    review.setUser_Id(rs.getInt("user_Id"));
+                    review.setCus_Id(rs.getInt("cus_Id"));
                     review.setTour_Id(rs.getString("tour_Id"));
                     review.setLikeCount(rs.getInt("likes")); // Set the like_Count field
                     review.setFirst_Name(rs.getString("first_Name"));

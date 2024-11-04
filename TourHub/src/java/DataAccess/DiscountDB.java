@@ -15,7 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Discount;
@@ -42,20 +44,15 @@ public class DiscountDB implements DatabaseInfo {
     }
 
     // Get all discounts
-    public static List<Discount> getDiscountsByCompanyId(int companyId) {
+    public List<Discount> getDiscountsByCompanyId(int companyId) {
         List<Discount> discounts = new ArrayList<>();
-
-        // Giả sử rằng bảng Tour có cột companyId
-        String sql = "SELECT d.* FROM [Discount] d "
+        String sql = "SELECT d.*, t.tour_Name FROM [Discount] d "
                 + "JOIN [Tour] t ON d.tour_Id = t.tour_Id "
                 + "WHERE t.company_Id = ?";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            // Thiết lập tham số cho companyId
             ps.setInt(1, companyId);
 
-            // Thực hiện truy vấn và xử lý kết quả
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int discountId = rs.getInt("discount_Id");
@@ -66,16 +63,17 @@ public class DiscountDB implements DatabaseInfo {
                     Date endDay = rs.getDate("end_Day");
                     String require = rs.getString("require");
                     String tourId = rs.getString("tour_Id");
+                    String tourName = rs.getString("tour_Name"); // Fetch tour_name
                     String description = rs.getString("description");
 
                     Discount discount = new Discount(discountId, code, quantity, percentDiscount, startDay, endDay, require, tourId, description);
+                    discount.setTour_name(tourName); // Set the tour_name in the Discount object
                     discounts.add(discount);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return discounts;
     }
 
@@ -214,6 +212,26 @@ public class DiscountDB implements DatabaseInfo {
         }
         System.out.println("Danh sách tour IDs: " + tourIds);
         return tourIds;
+    }
+
+    public Map<String, String> getTourNamesByCompanyId(int companyId) {
+        Map<String, String> tourMap = new HashMap<>();
+        String query = "SELECT tour_Id, tour_Name FROM Tour WHERE company_Id = ?";
+
+        try (Connection con = getConnect(); PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, companyId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String tourId = rs.getString("tour_Id");
+                    String tourName = rs.getString("tour_Name");
+                    tourMap.put(tourName, tourId);  // Mapping tour_name to tour_id
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DiscountDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return tourMap;
     }
 
     public static void main(String[] args) {

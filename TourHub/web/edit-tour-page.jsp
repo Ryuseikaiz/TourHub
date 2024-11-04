@@ -88,131 +88,131 @@
                 border: none;
                 border-radius: 3px;
                 cursor: pointer;
-                transition: background-color 0.3s ease
+                transition: background-color 0.3s ease;
 
-                </style>
-            </head>
-            <body>
+            </style>
+        </head>
+        <body>
 
-                <!-- SIDEBAR -->
-                <section id="sidebar">
-                    <a href="home" class="brand">
-                        <i class='bx bxs-smile'></i>
-                        <span class="text">TourHub</span>
-                    </a>
-                    <ul class="side-menu top">
+            <!-- SIDEBAR -->
+            <section id="sidebar">
+                <a href="home" class="brand">
+                    <i class='bx bxs-smile'></i>
+                    <span class="text">TourHub</span>
+                </a>
+                <ul class="side-menu top">
+                    <li>
+                        <a href="user-profile.jsp">
+                            <i class='bx bxs-dashboard' ></i>
+                            <span class="text">User Information</span>
+                        </a>
+                    </li>
+                    <c:if test="${sessionScope.currentUser.role == 'Provider'}">
                         <li>
-                            <a href="user-profile.jsp">
+                            <a href="user-booking.jsp">
+                                <i class='bx bxs-shopping-bag-alt' ></i>
+                                <span class="text">Manage Booking</span>
+                            </a>
+                        </li>
+                    </c:if>
+                    <c:if test="${sessionScope.currentUser.role == 'Customer'}">
+                        <li>
+                            <a href="user-booking.jsp">
+                                <i class='bx bxs-shopping-bag-alt' ></i>
+                                <span class="text">My Booking</span>
+                            </a>
+                        </li>
+                    </c:if>
+                    <li>
+                        <a href="#">
+                            <i class='bx bxs-message-dots' ></i>
+                            <span class="text">Message</span>
+                        </a>
+                    </li>
+                    <c:if test="${sessionScope.currentUser.role == 'Provider' || sessionScope.currentUser.role == 'Admin'}">
+                        <li class="">
+                            <a href="${sessionScope.currentUser.role == 'Provider' ? '/Project_SWP/provider-analys' : 'admin-analysis.jsp'}">
                                 <i class='bx bxs-dashboard' ></i>
-                                <span class="text">User Information</span>
+                                <span class="text">Dashboard</span>
                             </a>
-                        </li>
-                        <c:if test="${sessionScope.currentUser.role == 'Provider'}">
-                            <li>
-                                <a href="user-booking.jsp">
-                                    <i class='bx bxs-shopping-bag-alt' ></i>
-                                    <span class="text">Manage Booking</span>
-                                </a>
-                            </li>
-                        </c:if>
-                        <c:if test="${sessionScope.currentUser.role == 'Customer'}">
-                            <li>
-                                <a href="user-booking.jsp">
-                                    <i class='bx bxs-shopping-bag-alt' ></i>
-                                    <span class="text">My Booking</span>
-                                </a>
-                            </li>
-                        </c:if>
-                        <li>
-                            <a href="#">
-                                <i class='bx bxs-message-dots' ></i>
-                                <span class="text">Message</span>
+                        </li>   
+                        <li class="active dropdown-btn">
+                            <a href="my-tour">
+                                <i class='bx bxs-briefcase-alt' ></i>
+                                <span class="text">My Tour</span>
                             </a>
-                        </li>
-                        <c:if test="${sessionScope.currentUser.role == 'Provider' || sessionScope.currentUser.role == 'Admin'}">
-                            <li class="">
-                                <a href="${sessionScope.currentUser.role == 'Provider' ? '/Project_SWP/provider-analys' : 'admin-analysis.jsp'}">
-                                    <i class='bx bxs-dashboard' ></i>
-                                    <span class="text">Dashboard</span>
-                                </a>
-                            </li>   
-                            <li class="active dropdown-btn">
-                                <a href="my-tour">
-                                    <i class='bx bxs-briefcase-alt' ></i>
-                                    <span class="text">My Tour</span>
-                                </a>
-                            </li> 
-                            <!-- Sub-menu -->
-                            <ul class="sub-menu">
-                                <li><a href="add-tour.jsp" class="active">Add Tour</a></li>                    
-                                <li><a href="#">Feature 3</a></li>
-                            </ul>
-                            <li>
-                                <a href="payment.jsp">
-                                    <i class='bx bxs-credit-card'></i>
-                                    <span class="text">Payment</span>
-                                </a>
-                            </li> 
-                        </c:if>
-
+                        </li> 
                         <!-- Sub-menu -->
                         <ul class="sub-menu">
-                            <li><a href="add-tour.jsp">Add Tour</a></li>
-                            <li><a href="payment.jsp">Payment</a></li>
+                            <li><a href="add-tour.jsp" class="active">Add Tour</a></li>                    
                             <li><a href="#">Feature 3</a></li>
                         </ul>
-                    </ul>
-                    <ul class="side-menu">
                         <li>
-                            <a href="#">
-                                <i class='bx bxs-cog' ></i>
-                                <span class="text">Settings</span>
+                            <a href="payment.jsp">
+                                <i class='bx bxs-credit-card'></i>
+                                <span class="text">Payment</span>
                             </a>
-                        </li>
-                        <li>
-                            <a href="logout" class="logout">
-                                <i class='bx bxs-log-out-circle' ></i>
-                                <span class="text">Logout</span>
-                            </a>
-                        </li>
+                        </li> 
+                    </c:if>
+
+                    <!-- Sub-menu -->
+                    <ul class="sub-menu">
+                        <li><a href="add-tour.jsp">Add Tour</a></li>
+                        <li><a href="payment.jsp">Payment</a></li>
+                        <li><a href="#">Feature 3</a></li>
                     </ul>
-                </section>
-                <!-- SIDEBAR -->
-
-
-
-                <!-- CONTENT -->
-                <section id="content">
-                    <!-- NAVBAR -->
-                    <nav>
-                        <i class='bx bx-menu' ></i>
-                        <a href="#" class="nav-link"></a>
-                        <form action="#">
-                            <div class="form-input">
-                                <input type="search" placeholder="Searching for tour...">
-                                <button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
-                            </div>
-                        </form>
-                        <input type="checkbox" id="switch-mode" hidden>
-                        <label for="switch-mode" class="switch-mode"></label>
-                        <a href="#" class="notification">
-                            <i class='bx bxs-bell' ></i>
-                            <!-- <span class="num">8</span> -->
+                </ul>
+                <ul class="side-menu">
+                    <li>
+                        <a href="#">
+                            <i class='bx bxs-cog' ></i>
+                            <span class="text">Settings</span>
                         </a>
-                        <div class="image-container">
-                            <img src="assests/images/avatar.jpg" alt="User Avatar" class="avatar">
-                        </div>
-                    </nav>
-                    <!-- NAVBAR -->
+                    </li>
+                    <li>
+                        <a href="logout" class="logout">
+                            <i class='bx bxs-log-out-circle' ></i>
+                            <span class="text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+            <!-- SIDEBAR -->
 
-                    <!-- MAIN -->
-                    <main>
-                        <c:choose>
-                            <c:when test="${sessionScope.currentUser == null}">
-                                <c:redirect url="home" />
-                            </c:when>
-                            <c:otherwise>
-                                <h3 style="<c:if test='${requestScope.message.contains("successfully")}'>color: green;</c:if>
+
+
+            <!-- CONTENT -->
+            <section id="content">
+                <!-- NAVBAR -->
+                <nav>
+                    <i class='bx bx-menu' ></i>
+                    <a href="#" class="nav-link"></a>
+                    <form action="#">
+                        <div class="form-input">
+                            <input type="search" placeholder="Searching for tour...">
+                            <button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
+                        </div>
+                    </form>
+                    <input type="checkbox" id="switch-mode" hidden>
+                    <label for="switch-mode" class="switch-mode"></label>
+                    <a href="#" class="notification">
+                        <i class='bx bxs-bell' ></i>
+                        <!-- <span class="num">8</span> -->
+                    </a>
+                    <div class="image-container">
+                        <img src="assests/images/avatar.jpg" alt="User Avatar" class="avatar">
+                    </div>
+                </nav>
+                <!-- NAVBAR -->
+
+                <!-- MAIN -->
+                <main>
+                    <c:choose>
+                        <c:when test="${sessionScope.currentUser == null}">
+                            <c:redirect url="home" />
+                        </c:when>
+                        <c:otherwise>
+                            <h3 style="<c:if test='${requestScope.message.contains("successfully")}'>color: green;</c:if>
                                 <c:if test='${requestScope.message.contains("Error")}'>color: red;</c:if>">
                                 ${requestScope.message}
                             </h3>

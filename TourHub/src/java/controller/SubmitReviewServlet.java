@@ -33,13 +33,22 @@ public class SubmitReviewServlet extends HttpServlet {
             return;
         }
 
+        // Retrieve cus_Id based on the current user's user_Id
+        ReviewDB reviewDB = new ReviewDB();
+        Integer cusId = reviewDB.getCusIdByUserId(currentUser.getUser_Id()); // Assuming this method exists
+
+        if (cusId == null) {
+            request.setAttribute("error", "Could not find customer information. Please contact support.");
+            request.getRequestDispatcher("reviewtour.jsp").forward(request, response);
+            return;
+        }
+
         Review review = new Review();
-        review.setUser_Id(currentUser.getUser_Id());
+        review.setCus_Id(cusId);  // Set cus_Id instead of user_Id
         review.setTour_Id(tourId);
         review.setRating_Star(ratingStar);
         review.setComment(comment);
 
-        ReviewDB reviewDB = new ReviewDB();
         boolean isReviewSubmitted = reviewDB.submitReview(review);
 
         if (isReviewSubmitted) {
@@ -62,8 +71,17 @@ public class SubmitReviewServlet extends HttpServlet {
             return;
         }
 
+        // Retrieve cus_Id based on the current user's user_Id
         ReviewDB reviewDB = new ReviewDB();
-        List<Booking> bookedTours = reviewDB.getBookedToursWithoutReview(currentUser.getUser_Id());
+        Integer cusId = reviewDB.getCusIdByUserId(currentUser.getUser_Id()); // Assuming this method exists
+
+        if (cusId == null) {
+            request.setAttribute("error", "Could not find customer information. Please contact support.");
+            request.getRequestDispatcher("reviewtour.jsp").forward(request, response);
+            return;
+        }
+
+        List<Booking> bookedTours = reviewDB.getBookedToursWithoutReview(cusId);
 
         Map<String, String> tourImages = new HashMap<>();
         for (Booking booking : bookedTours) {
@@ -82,5 +100,4 @@ public class SubmitReviewServlet extends HttpServlet {
 
         request.getRequestDispatcher("reviewtour.jsp").forward(request, response);
     }
-
 }

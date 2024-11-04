@@ -346,14 +346,13 @@
                                     <th>Start Day</th>
                                     <th>End Day</th>
                                     <th>Require</th>
-                                    <th>Tour ID</th>
+                                    <th>Tour Name</th> <!-- Update column title -->
                                     <th>Description</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% 
-                                // Lấy danh sách discounts từ attribute request
                                 List<Discount> discounts = (List<Discount>) request.getAttribute("listDiscount");
                                 if (discounts != null && !discounts.isEmpty()) { 
                                     for (Discount discount : discounts) { %>
@@ -364,7 +363,7 @@
                                     <td><%= discount.getStart_Day() %></td>
                                     <td><%= discount.getEnd_Day() %></td>
                                     <td><%= discount.getRequire() %></td>
-                                    <td><%= discount.getTour_Id() %></td>
+                                    <td><%= discount.getTour_name() %></td> <!-- Display tour_name -->
                                     <td><%= discount.getDescription() %></td>
                                     <td>
                                         <form action="edit-discount" method="get" style="display: inline-block; margin-right: 10px;">
@@ -375,15 +374,15 @@
 
                                         <button class="btn btn-delete" onclick="showModal('<%= discount.getDiscount_Id() %>')" style="display: inline-block;">Delete</button>
                                     </td>
-
                                 </tr>
                                 <% } 
-                                } else { %>
+    } else { %>
                                 <tr>
-                                    <td colspan="8">No discounts available.</td>
+                                    <td colspan="9">No discounts available.</td>
                                 </tr>
                                 <% } %>
                             </tbody>
+
                         </table>
                     </div>
                 </div>
