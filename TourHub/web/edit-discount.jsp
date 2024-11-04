@@ -16,28 +16,26 @@
     </head>
     <style>
         .form-group select {
-            width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
-            padding: 10px; /* Khoảng cách bên trong */
-            border: 1px solid #ddd; /* Đường viền */
-            border-radius: 4px; /* Bo tròn các góc */
-            font-size: 16px; /* Kích thước chữ */
-            background-color: #fff; /* Màu nền trắng */
-            appearance: none; /* Bỏ giao diện mặc định */
-            -webkit-appearance: none; /* Dành cho WebKit browsers */
-            -moz-appearance: none; /* Dành cho Firefox */
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M2%200L0%202h4L2%200zM0%203h4L2%205%200%203z%22/%3E%3C/svg%3E'); /* Mũi tên tùy chỉnh */
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: #fff;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M2%200L0%202h4L2%200zM0%203h4L2%205%200%203z%22/%3E%3C/svg%3E');
             background-repeat: no-repeat;
-            background-position: right 10px center; /* Vị trí mũi tên */
+            background-position: right 10px center;
             background-size: 10px;
         }
 
         .form-group select:hover {
-            border-color: #999; /* Đổi màu đường viền khi di chuột vào */
+            border-color: #999;
         }
 
         .form-group select:focus {
-            border-color: #007BFF; /* Đổi màu đường viền khi được focus */
-            outline: none; /* Bỏ viền mặc định */
+            border-color: #007BFF;
+            outline: none;
         }
 
     </style>
@@ -121,38 +119,20 @@
                 <div class="form-container">
                     <h3>Edit Discount</h3>
 
-                    <!-- Hiển thị thông báo lỗi nếu có -->
-                    <%
-                        String errorMessage = (String) session.getAttribute("error");
-                        String successMessage = (String) session.getAttribute("message");
+                    <!-- Display error or success messages if any -->
+                    <% String errorMessage = (String) session.getAttribute("error"); %>
+                    <% String successMessage = (String) session.getAttribute("message"); %>
+                    <% if (errorMessage != null) { %>
+                    <div style="color:red; margin-bottom: 10px;"><%= errorMessage %></div>
+                    <% session.removeAttribute("error"); %>
+                    <% } else if (successMessage != null) { %>
+                    <div style="color:green; margin-bottom: 10px;"><%= successMessage %></div>
+                    <% session.removeAttribute("message"); %>
+                    <% } %>
 
-                        if (errorMessage != null) {
-                    %> 
-                    <div style="color:red; margin-bottom: 10px;">
-                        <%= errorMessage %>
-                    </div>
-                    <%
-                        // Xóa thông báo lỗi khỏi session
-                        session.removeAttribute("error");
-                        }
-
-                        // Hiển thị thông báo thành công nếu có
-                        if (successMessage != null) {
-                    %> 
-                    <div style="color:green; margin-bottom: 10px;">
-                        <%= successMessage %>
-                    </div>
-                    <%
-                        // Xóa thông báo thành công khỏi session
-                        session.removeAttribute("message");
-                        }
-                    %>
-
-                    <!-- Nhận đối tượng discount từ request -->
-                    <%
-                        Discount discount = (Discount) request.getAttribute("discount");
-                        if (discount != null) {
-                    %>
+                    <!-- Receive discount object from request -->
+                    <% Discount discount = (Discount) request.getAttribute("discount"); %>
+                    <% if (discount != null) { %>
                     <form action="discount" method="post">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="id" value="<%= discount.getDiscount_Id() %>">
@@ -184,21 +164,31 @@
                             <select id="require" name="require" required>
                                 <option value="1" <%= discount.getRequire().equals("1") ? "selected" : "" %>>1 slot</option>
                                 <option value="2" <%= discount.getRequire().equals("2") ? "selected" : "" %>>2 slots</option>
-                                <!-- add other options similarly -->
+                                <option value="2" <%= discount.getRequire().equals("3") ? "selected" : "" %>>3 slots</option>
+                                <option value="2" <%= discount.getRequire().equals("4") ? "selected" : "" %>>4 slots</option>
+                                <option value="2" <%= discount.getRequire().equals("5") ? "selected" : "" %>>5 slots</option>
+                                <option value="2" <%= discount.getRequire().equals("6") ? "selected" : "" %>>6 slots</option>
+                                <option value="2" <%= discount.getRequire().equals("7") ? "selected" : "" %>>7 slots</option>
+                                <option value="2" <%= discount.getRequire().equals("8") ? "selected" : "" %>>8 slots</option>
+                                <option value="2" <%= discount.getRequire().equals("9") ? "selected" : "" %>>9 slots</option>
+                                <option value="2" <%= discount.getRequire().equals("10") ? "selected" : "" %>>10 slots</option>
+                                
+                                <!-- Additional options as needed -->
                             </select>
                         </div>
 
-                        <!-- Dropdown for Tour ID -->
+                        <!-- Dropdown for Tour Selection using tour_name but storing tour_id -->
                         <div class="form-group">
-                            <label for="tourId">Tour ID:</label>
+                            <label for="tourId">Select Tour:</label>
                             <select id="tourId" name="tourId" required>
-                                <c:forEach var="tourId" items="${providerTourIds}">
-                                    <option value="${tourId}" <c:if test="${tourId == discount.getTour_Id()}">selected</c:if>>${tourId}</option>
+                                <c:forEach var="entry" items="${providerTourNames}">
+                                    <option value="${entry.value}" <c:if test="${entry.value == discount.getTour_Id()}">selected</c:if>>
+                                        ${entry.key}
+                                    </option>
                                 </c:forEach>
                             </select>
                         </div>
 
-                        <!-- Description Field -->
                         <div class="form-group">
                             <label for="description">Description:</label>
                             <input type="text" id="description" name="description" value="<%= discount.getDescription() %>" required>

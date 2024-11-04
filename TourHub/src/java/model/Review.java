@@ -15,7 +15,7 @@ public class Review {
     private int review_Id;
     private String comment;
     private int rating_Star;
-    private int user_Id;
+    private int cus_Id;
     private String tour_Id;
     private String first_Name;
     private String last_Name;
@@ -26,16 +26,17 @@ public class Review {
     public Review() {
     }
 
-    public Review(int review_Id, String comment, int rating_Star, int user_Id, String tour_Id, String first_Name, String last_Name, List<ReviewReply> replies, int likes) {
+    public Review(int review_Id, String comment, int rating_Star, int cus_Id, String tour_Id, String first_Name, String last_Name, List<ReviewReply> replies, int likes, int likeCount) {
         this.review_Id = review_Id;
         this.comment = comment;
         this.rating_Star = rating_Star;
-        this.user_Id = user_Id;
+        this.cus_Id = cus_Id;
         this.tour_Id = tour_Id;
         this.first_Name = first_Name;
         this.last_Name = last_Name;
         this.replies = replies;
         this.likes = likes;
+        this.likeCount = likeCount;
     }
 
     public int getLikeCount() {
@@ -102,12 +103,12 @@ public class Review {
         this.rating_Star = rating_Star;
     }
 
-    public int getUser_Id() {
-        return user_Id;
+    public int getCus_Id() {
+        return cus_Id;
     }
 
-    public void setUser_Id(int user_Id) {
-        this.user_Id = user_Id;
+    public void setCus_Id(int cus_Id) {
+        this.cus_Id = cus_Id;
     }
 
     public String getTour_Id() {

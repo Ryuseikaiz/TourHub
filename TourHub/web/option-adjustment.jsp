@@ -188,13 +188,13 @@
                             <!-- RD Navbar Toggle-->
                             <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
                             <!-- RD Navbar Brand-->
-                            <div class="rd-navbar-brand"><a class="brand-name" href="index.html"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
+                            <div class="rd-navbar-brand"><a class="brand-name" href="home"><img class="logo-default" src="assests/images/logo-favicon/logo.png" alt="" width="208" height="46"/><img class="logo-inverse" src="assests/images/logo-inverse-208x46.png" alt="" width="208" height="46"/></a></div>
                         </div>
                         <div class="rd-navbar-aside-center">
                             <div class="rd-navbar-nav-wrap">
                                 <!-- RD Navbar Nav-->
                                 <ul class="rd-navbar-nav">
-                                    <li><a href="index.jsp">Home</a>
+                                    <li><a href="home">Home</a>
                                     </li>
                                     <li><a href="about-us.jsp">About Us</a>
                                     </li>
@@ -212,31 +212,62 @@
         </header>
      
         <div class="main-container flex" id="blur" style="margin-bottom: 50px">
-        <div class="card" style="height: fit-content;">
-            <img src="assests/images/new-image/CuChi-1.jpg" class="card-img" alt="">
-            <div class="tour-card-body">
-                <span class="card-title">
-                    ${option.option_Name}
-                </span>
-                <br>
-                <span class="card-text">
-                    ${option.option_Description}
-                </span>
+            <div class="card-dis-container">
+                <div class="card" style="height: fit-content;">
+                    <img src="assests/images/new-image/CuChi-1.jpg" class="card-img" alt="">
+                    <div class="tour-card-body">
+                        <span class="card-title">
+                            ${option.option_Name}
+                        </span>
+                        <br>
+                        <span class="card-text">
+                            ${option.option_Description}
+                        </span>
 
-                <div class="card-change">
-                    <span class="card-refund">
-                        Không thể hoàn tiền
-                    </span>
-                    <span class="card-change-date">
-                        Không thể đổi lịch
-                    </span>
-                </div>
+                        <div class="card-change">
+                            <span class="card-refund">
+                                Không thể hoàn tiền
+                            </span>
+                            <span class="card-change-date">
+                                Không thể đổi lịch
+                            </span>
+                        </div>
 
-                <div class="card-view-btn">
-                    <button>Xem thông tin vé</button>
+                        <div class="card-view-btn">
+                            <button>Xem thông tin vé</button>
+                        </div>
+                    </div>
                 </div>
+                        
+                <div class="discount-container">
+                    <div class="discount-title">Voucher</div>
+                    <c:forEach var="discount" items="${discounts}">
+                        <div class="discount-detail-wrapper" style="justify-content: space-between;">
+                        <div class="discount-detail">
+                            <div class="discount-name">
+                                <span class="discount-percent">${discount.percent_Discount.intValue()}</span>
+                                % discount for bookings from
+                                <span class="discount-require">${discount.require} </span>
+                                people</div>
+                            <div class="discount-slot">Available: ${discount.quantity}</div>
+                            <div class="discount-day" style="font-weight: 600; font-size: 12px; color: #808080;">
+                                Valid from: 
+                                <span class="start-Day">
+                                    <fmt:formatDate value="${discount.start_Day}" pattern="dd-MM-yyyy"/>
+                                </span> 
+                                to 
+                                <span class="start-Day">
+                                    <fmt:formatDate value="${discount.end_Day}" pattern="dd-MM-yyyy"/>
+                                </span>
+                            </div>
+                        </div>
+
+                        <button class="discount-btn" data-start="${discount.start_Day}" data-end="${discount.end_Day}" onclick="selectDiscount('${discount.discount_Id}')">Choose</button>
+                    </div>
+                    </c:forEach>
+                </div>       
             </div>
-        </div>
+        
 
         <div class="option-adjustment">
 
@@ -288,7 +319,7 @@
 
                         <div class="counter-container">
                             <div class="adjust-button" id="decrement-${people.peopleId}">-</div>
-                            <div class="counter-display" id="counter-${people.peopleId}" data-count="${people.minCount}" data-min-count="${people.minCount}" data-max-count="${people.maxCount}">${people.minCount}</div>
+                            <div class="counter-display" id="counter-${people.peopleId}" data-count="${people.minCount}" data-min-count="${people.minCount}" data-max-count="${people.maxCount}" data-people-type="${people.peopleType}">${people.minCount}</div>
                             <div class="adjust-button" id="increment-${people.peopleId}">+</div>
                         </div>
                     </div>
@@ -299,7 +330,7 @@
                 <div class="total-cost-left-sec-container">
                     <div class="total-cost-left-sec">
                         <div class="total-cost-left-sec-above">
-                            <span class="total-cost-title" >Tổng giá tiền</span>
+                            <span class="total-cost-title" >You must pay</span>
                             <br>
                             <span class="total-cost"></span>
                         </div>
@@ -327,13 +358,21 @@
                                                <span class="total-cost-detail" id="${people.peopleId}-total-cost-detail"></span>
                                         </div>
                                     </c:forEach>
+                                    <div class="total-no-discount-container" style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                        <span class="total-no-discount-text" style="font-size: 17px; font-weight: 600; color: black;">Total</span>
+                                        <span class="total-no-discount" style="font-size: 17px; font-weight: 700; color: #FF5E1F;"></span>
+                                    </div>
+                                    <div class="discount-cost" style="display: flex; justify-content: space-between;">
+                                        <span class="discount-text" style="font-weight: 600; color: gray;">Discount</span>
+                                        <span class="total-discount" style="font-weight: 700; color: black;"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button class="book-now-btn">Đặt ngay</button>
+                <button class="book-now-btn">Book now</button>
             </div>
         </div>
     </div>
@@ -345,7 +384,207 @@
         </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     
+    <script>    
+        // Biến toàn cục lưu trữ phần trăm giảm giá đã chọn và điều kiện giảm giá đã chọn
+        let selectedDiscountPercent = 0;
+        let selectedDiscountRequire = 0;  // Điều kiện số lượng người của voucher đã chọn
+        let currentTotalCost = 0; // Biến toàn cục lưu tổng giá tiền
+        
+        // Hàm tính toán tổng giá tiền của tất cả người với giảm giá nếu có
+        function calculateTotalCost() {
+            let totalCost = 0;
+            const peopleContainers = document.querySelectorAll('.people-container');
+            let totalPeopleCount = 0;
+
+            peopleContainers.forEach(container => {
+                const peopleInfo = container.querySelector('.people-infomation');
+                const counterDisplay = container.querySelector('.counter-display');
+
+                if (!peopleInfo || !counterDisplay) {
+                    console.error("Cannot find people-infomation or counter-display in container:", container);
+                    return;
+                }
+
+                const price = parseFloat(peopleInfo.getAttribute('data-price'));
+                const count = parseInt(counterDisplay.getAttribute('data-count'));
+                const peopleId = peopleInfo.getAttribute('data-people-id');
+                const totalPeopleCost = price * count;
+
+                // Tính tổng số lượng người để kiểm tra điều kiện giảm giá
+                totalPeopleCount += count;
+
+                const getElementIdCost = peopleId + '-total-cost-detail';
+                const totalCostDetailElement = document.getElementById(getElementIdCost);
+
+                if (totalCostDetailElement) {
+                    totalCostDetailElement.textContent = formatCurrency(totalPeopleCost);
+                } else {
+                    console.error(`Cannot find #${peopleId}-total-cost-detail to display total cost.`);
+                }
+
+                totalCost += totalPeopleCost;
+            });
+
+            // Kiểm tra điều kiện của giảm giá đã chọn
+            let discountAmount = 0;
+            if (totalPeopleCount >= selectedDiscountRequire && selectedDiscountPercent > 0) {
+                discountAmount = (totalCost * selectedDiscountPercent) / 100;
+            } else {
+                // Nếu không đạt điều kiện, bỏ giảm giá đã chọn
+                selectedDiscountPercent = 0;
+                selectedDiscountRequire = 0;
+            }
+
+            const totalAfterDiscount = totalCost - discountAmount;
+            
+            // Update the global variable with the calculated total cost after discount
+            currentTotalCost = totalCost;
+
+            // Cập nhật hiển thị cho tổng tiền và tiền giảm
+            const totalDiscountElement = document.querySelector('.total-discount');
+            const totalCostElement = document.querySelector('.total-cost');
+            const totalCostNoDiscountElement = document.querySelector('.total-no-discount');
+            
+            
+            if (totalDiscountElement) {
+                totalDiscountElement.textContent = '-' + formatCurrency(discountAmount);
+            }
+            
+            if (totalCostNoDiscountElement) {
+                totalCostNoDiscountElement.textContent = formatCurrency(totalCost);
+            }
+
+            if (totalCostElement) {
+                totalCostElement.textContent = formatCurrency(totalAfterDiscount);
+            } else {
+                console.error("Cannot find .total-cost to display the total cost.");
+            }
+        }
+
+        // Thêm sự kiện cho nút giảm giá
+        function setupDiscountButtons() {
+            const discountButtons = document.querySelectorAll('.discount-btn');
+
+            discountButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const discountContainer = this.closest('.discount-detail-wrapper');
+                    const discountPercentElement = discountContainer.querySelector('.discount-percent');
+                    const discountRequireElement = discountContainer.querySelector('.discount-require');
+
+                    selectedDiscountPercent = parseFloat(discountPercentElement ? discountPercentElement.textContent : 0);
+                    selectedDiscountRequire = parseInt(discountRequireElement ? discountRequireElement.textContent : 0);
+
+                    // Tính lại tổng giá với giảm giá
+                    calculateTotalCost();
+                });
+            });
+        }
+
+        // Hàm format tiền tệ (ví dụ: 1,000,000 VND)
+        function formatCurrency(amount) {
+            return amount.toLocaleString('vi-VN') + ' VND';
+        }
+
+        // Hàm kiểm tra và kích hoạt nút giảm giá nếu ngày hiện tại nằm trong khoảng hợp lệ
+        function checkAndActivateDiscount() {
+            const discountContainers = document.querySelectorAll('.discount-detail-wrapper');
+            let totalPeopleCount = 0;
+
+            const peopleContainers = document.querySelectorAll('.people-container');
+            peopleContainers.forEach(container => {
+                const counterDisplay = container.querySelector('.counter-display');
+                const peopleType = container.querySelector('.people-title').textContent;
+
+                if (peopleType.includes("Người lớn") || peopleType.includes("Trẻ em")) {
+                    totalPeopleCount += parseInt(counterDisplay.getAttribute('data-count'));
+                }
+            });
+
+            // Ngày hiện tại
+            const today = new Date();
+
+            discountContainers.forEach(discountContainer => {
+                const discountBtn = discountContainer.querySelector('.discount-btn');
+                const discountRequire = parseInt(discountContainer.querySelector('.discount-require').textContent.trim());
+
+                // Lấy ngày bắt đầu và ngày kết thúc từ các thuộc tính data-start và data-end
+                const startDateStr = discountBtn.getAttribute('data-start');
+                const endDateStr = discountBtn.getAttribute('data-end');
+
+                // Chuyển đổi chuỗi ngày sang đối tượng Date
+                const startDate = new Date(startDateStr);
+                const endDate = new Date(endDateStr);
+
+                // Kiểm tra ngày hiện tại có nằm trong khoảng [startDate, endDate] và số người đạt yêu cầu
+                const isWithinDateRange = today >= startDate && today <= endDate;
+                const meetsPeopleRequirement = totalPeopleCount >= discountRequire;
+
+                // Kích hoạt nút nếu cả hai điều kiện đều thỏa mãn
+                discountBtn.disabled = !(isWithinDateRange && meetsPeopleRequirement);
+                discountBtn.style.backgroundColor = discountBtn.disabled ? 'gray' : '';
+            });
+        }
+
+        // Hàm cập nhật số lượng và giá tiền khi nhấn nút tăng/giảm
+        function setupCounterListeners() {
+            const adjustButtons = document.querySelectorAll('.adjust-button');
+
+            adjustButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const peopleContainer = this.closest('.people-container');
+                    const peopleInfo = peopleContainer.querySelector('.people-infomation');
+                    const counterDisplay = peopleContainer.querySelector('.counter-display');
+
+                    if (!peopleInfo || !counterDisplay) {
+                        console.error("Cannot find people-infomation or counter-display in container:", peopleContainer);
+                        return;
+                    }
+
+                    const peopleId = peopleInfo.getAttribute('data-people-id');
+                    const minCount = parseInt(counterDisplay.getAttribute('data-min-count'));
+                    const maxCount = parseInt(counterDisplay.getAttribute('data-max-count'));
+                    let count = parseInt(counterDisplay.getAttribute('data-count'));
+
+                    if (this.id.includes('increment') && count < maxCount) {
+                        count++;
+                    } else if (this.id.includes('decrement') && count > minCount) {
+                        count--;
+                    }
+
+                    counterDisplay.textContent = count;
+                    counterDisplay.setAttribute('data-count', count);
+
+                    calculateTotalCost();
+                    checkAndActivateDiscount();
+
+                    const getElementIdNum = peopleId + '-num-detail';
+                    const numDetailElement = document.getElementById(getElementIdNum);
+
+                    if (numDetailElement) {
+                        numDetailElement.textContent = count;
+                    } else {
+                        console.error(`Cannot find #${peopleId}-num-detail to update count.`);
+                    }
+                });
+            });
+        }
+
+        // Khởi tạo các sự kiện lắng nghe khi trang được tải xong
+        window.addEventListener('DOMContentLoaded', (event) => {
+            setupCounterListeners();
+            calculateTotalCost();
+            checkAndActivateDiscount();
+            setupDiscountButtons();
+        });
+    </script>
+    
     <script>
+        function selectDiscount(discountId) {
+            // Lưu discountId vào localStorage
+            localStorage.setItem("selectedDiscountId", discountId);
+            console.log("Discount ID saved:", discountId);
+        }
+        
         document.querySelector('.book-now-btn').addEventListener('click', function() {
             // Gửi yêu cầu kiểm tra đăng nhập
             fetch('CheckLogin', { // Gọi đến servlet kiểm tra đăng nhập
@@ -354,6 +593,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.loggedIn) {
+                    
                     // Nếu người dùng đã đăng nhập, tiếp tục quy trình đặt tour
                     const bookingData = proceedWithBooking();
 
@@ -361,13 +601,20 @@
                     const totalCost = bookingData.totalCost;
                     const bookingDetail = bookingData.bookingDetail;
                     const optionId = bookingData.optionId;
+                    const discountCost = bookingData.discountCost;
+                    const discountId = localStorage.getItem("selectedDiscountId");
+                    const totalCostNoDis = currentTotalCost;
+                    
 
                     // Debug: Check if the values are retrieved correctly
                     console.log("Selected Date: ", selectedDate);
                     console.log("Total Cost: ", totalCost);
                     console.log("Booking Detail: ", bookingDetail);
                     console.log("Option ID: ", optionId);
-
+                    console.log("Discount cost: ", discountCost);
+                    console.log("Discount ID servlet: ", discountId);
+                    console.log("Total no dis: ", totalCostNoDis);
+                    
                     // Check for empty values before redirecting
                     if (!selectedDate || !totalCost || !bookingDetail || !optionId) {
                         console.error("One or more booking parameters are missing!");
@@ -383,7 +630,10 @@
                     const bookingOverviewLink = 'BookingOverview?selectedDate=' + enCodeSelectedDate + 
                              '&totalCost=' + enCodeTotalCost + 
                              '&bookingDetail=' + enCodeBookingDetail + 
-                             '&optionId=' + enCodeOptionId;
+                             '&optionId=' + enCodeOptionId +
+                             '&discountCost=' + discountCost +
+                             '&discountId=' + discountId +
+                             '&totalNoDis=' + totalCostNoDis;
 
                     // Redirect to BookingOverview with parameters
                     window.location.href = bookingOverviewLink;
@@ -402,6 +652,7 @@
             // Lấy ngày đã chọn
             const selectedDate = document.querySelector('.selected-date').innerText;
             let optionId = document.querySelector('.optionId').innerText;
+            let discountCost = document.querySelector('.total-discount').innerText;
 
             const formattedSelectedDate = convertDateFormat(selectedDate);
             
@@ -440,7 +691,8 @@
                 selectedDate: formattedSelectedDate,
                 totalCost: totalCost.replace(/[^0-9]/g, ''), // Chỉ lấy số từ giá tiền
                 bookingDetail: bookingDetail,
-                optionId: optionId
+                optionId: optionId,
+                discountCost: discountCost
             };
 
             return bookingData;
@@ -535,103 +787,6 @@
             }
         }
     </script>
-
-    <script>
-        // Hàm tính toán tổng giá tiền của tất cả người
-        function calculateTotalCost() {
-            let totalCost = 0;
-            const peopleContainers = document.querySelectorAll('.people-container');
-
-            peopleContainers.forEach(container => {
-                const peopleInfo = container.querySelector('.people-infomation');
-                const counterDisplay = container.querySelector('.counter-display');
-
-                if (!peopleInfo || !counterDisplay) {
-                    console.error("Cannot find people-infomation or counter-display in container:", container);
-                    return;
-                }
-
-                const price = parseFloat(peopleInfo.getAttribute('data-price'));
-                const count = parseInt(counterDisplay.getAttribute('data-count'));
-                const peopleId = peopleInfo.getAttribute('data-people-id');
-                const totalPeopleCost = price * count;
-
-                const getElementIdCost = peopleId + '-total-cost-detail';
-                const totalCostDetailElement = document.getElementById(getElementIdCost);
-
-                if (totalCostDetailElement) {
-                    totalCostDetailElement.textContent = formatCurrency(totalPeopleCost);
-                } else {
-                    console.error(`Cannot find #${peopleId}-total-cost-detail to display total cost.`);
-                }
-
-                totalCost += totalPeopleCost;
-            });
-
-            const totalCostElement = document.querySelector('.total-cost');
-            if (totalCostElement) {
-                totalCostElement.textContent = formatCurrency(totalCost);
-            } else {
-                console.error("Cannot find .total-cost to display the total cost.");
-            }
-        }
-
-        // Hàm format tiền tệ (ví dụ: 1,000,000 VND)
-        function formatCurrency(amount) {
-            return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-        }
-
-        // Hàm cập nhật số lượng và giá tiền khi nhấn nút tăng/giảm
-        function setupCounterListeners() {
-            const adjustButtons = document.querySelectorAll('.adjust-button');
-
-            adjustButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const peopleContainer = this.closest('.people-container');
-                    const peopleInfo = peopleContainer.querySelector('.people-infomation');
-                    const counterDisplay = peopleContainer.querySelector('.counter-display');
-
-                    if (!peopleInfo || !counterDisplay) {
-                        console.error("Cannot find people-infomation or counter-display in container:", peopleContainer);
-                        return;
-                    }
-
-                    const peopleId = peopleInfo.getAttribute('data-people-id');
-                    const minCount = parseInt(counterDisplay.getAttribute('data-min-count')); // Lấy minCount từ thuộc tính
-                    const maxCount = parseInt(counterDisplay.getAttribute('data-max-count')); // Lấy maxCount từ thuộc tính
-                    let count = parseInt(counterDisplay.getAttribute('data-count'));
-
-                    if (this.id.includes('increment') && count < maxCount) {
-                        count++;
-                    } else if (this.id.includes('decrement') && count > minCount) {
-                        count--;
-                    }
-
-                    counterDisplay.textContent = count;
-                    counterDisplay.setAttribute('data-count', count);
-
-                    // Cập nhật lại tổng giá tiền sau khi thay đổi số lượng
-                    calculateTotalCost();
-
-                    const getElementIdNum = peopleId + '-num-detail';
-                    const numDetailElement = document.getElementById(getElementIdNum);
-
-                    if (numDetailElement) {
-                        numDetailElement.textContent = count;
-                    } else {
-                        console.error(`Cannot find #${peopleId}-num-detail to update count.`);
-                    }
-                });
-            });
-        }
-
-        // Khởi tạo các sự kiện lắng nghe khi trang được tải xong
-        window.addEventListener('DOMContentLoaded', (event) => {
-            setupCounterListeners();
-            calculateTotalCost(); // Tính toán ngay khi trang được tải lần đầu
-        });
-    </script>
-
 
 <!--    <script>
         function scrollRight() {

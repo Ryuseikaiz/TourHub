@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,7 +70,10 @@ public class ProviderTourServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String status = request.getParameter("filterStatus");
+
         int companyId = 0;
+
         try {
             companyId = new hoang_UserDB().getProviderIdFromUserId(new UserDB().getUserFromSession(request.getSession()).getUser_Id());
         } catch (SQLException ex) {
@@ -77,9 +81,19 @@ public class ProviderTourServlet extends HttpServlet {
         }
 
         TourDB tourDB = new TourDB();
-        List<Tour> providerTours = tourDB.getToursByProviderID(companyId);
-        request.setAttribute("providerTours", providerTours);
+        List<Tour> providerTours;
+
+        if (status == null || status.isEmpty()) {
+            // Retrieve all tours if status is null or empty
+            providerTours = tourDB.getToursByProviderID(companyId);
+        } else {
+            // Retrieve tours based on status
+            providerTours = tourDB.getToursByProviderID(companyId, status);
+        }
+
+        request.setAttribute("tours", providerTours);
         request.getRequestDispatcher("mytour.jsp").forward(request, response);
+
     }
 
     /**

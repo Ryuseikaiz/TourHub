@@ -10,7 +10,7 @@ import model.Review;
 import model.Tour;
 import model.User;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,16 @@ public class MyReviewsServlet extends HttpServlet {
             return;
         }
 
-        List<Review> userReviews = reviewDB.getUserReviews(currentUser.getUser_Id());
+        // Retrieve cus_Id based on user_Id
+        Integer cusId = reviewDB.getCusIdByUserId(currentUser.getUser_Id());
+        if (cusId == null) {
+            session.setAttribute("reviewError", "Customer information not found.");
+            response.sendRedirect("myreviews");
+            return;
+        }
+
+        // Fetch reviews using cus_Id
+        List<Review> userReviews = reviewDB.getUserReviews(cusId);
         Map<Integer, String> tourNames = new HashMap<>();
         Map<Integer, String> tourImages = new HashMap<>();
 
@@ -47,6 +56,7 @@ public class MyReviewsServlet extends HttpServlet {
         request.setAttribute("tourNames", tourNames);
         request.setAttribute("tourImages", tourImages);
 
+        // Handle success and error messages
         String reviewSuccess = (String) session.getAttribute("reviewSuccess");
         if (reviewSuccess != null) {
             request.setAttribute("reviewSuccess", reviewSuccess);
@@ -86,13 +96,21 @@ public class MyReviewsServlet extends HttpServlet {
             return;
         }
 
+        // Retrieve cus_Id based on user_Id
+        Integer cusId = reviewDB.getCusIdByUserId(currentUser.getUser_Id());
+        if (cusId == null) {
+            session.setAttribute("reviewError", "Customer information not found.");
+            response.sendRedirect("myreviews");
+            return;
+        }
+
         int reviewId = Integer.parseInt(request.getParameter("reviewId"));
         int ratingStar = Integer.parseInt(request.getParameter("ratingStar"));
         String comment = request.getParameter("comment");
 
         Review review = new Review();
         review.setReview_Id(reviewId);
-        review.setUser_Id(currentUser.getUser_Id());
+        review.setCus_Id(cusId); // Use cus_Id instead of user_Id
         review.setRating_Star(ratingStar);
         review.setComment(comment);
 

@@ -2,10 +2,38 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
  */
-// Automatically call calculateDuration when the page loads
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
     calculateDuration();
-}
+    console.log("DOM fully loaded and parsed");
+
+    // Get the message from the data attribute
+    var toastContainer = document.getElementById('toastContainer');
+    var toastMessage = toastContainer.getAttribute('data-message');
+
+    // Debugging message value
+    console.log("Toast message:", toastMessage);
+
+    // Toastify message handling
+    if (toastMessage && toastMessage.trim() !== "") {
+        Toastify({
+            text: toastMessage,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+            close: true,
+            style: {
+                fontSize: "18px",
+                padding: "20px",
+                borderRadius: "8px"
+            }
+        }).showToast();
+    } else {
+        console.log("No valid toast message found.");
+    }
+});
+
+
 function reloadData() {
     var date = document.getElementById("date").value;
     $.ajax({
@@ -110,4 +138,19 @@ function removeImage(tourId, imageToRemove) {
     // Send AJAX request with tourId and imageToRemove parameters
     xhr.send(`tourId=${encodeURIComponent(tourId)}&imageToRemove=${encodeURIComponent(imageToRemove)}`);
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const slotInput = document.getElementById("slot");
+    const errorElement = document.getElementById("slotError");
 
+    slotInput.addEventListener("input", function () {
+        const slotValue = parseFloat(this.value);
+
+        if (isNaN(slotValue) || slotValue < 0) {
+            errorElement.style.display = "block";
+            this.setCustomValidity("Slot must be a non-negative number.");
+        } else {
+            errorElement.style.display = "none";
+            this.setCustomValidity("");
+        }
+    });
+});

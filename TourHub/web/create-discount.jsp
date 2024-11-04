@@ -16,33 +16,27 @@
     </head>
     <style>
         .form-group select {
-            width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
-            padding: 10px; /* Khoảng cách bên trong */
-            border: 1px solid #ddd; /* Đường viền */
-            border-radius: 4px; /* Bo tròn các góc */
-            font-size: 16px; /* Kích thước chữ */
-            background-color: #fff; /* Màu nền trắng */
-            appearance: none; /* Bỏ giao diện mặc định */
-            -webkit-appearance: none; /* Dành cho WebKit browsers */
-            -moz-appearance: none; /* Dành cho Firefox */
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M2%200L0%202h4L2%200zM0%203h4L2%205%200%203z%22/%3E%3C/svg%3E'); /* Mũi tên tùy chỉnh */
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: #fff;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M2%200L0%202h4L2%200zM0%203h4L2%205%200%203z%22/%3E%3C/svg%3E');
             background-repeat: no-repeat;
-            background-position: right 10px center; /* Vị trí mũi tên */
+            background-position: right 10px center;
             background-size: 10px;
         }
-
         .form-group select:hover {
-            border-color: #999; /* Đổi màu đường viền khi di chuột vào */
+            border-color: #999;
         }
-
         .form-group select:focus {
-            border-color: #007BFF; /* Đổi màu đường viền khi được focus */
-            outline: none; /* Bỏ viền mặc định */
+            border-color: #007BFF;
+            outline: none;
         }
-
     </style>
     <body>
-
         <!-- SIDEBAR -->
         <section id="sidebar">
             <a href="index.jsp" class="brand">
@@ -120,33 +114,17 @@
             <main>
                 <div class="form-container">
                     <h3>Create New Discount</h3>
-                    <!-- Hiển thị thông báo lỗi nếu có -->
-                    <%
-    String errorMessage = (String) session.getAttribute("error");
-    String successMessage = (String) session.getAttribute("message");
-    
-    // Hiển thị thông báo lỗi nếu có
-    if (errorMessage != null) {
-                    %> 
-                    <div style="color:red; margin-bottom: 10px;">
-                        <%= errorMessage %>
-                    </div>
-                    <%
-                            // Xóa thông báo lỗi khỏi session để không hiển thị lại
-                            session.removeAttribute("error");
-                        }
 
-                        // Hiển thị thông báo thành công nếu có
-                        if (successMessage != null) {
-                    %> 
-                    <div style="color:green; margin-bottom: 10px;">
-                        <%= successMessage %>
-                    </div>
-                    <%
-                            // Xóa thông báo thành công khỏi session để không hiển thị lại
-                            session.removeAttribute("message");
-                        }
-                    %>
+                    <!-- Display error or success messages if any -->
+                    <% String errorMessage = (String) session.getAttribute("error"); %>
+                    <% String successMessage = (String) session.getAttribute("message"); %>
+                    <% if (errorMessage != null) { %>
+                    <div style="color:red; margin-bottom: 10px;"><%= errorMessage %></div>
+                    <% session.removeAttribute("error"); %>
+                    <% } else if (successMessage != null) { %>
+                    <div style="color:green; margin-bottom: 10px;"><%= successMessage %></div>
+                    <% session.removeAttribute("message"); %>
+                    <% } %>
 
                     <form action="discount" method="post">
                         <input type="hidden" name="action" value="insert">
@@ -188,13 +166,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="tourId">Tour ID:</label>
+                            <label for="tourId">Select Tour:</label>
                             <select id="tourId" name="tourId" required>
-                                <c:forEach var="tourId" items="${providerTourIds}">
-                                    <option value="${tourId}">${tourId}</option>
+                                <c:forEach var="entry" items="${providerTourNames}">
+                                    <option value="${entry.value}">${entry.key}</option>
                                 </c:forEach>
                             </select>
                         </div>
+
                         <div class="form-group">
                             <label for="description">Description:</label>
                             <input type="text" id="description" name="description" required>
