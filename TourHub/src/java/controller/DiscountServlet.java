@@ -87,7 +87,6 @@ public class DiscountServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("currentUser");
 
-        // Kiểm tra người dùng đã đăng nhập và có vai trò là Provider
         if (currentUser != null && "Provider".equals(currentUser.getRole())) {
             int companyId = 0;
             try {
@@ -95,6 +94,8 @@ public class DiscountServlet extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(ProviderTourServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            // Get discounts with tour_name
             List<Discount> listDiscount = DiscountDB.getDiscountsByCompanyId(companyId);
             request.setAttribute("listDiscount", listDiscount);
             request.getRequestDispatcher("manage-discounts.jsp").forward(request, response);

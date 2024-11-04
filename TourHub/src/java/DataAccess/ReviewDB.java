@@ -73,16 +73,16 @@ public class ReviewDB implements DatabaseInfo {
         }
     }
 
-    public List<Booking> getBookedToursWithoutReview(int userId) {
+    public List<Booking> getBookedToursWithoutReview(int cusId) {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT book_Id, created_At, slot_Order, total_Cost, tour_Id "
                 + "FROM Booking "
                 + "WHERE cus_Id = ? AND book_Status = 'Booked' "
-                + "AND NOT EXISTS (SELECT 1 FROM Review WHERE tour_Id = Booking.tour_Id AND user_Id = ?)";
+                + "AND NOT EXISTS (SELECT 1 FROM Review WHERE tour_Id = Booking.tour_Id AND cus_Id = ?)";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, userId);
+            ps.setInt(1, cusId);
+            ps.setInt(2, cusId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -102,19 +102,18 @@ public class ReviewDB implements DatabaseInfo {
     }
 
     public boolean submitReview(Review review) {
-        String sql = "INSERT INTO Review (comment, rating_Star, user_Id, tour_Id) VALUES (?, ?, ?, ?)";
-
+        String sql = "INSERT INTO Review (comment, rating_Star, cus_Id, tour_Id) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, review.getComment());
             stmt.setInt(2, review.getRating_Star());
-            stmt.setInt(3, review.getUser_Id());
+            stmt.setInt(3, review.getCus_Id());
             stmt.setString(4, review.getTour_Id());
 
             int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0; // Trả về true nếu lưu thành công
+            return rowsInserted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Trả về false nếu có lỗi
+            return false;
         }
     }
 
@@ -160,8 +159,9 @@ public class ReviewDB implements DatabaseInfo {
     public List<Review> getReviewsByTourId(String tourId) {
         List<Review> reviews = new ArrayList<>();
 
-        String sql = "SELECT R.review_Id, R.comment, R.rating_Star, R.user_Id, U.first_Name, U.last_Name, R.tour_Id "
-                + "FROM Review R JOIN [User] U ON R.user_Id = U.user_Id WHERE R.tour_Id = ?";
+        String sql = "SELECT R.review_Id, R.comment, R.rating_Star, R.cus_Id, U.first_Name, U.last_Name, R.tour_Id "
+                + "FROM Review R JOIN Customer C ON R.cus_Id = C.cus_Id "
+                + "JOIN [User] U ON C.user_Id = U.user_Id WHERE R.tour_Id = ?";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tourId);
@@ -171,14 +171,13 @@ public class ReviewDB implements DatabaseInfo {
                     review.setReview_Id(rs.getInt("review_Id"));
                     review.setComment(rs.getString("comment"));
                     review.setRating_Star(rs.getInt("rating_Star"));
-                    review.setUser_Id(rs.getInt("user_Id"));
+                    review.setCus_Id(rs.getInt("cus_Id"));
                     review.setTour_Id(rs.getString("tour_Id"));
                     review.setFirst_Name(rs.getString("first_Name"));
                     review.setLast_Name(rs.getString("last_Name"));
 
-                    // Lấy danh sách reply cho mỗi review
                     List<ReviewReply> replies = getRepliesForReview(review.getReview_Id());
-                    review.setReplies(replies);  // Gán danh sách reply vào review
+                    review.setReplies(replies);
 
                     reviews.add(review);
                 }
@@ -186,36 +185,35 @@ public class ReviewDB implements DatabaseInfo {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return reviews;
     }
 
     public List<Review> getTop3ReviewsByTourId(String tourId) {
         List<Review> reviews = new ArrayList<>();
-        String sql = "SELECT TOP 3 R.review_Id, R.comment, R.rating_Star, R.user_Id, U.first_Name, U.last_Name, R.tour_Id "
-                + "FROM Review R JOIN [User] U ON R.user_Id = U.user_Id "
+        String sql = "SELECT TOP 3 R.review_Id, R.comment, R.rating_Star, R.cus_Id, U.first_Name, U.last_Name, R.tour_Id "
+                + "FROM Review R JOIN Customer C ON R.cus_Id = C.cus_Id "
+                + "JOIN [User] U ON C.user_Id = U.user_Id "
                 + "WHERE R.tour_Id = ? "
                 + "ORDER BY R.rating_Star DESC";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, tourId); // Đảm bảo tourId được đặt đúng vào câu lệnh SQL
+            ps.setString(1, tourId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Review review = new Review();
                     review.setReview_Id(rs.getInt("review_Id"));
                     review.setComment(rs.getString("comment"));
                     review.setRating_Star(rs.getInt("rating_Star"));
-                    review.setUser_Id(rs.getInt("user_Id"));
+                    review.setCus_Id(rs.getInt("cus_Id"));
                     review.setTour_Id(rs.getString("tour_Id"));
                     review.setFirst_Name(rs.getString("first_Name"));
                     review.setLast_Name(rs.getString("last_Name"));
-                    reviews.add(review);  // Thêm review vào danh sách
+                    reviews.add(review);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return reviews;
     }
 
@@ -273,19 +271,19 @@ public class ReviewDB implements DatabaseInfo {
         return false;
     }
 
-    public List<Review> getUserReviews(int userId) {
+    public List<Review> getUserReviews(int cusId) {
         List<Review> reviews = new ArrayList<>();
-        String sql = "SELECT * FROM Review WHERE user_Id = ?";
+        String sql = "SELECT * FROM Review WHERE cus_Id = ?";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
+            ps.setInt(1, cusId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Review review = new Review();
                     review.setReview_Id(rs.getInt("review_Id"));
                     review.setComment(rs.getString("comment"));
                     review.setRating_Star(rs.getInt("rating_Star"));
-                    review.setUser_Id(rs.getInt("user_Id"));
+                    review.setCus_Id(rs.getInt("cus_Id"));
                     review.setTour_Id(rs.getString("tour_Id"));
                     reviews.add(review);
                 }
@@ -293,7 +291,6 @@ public class ReviewDB implements DatabaseInfo {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return reviews;
     }
 
@@ -382,6 +379,26 @@ public class ReviewDB implements DatabaseInfo {
         }
     }
 
+    public boolean replyReview(int userId, String reviewId, String replyText, Integer parentReplyId) {
+        String sql = "INSERT INTO ReviewReply (user_id, review_id, reply_text, parent_reply_id) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, reviewId);
+            ps.setString(3, replyText);
+            if (parentReplyId != null) {
+                ps.setInt(4, parentReplyId);  // If it's a reply to a reply, set parent_reply_id
+            } else {
+                ps.setNull(4, java.sql.Types.INTEGER);  // For root review reply, set NULL
+            }
+            int rowsInserted = ps.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<Comment> getCommentsByTourId(String tourId) {
         List<Comment> comments = new ArrayList<>();
         String sql = "SELECT c.comment_id, c.parent_comment_id, u.first_Name, u.last_Name, c.comment_text, c.created_at "
@@ -420,7 +437,7 @@ public class ReviewDB implements DatabaseInfo {
 
     public static void main(String[] args) {
         ReviewDB reviewdb = new ReviewDB();
-        int userId = 6; // Replace with an actual user ID
+        int userId = 1; // Replace with an actual user ID
 
         // Get the booked tours without a review for the specified user ID
         List<Booking> bookings = reviewdb.getBookedToursWithoutReview(userId);
@@ -436,5 +453,20 @@ public class ReviewDB implements DatabaseInfo {
                 System.out.println("-----");
             }
         }
+    }
+
+    public Integer getCusIdByUserId(int userId) {
+        String sql = "SELECT cus_Id FROM Customer WHERE user_Id = ?";
+        try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("cus_Id"); // Return cus_Id if found
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if no cus_Id found or if there's an error
     }
 }

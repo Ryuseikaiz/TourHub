@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
@@ -27,7 +28,6 @@ public class CreateDiscountServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("currentUser");
 
-        // Kiểm tra người dùng đã đăng nhập và có vai trò là Provider
         if (currentUser != null && "Provider".equals(currentUser.getRole())) {
             int companyId = 0;
             try {
@@ -35,19 +35,15 @@ public class CreateDiscountServlet extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(ProviderTourServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            // Lấy danh sách tour ID từ TourDB
-            List<String> providerTourIds = tourDB.getTourIdsByCompanyId(companyId);
 
-            // Kiểm tra xem danh sách có trống không
-            if (providerTourIds.isEmpty()) {
-                System.out.println("Không có tour nào cho companyId: " + companyId);
+            Map<String, String> providerTourNames = tourDB.getTourNamesByCompanyId(companyId);
+            if (providerTourNames.isEmpty()) {
+                session.setAttribute("error", "No tours available for this provider.");
+                response.sendRedirect("manage-discounts.jsp");
             } else {
-                // Đặt danh sách tour ID vào request attribute
-                request.setAttribute("providerTourIds", providerTourIds);
+                request.setAttribute("providerTourNames", providerTourNames);
+                request.getRequestDispatcher("create-discount.jsp").forward(request, response);
             }
-
-            // Chuyển đến JSP
-            request.getRequestDispatcher("create-discount.jsp").forward(request, response);
         } else {
             response.sendRedirect("login.jsp");
         }
