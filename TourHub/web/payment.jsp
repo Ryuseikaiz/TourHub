@@ -145,6 +145,103 @@
                 color: red;
                 font-weight: bold;
             }
+
+
+
+
+            /* Base Styles */
+            .notification {
+                position: relative;
+                cursor: pointer;
+            }
+            .dropdown{
+                margin-right: 20px;
+            }
+            /* Dropdown Container */
+            .dropdown {
+                display: none; /* Hidden by default, can be toggled with JavaScript */
+                position: absolute;
+                top: 40px; /* Adjust based on icon height */
+                right: 0;
+                width: 400px; /* Increased width */
+                max-height: 500px; /* Increased height */
+                background-color: #ffffff; /* White background */
+                color: #333333; /* Dark text color for readability */
+                border-radius: 8px;
+                overflow-y: auto;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                font-family: 'Arial', sans-serif; /* Adjusted font */
+            }
+
+            /* Dropdown Content */
+            .dropdown-content {
+                padding: 15px; /* Adjusted padding for more spacing */
+            }
+
+            /* Header */
+            .dropdown h2 {
+                margin: 10px;
+                font-size: 18px; /* Slightly larger font */
+                font-weight: bold;
+                color: #333333; /* Dark color for text */
+                padding-bottom: 10px;
+                border-bottom: 1px solid #e0e0e0; /* Light border */
+            }
+
+            /* Notification Item */
+            .notification-item {
+                display: flex;
+                align-items: center;
+                padding: 15px; /* More padding for larger items */
+                border-bottom: 1px solid #f0f0f0; /* Light gray for item separator */
+            }
+
+            .notification-item:last-child {
+                border-bottom: none;
+            }
+
+            .notification-item img {
+                width: 50px; /* Increased image size */
+                height: 50px;
+                border-radius: 50%;
+                margin-right: 15px; /* More space between image and text */
+            }
+
+            .notification-item .text {
+                flex: 1;
+            }
+
+            .notification-item .text p {
+                margin: 0;
+                font-size: 15px; /* Slightly larger font */
+                color: #333333; /* Dark text color */
+                line-height: 1.5;
+            }
+
+            .notification-item .text span {
+                font-size: 13px; /* Slightly larger font for timestamp */
+                color: #666666; /* Muted gray for timestamps */
+            }
+
+            /* See More Button */
+            .see-more {
+                display: block;
+                width: 100%;
+                padding: 12px; /* Increased padding */
+                background-color: #FD7238; /* Orange button color */
+                border: none;
+                color: #ffffff; /* White text */
+                font-size: 15px; /* Slightly larger font */
+                cursor: pointer;
+                text-align: center;
+                border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+                font-family: 'Arial', sans-serif; /* Ensure consistency with dropdown font */
+            }
+
+            .see-more:hover {
+                background-color: #e26229; /* Slightly darker on hover */
+            }
         </style>
     </head>
     <body>
@@ -246,10 +343,23 @@
                 </form>
                 <input type="checkbox" id="switch-mode" hidden>
                 <label for="switch-mode" class="switch-mode"></label>
-                <a href="#" class="notification">
+                <!-- HTML Code for Dropdown -->
+                <a href="javascript:void(0)" class="notification" role="button" onclick="toggleDropdown(event)">
                     <i class='bx bxs-bell'></i>
-                    <!-- <span class="num">8</span> -->
                 </a>
+
+                <!-- Notification Dropdown -->
+                <div id="notificationDropdown" class="dropdown" style="display: none;">
+                    <h2>Notifications</h2>
+                    <div class="dropdown-content">
+                        <p style="display: flex; justify-content: space-between"><strong>New</strong> <a href="#">See all</a></p>
+                    </div>
+                    <button class="see-more">See previous notifications</button>
+                </div>
+
+
+
+
                 <div class="image-container">
                     <img src="assests/images/avatar.jpg" alt="User Avatar" class="avatar">
                 </div>
@@ -353,18 +463,18 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const burger = document.querySelector('.burger');
-                const navigation = document.querySelector('.navigation-admin');
-                const main = document.querySelector('.main-admin');
-                const profileCard = document.querySelector('.profile-card'); // Select the profile card
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const burger = document.querySelector('.burger');
+                        const navigation = document.querySelector('.navigation-admin');
+                        const main = document.querySelector('.main-admin');
+                        const profileCard = document.querySelector('.profile-card'); // Select the profile card
 
-                burger.addEventListener('click', function () {
-                    navigation.classList.toggle('active');
-                    main.classList.toggle('active');
-                    profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                });
-            });
+                        burger.addEventListener('click', function () {
+                            navigation.classList.toggle('active');
+                            main.classList.toggle('active');
+                            profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+                        });
+                    });
 
 
 
@@ -462,6 +572,79 @@
 
                 // Toggle sort direction for the next click
                 sortDirection[columnIndex] = !isAscending;
+            }
+
+            function toggleDropdown(event) {
+                event.preventDefault(); // Prevents default anchor behavior
+                const dropdown = document.getElementById("notificationDropdown");
+                if (!dropdown) {
+                    console.error('Dropdown element not found');
+                    return;
+                }
+
+                // Toggle visibility
+                dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+
+                // Fetch notifications only when showing the dropdown
+                if (dropdown.style.display === "block") {
+                    fetchNotifications();
+                }
+            }
+
+            // Close the dropdown when clicking outside of it
+            window.onclick = function (event) {
+                if (!event.target.closest('.notification') && !event.target.closest('#notificationDropdown')) {
+                    const dropdown = document.getElementById("notificationDropdown");
+                    if (dropdown && dropdown.style.display === "block") {
+                        dropdown.style.display = "none";
+                    }
+                }
+            };
+
+            function fetchNotifications() {
+                const notificationContainer = document.querySelector('.dropdown-content');
+                if (!notificationContainer) {
+                    console.error('Notification container element not found');
+                    return;
+                }
+
+                // Show loading message
+                notificationContainer.innerHTML = '<p>Loading...</p>';
+
+                fetch('/Project_SWP/notifications', {method: 'POST'})
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Network response was not ok:', response.statusText);
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            notificationContainer.innerHTML = ''; // Clear existing content
+
+                            if (data.length === 0) {
+                                notificationContainer.innerHTML = '<p>No new notifications</p>';
+                                return;
+                            }
+
+                            data.forEach(noti => {
+                                const notificationItem = document.createElement('div');
+                                notificationItem.classList.add('notification-item');
+
+                                const notiContent = `
+                        <div class="text">
+                            <p><strong>${noti.isRead ? noti.message : '<em>' + noti.message + '</em>'}</strong></p>
+                            <span>${noti.dateSent}</span>
+                        </div>
+                    `;
+                                notificationItem.innerHTML = notiContent;
+                                notificationContainer.appendChild(notificationItem);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Fetch operation failed:', error);
+                            notificationContainer.innerHTML = '<p>Failed to load notifications. Please try again later.</p>';
+                        });
             }
         </script>
 

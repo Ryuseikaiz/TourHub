@@ -239,10 +239,10 @@
             }
 
             /* Dropdown Toggle */
-            .notification:hover + .dropdown,
-            .dropdown:hover {
-                display: block;
-            }
+            /*            .notification:hover + .dropdown,
+                        .dropdown:hover {
+                            display: block;
+                        }*/
 
 
 
@@ -268,25 +268,17 @@
                 </form>
                 <input type="checkbox" id="switch-mode" hidden>
                 <label for="switch-mode" class="switch-mode"></label>
-                <a href="#" class="notification" onclick="toggleDropdown()">
-                    <i class='bx bxs-bell'></i>
-                </a>
-
 
 
                 <!-- Notification Dropdown -->
-                <div id="notificationDropdown" class="dropdown">
+                <a href="javascript:void(0)" class="notification" role="button" onclick="toggleDropdown(event)">
+                    <i class='bx bxs-bell'></i>
+                </a>
+  
+                <div id="notificationDropdown" class="dropdown" style="display: none;">
                     <h2>Notifications</h2>
                     <div class="dropdown-content">
                         <p style="display: flex; justify-content: space-between"><strong>New</strong> <a href="#">See all</a></p>
-                        <div class="notification-item">
-                            <img src="user1.jpg" alt="User Image">
-                            <div class="text">
-                                <p><strong>Duy Khánh</strong> played Tiến Lên Miền Nam Cybergame: "Duy" is the winner and won 118.75K chip!</p>
-                                <span>1h</span>
-                            </div>
-                        </div>
-                        <!-- Repeat .notification-item for other notifications -->
                     </div>
                     <button class="see-more">See previous notifications</button>
                 </div>
@@ -400,8 +392,8 @@
         <script src="assests/js/script_profile.js"></script>
         <script>
                                                             function togglePassword() {
-                                                                var passwordField = document.getElementById('passwordDisplay');
-                                                                var button = event.target;
+                                                                const passwordField = document.getElementById('passwordDisplay');
+                                                                const button = event.target;
                                                                 if (passwordField.innerHTML === "********") {
                                                                     passwordField.innerHTML = "${user.password}";
                                                                     button.textContent = "Hide";
@@ -423,6 +415,7 @@
                                                                     profileCard.classList.toggle('active'); // Toggle the active class on the profile card
                                                                 });
                                                             });
+
                                                             function previewImage(event) {
                                                                 const file = event.target.files[0];
                                                                 const imgElement = document.getElementById('avatarImg');
@@ -430,38 +423,98 @@
                                                                 if (file) {
                                                                     const reader = new FileReader();
                                                                     reader.onload = function (e) {
-                                                                        imgElement.src = e.target.result; // Hiển thị ảnh đã chọn
-                                                                        document.getElementById('uploadBtn').style.display = 'inline-block'; // Hiện nút Upload
-                                                                        document.getElementById('cancelBtn').style.display = 'inline-block'; // Hiện nút Cancel
+                                                                        imgElement.src = e.target.result; // Display selected image
+                                                                        document.getElementById('uploadBtn').style.display = 'inline-block'; // Show Upload button
+                                                                        document.getElementById('cancelBtn').style.display = 'inline-block'; // Show Cancel button
                                                                     };
                                                                     reader.readAsDataURL(file);
                                                                 }
                                                             }
 
-                                                            var userAvatarPath = "${user.avatar}";
-
+                                                            let userAvatarPath = "${user.avatar}";
                                                             userAvatarPath = userAvatarPath.replace("assestsimages", "assests/images").replace("avatar", "avatar/").replace("imagesavatar", "images/avatar");
+
                                                             function cancelUpload() {
                                                                 document.getElementById('file-input').value = ''; // Reset file input
-                                                                document.getElementById('uploadBtn').style.display = 'none'; // Ẩn nút Upload
-                                                                document.getElementById('cancelBtn').style.display = 'none'; // Ẩn nút Cancel
+                                                                document.getElementById('uploadBtn').style.display = 'none'; // Hide Upload button
+                                                                document.getElementById('cancelBtn').style.display = 'none'; // Hide Cancel button
 
-                                                                // Đặt lại ảnh về hình ảnh đã lưu
-                                                                document.getElementById('avatarImg').src = userAvatarPath; // Gán lại đường dẫn ảnh
+                                                                // Reset to saved image path
+                                                                document.getElementById('avatarImg').src = userAvatarPath;
                                                             }
 
-
-
-                                                    function toggleDropdown() {
-                                                        const dropdown = document.getElementById("notificationDropdown");
-                                                        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-                                                    }
-
-                                                    window.onclick = function (event) {
-                                                        if (!event.target.matches('.notification, .notification *')) {
-                                                            document.getElementById("notificationDropdown").style.display = "none";
-                                                        }
-                                                    }
+//                                                            function toggleDropdown(event) {
+//                                                                event.preventDefault(); // Prevents default anchor behavior
+//                                                                const dropdown = document.getElementById("notificationDropdown");
+//                                                                if (!dropdown) {
+//                                                                    console.error('Dropdown element not found');
+//                                                                    return;
+//                                                                }
+//
+//                                                                // Toggle visibility
+//                                                                dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+//
+//                                                                // Fetch notifications only when showing the dropdown
+//                                                                if (dropdown.style.display === "block") {
+//                                                                    fetchNotifications();
+//                                                                }
+//                                                            }
+//
+//                                                            // Close the dropdown when clicking outside of it
+//                                                            window.onclick = function (event) {
+//                                                                if (!event.target.closest('.notification') && !event.target.closest('#notificationDropdown')) {
+//                                                                    const dropdown = document.getElementById("notificationDropdown");
+//                                                                    if (dropdown && dropdown.style.display === "block") {
+//                                                                        dropdown.style.display = "none";
+//                                                                    }
+//                                                                }
+//                                                            };
+//
+//                                                            function fetchNotifications() {
+//                                                                const notificationContainer = document.querySelector('.dropdown-content');
+//                                                                if (!notificationContainer) {
+//                                                                    console.error('Notification container element not found');
+//                                                                    return;
+//                                                                }
+//
+//                                                                // Show loading message
+//                                                                notificationContainer.innerHTML = '<p>Loading...</p>';
+//
+//                                                                fetch('/Project_SWP/notifications', {method: 'POST'})
+//                                                                        .then(response => {
+//                                                                            if (!response.ok) {
+//                                                                                console.error('Network response was not ok:', response.statusText);
+//                                                                                throw new Error('Network response was not ok');
+//                                                                            }
+//                                                                            return response.json();
+//                                                                        })
+//                                                                        .then(data => {
+//                                                                            notificationContainer.innerHTML = ''; // Clear existing content
+//
+//                                                                            if (data.length === 0) {
+//                                                                                notificationContainer.innerHTML = '<p>No new notifications</p>';
+//                                                                                return;
+//                                                                            }
+//
+//                                                                            data.forEach(noti => {
+//                                                                                const notificationItem = document.createElement('div');
+//                                                                                notificationItem.classList.add('notification-item');
+//
+//                                                                                const notiContent = `
+//                        <div class="text">
+//                            <p><strong>${noti.isRead ? noti.message : '<em>' + noti.message + '</em>'}</strong></p>
+//                            <span>${noti.dateSent}</span>
+//                        </div>
+//                    `;
+//                                                                                notificationItem.innerHTML = notiContent;
+//                                                                                notificationContainer.appendChild(notificationItem);
+//                                                                            });
+//                                                                        })
+//                                                                        .catch(error => {
+//                                                                            console.error('Fetch operation failed:', error);
+//                                                                            notificationContainer.innerHTML = '<p>Failed to load notifications. Please try again later.</p>';
+//                                                                        });
+//                                                            }
         </script>
 
     </body>

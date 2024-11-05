@@ -5,6 +5,7 @@
 package controller;
 
 import DataAccess.ThienDB;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -37,7 +38,6 @@ public class NotificationServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -63,8 +63,12 @@ public class NotificationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User currentUser = (User) request.getSession().getAttribute("currentUser");
+        if (currentUser == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
+            return;
+        }
+
         int userId = currentUser.getUser_Id();
-        
         ThienDB notificationsDAO = new ThienDB();
 
         try {
@@ -73,13 +77,10 @@ public class NotificationServlet extends HttpServlet {
 
             // Set notifications in request scope
             request.setAttribute("notifications", notifications);
-            System.out.println(notifications);
-
-            // Forward the request to notifications.jsp
             request.getRequestDispatcher("/user-notification.jsp").forward(request, response);
-
-        } catch (ServletException | IOException | SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to retrieve notifications");
         }
     }
 
@@ -94,7 +95,37 @@ public class NotificationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        try (PrintWriter out = response.getWriter()) {
+            User currentUser = (User) request.getSession().getAttribute("currentUser");
+            if (currentUser == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
+                return;
+            }
+
+            ThienDB notificationsDAO = new ThienDB();
+            try {
+                List<Notification> notifications = notificationsDAO.getNotificationsByUserId(currentUser.getUser_Id());
+                String notificationsJson = new Gson().toJson(notifications);
+
+                // Set appropriate headers to prevent caching
+                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+                response.setHeader("Pragma", "no-cache");
+                response.setDateHeader("Expires", 0);
+
+                out.write(notificationsJson);
+                out.flush(); // Ensure the response is sent fully
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                out.write("{\"error\": \"Failed to retrieve notifications\"}");
+                out.flush(); // Ensure the error message is sent
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // Log any IO issues that could affect response
+        }
     }
 
     /**
@@ -104,7 +135,6 @@ public class NotificationServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Notification handling servlet";
     }// </editor-fold>
-
 }
