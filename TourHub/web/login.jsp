@@ -74,7 +74,7 @@
 
                 <div class="row gy-5 justify-content-center">
                     <div class="col-12 col-lg-5">
-                        <form action="/Project_SWP/login" method="post">
+                        <form action="login" method="post">
                             <div class="row gy-3 overflow-hidden">
                                 <div class="col-12">
                                     <div class="form-floating mb-3">

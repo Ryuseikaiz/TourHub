@@ -239,11 +239,11 @@
                             <div class="banking-details">
                                 <div class="detail-item">
                                     <span>Bank account number:</span>
-                                    <span class="value">0364173531</span>
+                                    <span class="value">0000871278620</span>
                                 </div>
                                 <div class="detail-item">
                                     <span>Bank account name:</span>
-                                    <span class="value">PHAM DUY KHANH</span>
+                                    <span class="value">NGUYEN DOAN TRONG DUC</span>
                                 </div>
                                 <div class="detail-item">
                                     <span>Total cost:</span>
@@ -329,7 +329,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             let MY_BANK = {
                 BANK_ID: "MB",
-                ACCOUNT_NO: "0364173531"
+                ACCOUNT_NO: "0000871278620"
             };
 
             // Set to store used booking IDs
@@ -380,7 +380,7 @@
             }
 
             try {
-                const response = await fetch("https://script.google.com/macros/s/AKfycby-WzjKU2NrNMSAGWGRn5_AkZ_R7C_sFavklRNNQw4G2O8GQQXPJe_ZHXthb4PTLQqZ/exec");
+                const response = await fetch("https://script.google.com/macros/s/AKfycbzUZ3aGbGOZsAgwgGaRreU4HM0F8fi9RoQZnUE-TWCOYX0sWymFkSlfW_ZA73iV5GCQ/exec");
                 const data = await response.json();
                 const lastPaid = data.data[data.data.length - 1];
 
