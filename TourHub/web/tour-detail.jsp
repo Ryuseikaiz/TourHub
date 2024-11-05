@@ -604,20 +604,21 @@
             </div>
 
         </div>
-        <div class="content flex">
-            <div class="tour-gallery">
-                <div class="image-highlight">
-                    <img class="tour-img" src="${tour.tour_Img.get(0)}" alt="Tour Image 1">
-                    <a href="javascript:void(0)" onclick="toggle('popup1')">
-                        <div class="img-viewmore">
-                            <h3>
-                                <i class="fa-solid fa-image"></i>
-                                View All Image
-                            </h3>
-                        </div>
-                    </a>
-                </div>
-            </c:if>
+        <c:if test="${not empty tour.tour_Img[0]}">
+            <div class="content flex">
+                <div class="tour-gallery">
+                    <div class="image-highlight">
+                        <img class="tour-img" src="${tour.tour_Img.get(0)}" alt="Tour Image 1">
+                        <a href="javascript:void(0)" onclick="toggle('popup1')">
+                            <div class="img-viewmore">
+                                <h3>
+                                    <i class="fa-solid fa-image"></i>
+                                    View All Image
+                                </h3>
+                            </div>
+                        </a>
+                    </div>
+                </c:if>
                 <c:if test="${not empty tour.tour_Img[1]}">
                     <div class="image-1">
                         <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
@@ -955,37 +956,18 @@
         </div>
     </div>
 </div>
-    <!--Popup1-->
-    <div id="popup1">
-        <div id="carouselExampleIndicators" class="carousel slide">
-            <div class="carousel-indicators">
-                <c:forEach var="i" begin="0" end="${fn:length(tour.tour_Img) - 1}">
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
-                            class="${i == 0 ? 'active' : ''}" aria-current="${i == 0 ? 'true' : 'false'}"
-                            aria-label="Slide ${i + 1}"></button>
-                </c:forEach>
-            </div>
-            <div class="carousel-inner">
-                <c:forEach var="image" items="${tour.tour_Img}">
-                    <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
-                        <img src="${image}" class="carousel-img d-block w-100" alt="...">
-                    </div>
-                </c:forEach>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-                    data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-
+<!--Popup1-->
+<div id="popup1">
+    <div id="carouselExampleIndicators" class="carousel slide">
+        <div class="carousel-indicators">
+            <c:forEach var="i" begin="0" end="${fn:length(tour.tour_Img) - 1}">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
+                        class="${i == 0 ? 'active' : ''}" aria-current="${i == 0 ? 'true' : 'false'}"
+                        aria-label="Slide ${i + 1}"></button>
+            </c:forEach>
         </div>
         <div class="carousel-inner">
-            <c:forEach var="image" items="assests/images/tour-images/${tour.tour_Img}">
+            <c:forEach var="image" items="${tour.tour_Img}">
                 <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
                     <img src="${image}" class="carousel-img d-block w-100" alt="...">
                 </div>
@@ -1001,35 +983,54 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
-    </div>
-    <!--Popup2-->
-    <div id="popup2">
-        <h3>More Information</h3>
-        <div class="information-wrapper">
-            <div class="language-service">
-                <h4>Service Language(s)</h4>
-                <span>Service available in:</span>
-                <ul>
-                    <c:forEach var="language" items="${tourDetailDescription.languageService}">
-                        <li>${language}</li>
-                        </c:forEach>
-                </ul>
-            </div>
-        </div>
-        <div class="extra-information">
-            <h4>Additional Information</h4>
-            <span>
-                <ul>
-                    <c:forEach var="info" items="${tourDetailDescription.additionalInformation}">
-                        <li>${info}</li>
-                        </c:forEach>
-                </ul>
-            </span>
-        </div>
-    </div>
 
-    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup2')">
+    </div>
+    <div class="carousel-inner">
+        <c:forEach var="image" items="assests/images/tour-images/${tour.tour_Img}">
+            <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
+                <img src="${image}" class="carousel-img d-block w-100" alt="...">
+            </div>
+        </c:forEach>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
     </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<!--Popup2-->
+<div id="popup2">
+    <h3>More Information</h3>
+    <div class="information-wrapper">
+        <div class="language-service">
+            <h4>Service Language(s)</h4>
+            <span>Service available in:</span>
+            <ul>
+                <c:forEach var="language" items="${tourDetailDescription.languageService}">
+                    <li>${language}</li>
+                    </c:forEach>
+            </ul>
+        </div>
+    </div>
+    <div class="extra-information">
+        <h4>Additional Information</h4>
+        <span>
+            <ul>
+                <c:forEach var="info" items="${tourDetailDescription.additionalInformation}">
+                    <li>${info}</li>
+                    </c:forEach>
+            </ul>
+        </span>
+    </div>
+</div>
+
+<button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup2')">
+</button>
 </div>
 
 <!--Popup3-->
@@ -1079,574 +1080,574 @@
                     <li>${experience}</li>
                     </c:forEach>
             </ul>
-<!--Popup5-->
-<div id="popup5">
-    <h4>Tour ghép</h4>
-    <div class="tour-option-detail-wrapper">
-        <div class="tour-time-popup">
-            <span>
-                Thời lượng tour:
-                ${tour.total_Time}
-            </span>
+            <!--Popup5-->
+            <div id="popup5">
+                <h4>Tour ghép</h4>
+                <div class="tour-option-detail-wrapper">
+                    <div class="tour-time-popup">
+                        <span>
+                            Thời lượng tour:
+                            ${tour.total_Time}
+                        </span>
 
-            <span>
-                Thời gian và điểm đón:
-                <ul>
-                    <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
-                    <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
-                        thêm trên trang Sản phẩm để biết thêm chi tiết </li>
-                </ul>
-            </span>
-        </div>
+                        <span>
+                            Thời gian và điểm đón:
+                            <ul>
+                                <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
+                                <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
+                                    thêm trên trang Sản phẩm để biết thêm chi tiết </li>
+                            </ul>
+                        </span>
+                    </div>
 
-        <span class="refund-section-popup">
-            Easy Refund
-        </span>
+                    <span class="refund-section-popup">
+                        Easy Refund
+                    </span>
 
-        <div class="price-wrapper">
-            <span class="price-wrapper-inner">1.216.867 VND</span>
+                    <div class="price-wrapper">
+                        <span class="price-wrapper-inner">1.216.867 VND</span>
 
-            <button>Chọn vé</button>
-        </div>
-        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
-    </button>
-</div>
+                        <button>Chọn vé</button>
+                    </div>
+                    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
+                    </button>
+                </div>
 
-<!--Popup5-->
-<div id="popup5">
-    <h4>Tour ghép</h4>
-    <div class="tour-option-detail-wrapper">
-        <div class="tour-time-popup">
-            <span>
-                Thời lượng tour:
-                ${tour.total_Time}
-            </span>
+                <!--Popup5-->
+                <div id="popup5">
+                    <h4>Tour ghép</h4>
+                    <div class="tour-option-detail-wrapper">
+                        <div class="tour-time-popup">
+                            <span>
+                                Thời lượng tour:
+                                ${tour.total_Time}
+                            </span>
 
-            <span>
-                Thời gian và điểm đón:
-                <ul>
-                    <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
-                    <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
-                        thêm trên trang Sản phẩm để biết thêm chi tiết </li>
-                </ul>
-            </span>
-        </div>
+                            <span>
+                                Thời gian và điểm đón:
+                                <ul>
+                                    <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
+                                    <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
+                                        thêm trên trang Sản phẩm để biết thêm chi tiết </li>
+                                </ul>
+                            </span>
+                        </div>
 
-        <span class="refund-section-popup">
-            Easy Refund
-        </span>
+                        <span class="refund-section-popup">
+                            Easy Refund
+                        </span>
 
-        <div class="price-wrapper">
-            <span class="price-wrapper-inner">1.216.867 VND</span>
+                        <div class="price-wrapper">
+                            <span class="price-wrapper-inner">1.216.867 VND</span>
 
-            <button>Chọn vé</button>
-        </div>
+                            <button>Chọn vé</button>
+                        </div>
 
-        <div>
-            <nav id="navbar-example2" class="navbar-inner bg-body-tertiary px-3 mb-3">
-                <ul class="nav nav-pills">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#scrollspyHeading1">First</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#scrollspyHeading2">Second</a>
-                    </li>
-                    <li class="nav-item"></li>
-                    <a class="nav-link" href="#scrollspyHeading3">Third</a>
-                    </li>
-                    <li class="nav-item"></li>
-                    <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
-                    </li>
-                    <li class="nav-item"></li>
-                    <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
-                    </li>
-                </ul>
-            </nav>
-            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%"
-                 data-bs-smooth-scroll="true" class="navbar-content scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
-                <h4 id="scrollspyHeading1">First heading</h4>
-                <span>
-                    Giá đã bao gồm
-                    Bữa ăn:
+                        <div>
+                            <nav id="navbar-example2" class="navbar-inner bg-body-tertiary px-3 mb-3">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#scrollspyHeading1">First</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#scrollspyHeading2">Second</a>
+                                    </li>
+                                    <li class="nav-item"></li>
+                                    <a class="nav-link" href="#scrollspyHeading3">Third</a>
+                                    </li>
+                                    <li class="nav-item"></li>
+                                    <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
+                                    </li>
+                                    <li class="nav-item"></li>
+                                    <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%"
+                                 data-bs-smooth-scroll="true" class="navbar-content scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+                                <h4 id="scrollspyHeading1">First heading</h4>
+                                <span>
+                                    Giá đã bao gồm
+                                    Bữa ăn:
 
-                    1 buffet trưa
-                    Phương tiện di chuyển:
+                                    1 buffet trưa
+                                    Phương tiện di chuyển:
 
-                    Xe có máy điều hoà để đưa đón và trung chuyển
-                    Dịch vụ khác:
+                                    Xe có máy điều hoà để đưa đón và trung chuyển
+                                    Dịch vụ khác:
 
-                    Vé vào cửa
-                    Bảo hiểm du lịch
-                    Hướng dẫn viên nói tiếng Việt - Anh
-                </span>
-                <h4 id="scrollspyHeading2">Second heading</h4>
-                <span>
-                    Hiệu lực của voucher
+                                    Vé vào cửa
+                                    Bảo hiểm du lịch
+                                    Hướng dẫn viên nói tiếng Việt - Anh
+                                </span>
+                                <h4 id="scrollspyHeading2">Second heading</h4>
+                                <span>
+                                    Hiệu lực của voucher
 
-                    Sử dụng vào ngày đã chọn
-                    Có hiệu lực vào mọi ngày bình thường
-                    Có hiệu lực vào mọi ngày lễ
-                    Dành cho khách Việt Nam
-                </span>
-                <h4 id="scrollspyHeading3">Third heading</h4>
-                <span>
-                    Nếu đặt chỗ của bạn đã được xác nhận, nhân viên điều hành tour sẽ liên hệ với bạn qua điện thoại
-                    ít nhất 24 giờ trước khi tour bắt đầu.
-                </span>
-                <h4 id="scrollspyHeading4">Fourth heading</h4>
-                <span>
-                    Đặt chỗ này không thể thay đổi lịch.
-                    Yêu cầu hoàn tiền muộn nhất là 2 ngày trước ngày đi đã chọn của bạn để nhận được 100% hoàn tiền.
-                    Đặt chỗ của bạn sẽ không được hoàn lại nếu bạn yêu cầu hoàn tiền ít hơn 2 ngày trước ngày đi đã
-                    chọn.
-                </span>
-                <h4 id="scrollspyHeading5">Fifth heading</h4>
-                <span>
-                    Điều khoản & Điều kiện
-                    Thông tin chung
-                    Phụ phí 100.000 VND/khách, thanh toán trực tiếp với nhà cung cấp tour, áp dụng vào các ngày khởi
-                    hành tour sau: 18 Th04, 30 Th04, 1 Th05, 31 Th08 – 3 Th09 2024.
-                    Dịch vụ đón trả miễn phí cho khách ở tại trung tâm thành phố Đà Nẵng.
-                    Phí đón trả khách sẽ được áp dụng nếu khách có nguyện vọng được đón trả tại những địa điểm sau:
-                </span>
+                                    Sử dụng vào ngày đã chọn
+                                    Có hiệu lực vào mọi ngày bình thường
+                                    Có hiệu lực vào mọi ngày lễ
+                                    Dành cho khách Việt Nam
+                                </span>
+                                <h4 id="scrollspyHeading3">Third heading</h4>
+                                <span>
+                                    Nếu đặt chỗ của bạn đã được xác nhận, nhân viên điều hành tour sẽ liên hệ với bạn qua điện thoại
+                                    ít nhất 24 giờ trước khi tour bắt đầu.
+                                </span>
+                                <h4 id="scrollspyHeading4">Fourth heading</h4>
+                                <span>
+                                    Đặt chỗ này không thể thay đổi lịch.
+                                    Yêu cầu hoàn tiền muộn nhất là 2 ngày trước ngày đi đã chọn của bạn để nhận được 100% hoàn tiền.
+                                    Đặt chỗ của bạn sẽ không được hoàn lại nếu bạn yêu cầu hoàn tiền ít hơn 2 ngày trước ngày đi đã
+                                    chọn.
+                                </span>
+                                <h4 id="scrollspyHeading5">Fifth heading</h4>
+                                <span>
+                                    Điều khoản & Điều kiện
+                                    Thông tin chung
+                                    Phụ phí 100.000 VND/khách, thanh toán trực tiếp với nhà cung cấp tour, áp dụng vào các ngày khởi
+                                    hành tour sau: 18 Th04, 30 Th04, 1 Th05, 31 Th08 – 3 Th09 2024.
+                                    Dịch vụ đón trả miễn phí cho khách ở tại trung tâm thành phố Đà Nẵng.
+                                    Phí đón trả khách sẽ được áp dụng nếu khách có nguyện vọng được đón trả tại những địa điểm sau:
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
+                    </button>
+                </div>
+                <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
+                </button>
             </div>
+
+            <!--    <div id="popup5" class="popup">
+                    <div class="popup-content">
+                        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')">Close</button>
+            
+                         Dynamic content of the popup 
+                        <div class="tour-option-detail-wrapper">
+            <c:forEach items="${optionDetails}" var="detail">
+                <div>
+                    <h4>Category: 
+                <c:choose>
+                    <c:when test="${detail.categoryId == 1}">Price Includes</c:when>
+                    <c:when test="${detail.categoryId == 2}">Meals</c:when>
+                    <c:when test="${detail.categoryId == 3}">Transport</c:when>
+                    <c:when test="${detail.categoryId == 4}">Additional Services/Items</c:when>
+                    <c:when test="${detail.categoryId == 5}">Price Excludes</c:when>
+                </c:choose>
+            </h4>
+            <span>${detail.detailDescription}</span>
+            </div>
+            </c:forEach>
+            </div>
+            </div>
+            </div>-->
+
+            <div class="tour-content">
+
+
+
+            </div>
+
         </div>
-    </div>
-    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
-</button>
-</div>
-<button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
-</button>
-</div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<!--    <div id="popup5" class="popup">
-        <div class="popup-content">
-            <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')">Close</button>
-
-             Dynamic content of the popup 
-            <div class="tour-option-detail-wrapper">
-<c:forEach items="${optionDetails}" var="detail">
-    <div>
-        <h4>Category: 
-    <c:choose>
-        <c:when test="${detail.categoryId == 1}">Price Includes</c:when>
-        <c:when test="${detail.categoryId == 2}">Meals</c:when>
-        <c:when test="${detail.categoryId == 3}">Transport</c:when>
-        <c:when test="${detail.categoryId == 4}">Additional Services/Items</c:when>
-        <c:when test="${detail.categoryId == 5}">Price Excludes</c:when>
-    </c:choose>
-</h4>
-<span>${detail.detailDescription}</span>
-</div>
-</c:forEach>
-</div>
-</div>
-</div>-->
-
-<div class="tour-content">
-
-
-
-</div>
-
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-</script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-<!--<script>
-    function fetchDetails(optionId) {
-        // Construct the URL using window.location.origin
-        const origin = window.location.origin;
-        var url = origin + `/Project_SWP/getTourOptionDetails?optionId=` + optionId;
-        console.log("Fetching from url: " + url);
-        // Fetch data from the server
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.text();
-            })
-            .then(data => {
-                // Update the content of the popup with the fetched data
-                document.getElementById('popup5').innerHTML = data;
-                toggle('popup5'); // Assuming toggle function is defined to show/hide the popup
-            })
-            .catch(error => {
-                console.error("Fetch error: ", error);
-                alert("Failed to load tour option details.");
-            });
-    }
-</script>-->
-
-<script>
-    function toggle(action) {
-        var blur = document.getElementById('blur');
-
-        if (action === 'blur') {
-            // Chỉ kích hoạt blur
-            blur.classList.toggle('active');
-        } else if (action === 'popup1') {
-            // Kích hoạt popup 1 và blur
-            blur.classList.toggle('active');
-            var popup1 = document.getElementById('popup1');
-            popup1.classList.toggle('active');
-        } else if (action === 'popup2') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup2 = document.getElementById('popup2');
-            popup2.classList.toggle('active');
-        } else if (action === 'popup3') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup3 = document.getElementById('popup3');
-            popup3.classList.toggle('active');
-        } else if (action === 'popup4') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup4 = document.getElementById('popup4');
-            popup4.classList.toggle('active');
-        } else if (action === 'popup5') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup5 = document.getElementById('popup5');
-            popup5.classList.toggle('active');
-        } else if (action === 'calendar') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            const section = document.getElementById('date-section');
-            if (section) {
-                section.scrollLeft -= 600; // Di chuyển về phía trái
+        <!--<script>
+            function fetchDetails(optionId) {
+                // Construct the URL using window.location.origin
+                const origin = window.location.origin;
+                var url = origin + `/Project_SWP/getTourOptionDetails?optionId=` + optionId;
+                console.log("Fetching from url: " + url);
+                // Fetch data from the server
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        // Update the content of the popup with the fetched data
+                        document.getElementById('popup5').innerHTML = data;
+                        toggle('popup5'); // Assuming toggle function is defined to show/hide the popup
+                    })
+                    .catch(error => {
+                        console.error("Fetch error: ", error);
+                        alert("Failed to load tour option details.");
+                    });
             }
-        } else {
-            // Đóng popup (khi người dùng nhấn nút "Close")
-            var popups = document.getElementsByClassName('popup');
-            for (var i = 0; i < popups.length; i++) {
-                popups[i].classList.remove('active');
-            }
-            blur.classList.remove('active');
-        }
-    }
-</script>
+        </script>-->
 
-<script>
-    function scrollRight() {
-        const section = document.getElementById('date-section');
-        if (section) {
-            section.scrollLeft += 200; // Di chuyển về phía phải
-        }
-    }
+        <script>
+            function toggle(action) {
+                var blur = document.getElementById('blur');
 
-    function scrollLeft1() {
-        const section = document.getElementById('date-section');
-        if (section) {
-            section.scrollLeft -= 200; // Di chuyển về phía trái
-        }
-    }
-
-    // Lắng nghe sự kiện click ra ngoài popup để tắt hiệu ứng mờ
-    document.addEventListener('click', function (event) {
-        var calendarElement = document.querySelector('.flatpickr-calendar');
-        var blurElement = document.getElementById('blur');
-
-        // Kiểm tra sự tồn tại của các phần tử trước khi xử lý
-        if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar')) {
-            if (blurElement && blurElement.classList.contains('active')) {
-                toggle(null);
-            }
-        }
-    }, true);
-</script>
-
-<script>
-    // Biến lưu ngày được chọn, mặc định là ngày hiện tại
-    let selectedDate = new Date();
-
-    // Function để hiển thị 14 ngày với ngày hiện tại hoặc đã chọn ở giữa
-    function displayDateRange() {
-        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-        // Tìm tất cả các phần tử .date-container
-        let dateContainers = document.querySelectorAll('.date-container');
-
-        // Lấy danh sách ngày có tour và sắp xếp theo thứ tự
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-        const availableTourDates = tourOptions
-                .map(option => new Date(option.getAttribute('data-tour-date')))
-                .sort((a, b) => a - b)
-                .filter(date => date >= new Date()); // Chỉ lấy những ngày từ hiện tại trở đi
-
-        // Chỉ giữ lại 14 ngày gần nhất có tour
-        const closestTourDates = availableTourDates.slice(0, 14);
-
-        // Nếu có ít hơn 14 ngày, ẩn các date-container còn lại
-        for (let i = 0; i < dateContainers.length; i++) {
-            if (i < closestTourDates.length) {
-                const date = closestTourDates[i];
-                const dayOfWeek = daysOfWeek[date.getDay()];
-                const formattedDate = date.getDate() + ' thg ' + (date.getMonth() + 1);
-
-                // Cập nhật nội dung của phần tử date-container
-                dateContainers[i].querySelector('[data-dayofweek]').innerText = dayOfWeek;
-                dateContainers[i].querySelector('[data-formatteddate]').innerText = formattedDate;
-
-                // Cập nhật sự kiện onclick với giá trị ngày mới
-                dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
-
-                // Hiển thị date-container nếu có tour
-                dateContainers[i].style.display = 'flex';
-
-                // Đặt class 'selected' vào ngày đầu tiên trong danh sách
-                if (i === 0) {
-                    dateContainers[i].classList.add('selected');
-                    selectedDate = date;
+                if (action === 'blur') {
+                    // Chỉ kích hoạt blur
+                    blur.classList.toggle('active');
+                } else if (action === 'popup1') {
+                    // Kích hoạt popup 1 và blur
+                    blur.classList.toggle('active');
+                    var popup1 = document.getElementById('popup1');
+                    popup1.classList.toggle('active');
+                } else if (action === 'popup2') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup2 = document.getElementById('popup2');
+                    popup2.classList.toggle('active');
+                } else if (action === 'popup3') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup3 = document.getElementById('popup3');
+                    popup3.classList.toggle('active');
+                } else if (action === 'popup4') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup4 = document.getElementById('popup4');
+                    popup4.classList.toggle('active');
+                } else if (action === 'popup5') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup5 = document.getElementById('popup5');
+                    popup5.classList.toggle('active');
+                } else if (action === 'calendar') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    const section = document.getElementById('date-section');
+                    if (section) {
+                        section.scrollLeft -= 600; // Di chuyển về phía trái
+                    }
                 } else {
-                    dateContainers[i].classList.remove('selected');
+                    // Đóng popup (khi người dùng nhấn nút "Close")
+                    var popups = document.getElementsByClassName('popup');
+                    for (var i = 0; i < popups.length; i++) {
+                        popups[i].classList.remove('active');
+                    }
+                    blur.classList.remove('active');
                 }
-            } else {
-                dateContainers[i].style.display = 'none';
             }
-        }
+        </script>
 
-        // Cập nhật các lựa chọn tour dựa trên selectedDate ban đầu
-        filterTourOptions(selectedDate);
-    }
-
-
-    const daysMapping = {
-        'Sunday': 0,
-        'Monday': 1,
-        'Tuesday': 2,
-        'Wednesday': 3,
-        'Thursday': 4,
-        'Friday': 5,
-        'Saturday': 6
-    };
-
-
-    function filterTourOptions(selectedDate) {
-        const dayOfWeek = selectedDate.getDay(); // Lấy số ngày trong tuần từ selectedDate
-        console.log("Selected day of week:", dayOfWeek); // Kiểm tra giá trị ngày đã chọn
-
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-
-        tourOptions.forEach(option => {
-            const refundSection = option.querySelector('.refund-section').innerText;
-            console.log("Refund section text:", refundSection); // In ra nội dung refund-section
-            const optionDayOfWeek = daysMapping[refundSection]; // Sử dụng ánh xạ để lấy số
-
-            console.log("Option day of week:", optionDayOfWeek); // Kiểm tra giá trị dayOfWeek trong mỗi option
-
-            // Lấy tour_Date từ option
-            const tourDateStr = option.getAttribute('data-tour-date'); // Giả sử bạn lưu trữ tour_Date trong thuộc tính data
-            const tourDate = new Date(tourDateStr); // Chuyển đổi chuỗi ngày thành đối tượng Date
-
-            // Kiểm tra nếu ngày đã chọn và tour_Date cùng ngày
-            if (optionDayOfWeek === dayOfWeek && selectedDate.toDateString() === tourDate.toDateString()) {
-                option.style.display = 'flex'; // Hiển thị tourOption
-            } else {
-                option.style.display = 'none'; // Ẩn tourOption
+        <script>
+            function scrollRight() {
+                const section = document.getElementById('date-section');
+                if (section) {
+                    section.scrollLeft += 200; // Di chuyển về phía phải
+                }
             }
-        });
-    }
 
+            function scrollLeft1() {
+                const section = document.getElementById('date-section');
+                if (section) {
+                    section.scrollLeft -= 200; // Di chuyển về phía trái
+                }
+            }
 
-    // Function để xử lý việc chọn ngày trong date-wrapper
-    function selectDate(element, dateStr) {
-        console.log("Date string selected:", dateStr);
-        // Xóa class 'selected' khỏi tất cả các ngày
-        let allDates = document.querySelectorAll('.date-container');
-        allDates.forEach(date => date.classList.remove('selected'));
+            // Lắng nghe sự kiện click ra ngoài popup để tắt hiệu ứng mờ
+            document.addEventListener('click', function (event) {
+                var calendarElement = document.querySelector('.flatpickr-calendar');
+                var blurElement = document.getElementById('blur');
 
-        // Thêm class 'selected' vào phần tử được nhấp vào
-        element.classList.add('selected');
-
-        // Cập nhật ngày đã chọn
-        selectedDate = new Date(dateStr);
-
-        console.log("Updated selectedDate:", selectedDate);
-
-        filterTourOptions(selectedDate);
-    }
-
-    // Function để mở lịch và đặt ngày mặc định
-    function openCalendar() {
-        flatpickr("#calendarInput", {
-            dateFormat: "Y-m-d",
-            defaultDate: new Date(), // Ngày mặc định là ngày hiện tại
-            minDate: "today",
-            onChange: function (selectedDates, dateStr, instance) {
-                if (selectedDates.length > 0) {
-                    // Chuyển selectedDate thành chuỗi không có múi giờ (YYYY-MM-DD)
-                    const selectedDate = selectedDates[0].toISOString().split('T')[0];
-
-                    // Lấy danh sách ngày có tour và chuyển thành chuỗi dạng YYYY-MM-DD
-                    const availableTourDates = getAvailableTourDates().map(date =>
-                        new Date(date).toISOString().split('T')[0]
-                    );
-
-                    // Kiểm tra xem selectedDate có nằm trong availableTourDates không
-                    if (!availableTourDates.includes(selectedDate)) {
-                        // Hiển thị thông báo ngay lập tức
-                        const notification = document.getElementById('notification');
-                        notification.innerText = "Ngày được chọn không có tour nào!";
-                        notification.style.display = 'block';
-                    } else {
-                        // Nếu có tour, cập nhật UI và ẩn thông báo nếu có
-                        displayDateRange(new Date(selectedDate));
-                        const notification = document.getElementById('notification');
-                        notification.style.display = 'none';
+                // Kiểm tra sự tồn tại của các phần tử trước khi xử lý
+                if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar')) {
+                    if (blurElement && blurElement.classList.contains('active')) {
+                        toggle(null);
                     }
                 }
-            },
-            onClose: function () {
-                toggle('calendar');
-            }
-        }).open();
-    }
+            }, true);
+        </script>
 
-    // Function để lấy danh sách ngày có tour
-    function getAvailableTourDates() {
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-        return tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
-    }
+        <script>
+            // Biến lưu ngày được chọn, mặc định là ngày hiện tại
+            let selectedDate = new Date();
 
-    // Function để tìm ngày gần nhất có tour
-    function getClosestTourDate() {
-        const availableTourDates = getAvailableTourDates();
-        return new Date(availableTourDates[0]); // Giả sử ngày gần nhất có tour là ngày đầu tiên trong danh sách
-    }
+            // Function để hiển thị 14 ngày với ngày hiện tại hoặc đã chọn ở giữa
+            function displayDateRange() {
+                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    // Khi trang tải, hiển thị dải ngày với ngày đầu tiên là ngày hiện tại
-    window.onload = function () {
-        displayDateRange();
-    };
-</script>
+                // Tìm tất cả các phần tử .date-container
+                let dateContainers = document.querySelectorAll('.date-container');
 
-<script>
-    const options = document.querySelectorAll('.tour-option');
-    options.forEach(option => {
-        const dayOfWeek = option.getAttribute('data-dayofweek');
-        console.log(dayOfWeek); // Kiểm tra xem giá trị có được in ra không
-    });
-</script>
-<script>
-    document.querySelectorAll('.nav-link').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        });
-    });
-</script>
+                // Lấy danh sách ngày có tour và sắp xếp theo thứ tự
+                const tourOptions = [...document.querySelectorAll('.tour-option')];
+                const availableTourDates = tourOptions
+                        .map(option => new Date(option.getAttribute('data-tour-date')))
+                        .sort((a, b) => a - b)
+                        .filter(date => date >= new Date()); // Chỉ lấy những ngày từ hiện tại trở đi
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const saveBtn = document.querySelector('.save-btn');
+                // Chỉ giữ lại 14 ngày gần nhất có tour
+                const closestTourDates = availableTourDates.slice(0, 14);
 
-        saveBtn.addEventListener('click', function () {
-            const tourId = this.getAttribute('data-tour-id'); // Get tourId from data attribute
-            const returnUrl = window.location.href; // Current URL
+                // Nếu có ít hơn 14 ngày, ẩn các date-container còn lại
+                for (let i = 0; i < dateContainers.length; i++) {
+                    if (i < closestTourDates.length) {
+                        const date = closestTourDates[i];
+                        const dayOfWeek = daysOfWeek[date.getDay()];
+                        const formattedDate = date.getDate() + ' thg ' + (date.getMonth() + 1);
 
-            addWishlist(tourId, returnUrl);
-        });
-    });
+                        // Cập nhật nội dung của phần tử date-container
+                        dateContainers[i].querySelector('[data-dayofweek]').innerText = dayOfWeek;
+                        dateContainers[i].querySelector('[data-formatteddate]').innerText = formattedDate;
 
-    function addWishlist(tourId, returnUrl) {
-        const request = new XMLHttpRequest();
-        request.open('POST', 'wishlist', true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                        // Cập nhật sự kiện onclick với giá trị ngày mới
+                        dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
 
-        const data = `action=add&tourId=${tourId}&returnUrl=${returnUrl}`;
+                        // Hiển thị date-container nếu có tour
+                        dateContainers[i].style.display = 'flex';
 
-        request.onreadystatechange = function () {
-            if (request.readyState === XMLHttpRequest.DONE) {
-                if (request.status === 200) {
-                    const response = JSON.parse(request.responseText);
-                    Toastify({
-                        text: response.message,
-                        duration: 3000,
-                        gravity: "top",
-                        position: "right",
-                        backgroundColor: response.message.includes("Failed") ? 
-                            "linear-gradient(to right, #ff5f6d, #ffc371)" : 
-                            "linear-gradient(to right, #00b09b, #96c93d)",
-                    }).showToast();
-                } else {
-                    Toastify({
-                        text: "An error occurred while processing your request.",
-                        duration: 3000,
-                        gravity: "top",
-                        position: "right",
-                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                    }).showToast();
+                        // Đặt class 'selected' vào ngày đầu tiên trong danh sách
+                        if (i === 0) {
+                            dateContainers[i].classList.add('selected');
+                            selectedDate = date;
+                        } else {
+                            dateContainers[i].classList.remove('selected');
+                        }
+                    } else {
+                        dateContainers[i].style.display = 'none';
+                    }
                 }
+
+                // Cập nhật các lựa chọn tour dựa trên selectedDate ban đầu
+                filterTourOptions(selectedDate);
             }
-        };
-
-        request.send(data);
-    }
-</script>
 
 
+            const daysMapping = {
+                'Sunday': 0,
+                'Monday': 1,
+                'Tuesday': 2,
+                'Wednesday': 3,
+                'Thursday': 4,
+                'Friday': 5,
+                'Saturday': 6
+            };
 
 
-<script>
-    function sharePage() {
-        var pageUrl = encodeURIComponent(window.location.href); // Get the current page URL
-        var facebookShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + pageUrl;
-        // Open the share URL in a new window
-        window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
-    }
-</script>
+            function filterTourOptions(selectedDate) {
+                const dayOfWeek = selectedDate.getDay(); // Lấy số ngày trong tuần từ selectedDate
+                console.log("Selected day of week:", dayOfWeek); // Kiểm tra giá trị ngày đã chọn
 
-<script>
+                const tourOptions = [...document.querySelectorAll('.tour-option')];
 
-</script>
+                tourOptions.forEach(option => {
+                    const refundSection = option.querySelector('.refund-section').innerText;
+                    console.log("Refund section text:", refundSection); // In ra nội dung refund-section
+                    const optionDayOfWeek = daysMapping[refundSection]; // Sử dụng ánh xạ để lấy số
 
-<script>
-    // Mở popup khi nhấn vào "Xem tất cả đánh giá"
-    document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
-        event.preventDefault();
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
+                    console.log("Option day of week:", optionDayOfWeek); // Kiểm tra giá trị dayOfWeek trong mỗi option
 
-        popup.classList.add("show");
-        setTimeout(function () {
-            popupContent.classList.add("show");
-        }, 100); // Delay để popup hiện ra mượt mà
-    });
+                    // Lấy tour_Date từ option
+                    const tourDateStr = option.getAttribute('data-tour-date'); // Giả sử bạn lưu trữ tour_Date trong thuộc tính data
+                    const tourDate = new Date(tourDateStr); // Chuyển đổi chuỗi ngày thành đối tượng Date
 
-    // Đóng popup khi nhấn vào nút đóng (x)
-    document.getElementById("closePopup").addEventListener("click", function () {
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
+                    // Kiểm tra nếu ngày đã chọn và tour_Date cùng ngày
+                    if (optionDayOfWeek === dayOfWeek && selectedDate.toDateString() === tourDate.toDateString()) {
+                        option.style.display = 'flex'; // Hiển thị tourOption
+                    } else {
+                        option.style.display = 'none'; // Ẩn tourOption
+                    }
+                });
+            }
 
-        popupContent.classList.remove("show");
-        setTimeout(function () {
-            popup.classList.remove("show");
-        }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
-    });
 
-    // Đóng popup khi nhấn bên ngoài popup
-    window.addEventListener("click", function (event) {
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
+            // Function để xử lý việc chọn ngày trong date-wrapper
+            function selectDate(element, dateStr) {
+                console.log("Date string selected:", dateStr);
+                // Xóa class 'selected' khỏi tất cả các ngày
+                let allDates = document.querySelectorAll('.date-container');
+                allDates.forEach(date => date.classList.remove('selected'));
 
-        if (event.target == popup) {
-            popupContent.classList.remove("show");
-            setTimeout(function () {
-                popup.classList.remove("show");
-            }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
-        }
-    });
-</script>
+                // Thêm class 'selected' vào phần tử được nhấp vào
+                element.classList.add('selected');
 
-<script src="assests/js/searchpage-test.js"></script>
-</body>
+                // Cập nhật ngày đã chọn
+                selectedDate = new Date(dateStr);
 
-<%@include file="includes/footer.jsp" %>
+                console.log("Updated selectedDate:", selectedDate);
+
+                filterTourOptions(selectedDate);
+            }
+
+            // Function để mở lịch và đặt ngày mặc định
+            function openCalendar() {
+                flatpickr("#calendarInput", {
+                    dateFormat: "Y-m-d",
+                    defaultDate: new Date(), // Ngày mặc định là ngày hiện tại
+                    minDate: "today",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        if (selectedDates.length > 0) {
+                            // Chuyển selectedDate thành chuỗi không có múi giờ (YYYY-MM-DD)
+                            const selectedDate = selectedDates[0].toISOString().split('T')[0];
+
+                            // Lấy danh sách ngày có tour và chuyển thành chuỗi dạng YYYY-MM-DD
+                            const availableTourDates = getAvailableTourDates().map(date =>
+                                new Date(date).toISOString().split('T')[0]
+                            );
+
+                            // Kiểm tra xem selectedDate có nằm trong availableTourDates không
+                            if (!availableTourDates.includes(selectedDate)) {
+                                // Hiển thị thông báo ngay lập tức
+                                const notification = document.getElementById('notification');
+                                notification.innerText = "Ngày được chọn không có tour nào!";
+                                notification.style.display = 'block';
+                            } else {
+                                // Nếu có tour, cập nhật UI và ẩn thông báo nếu có
+                                displayDateRange(new Date(selectedDate));
+                                const notification = document.getElementById('notification');
+                                notification.style.display = 'none';
+                            }
+                        }
+                    },
+                    onClose: function () {
+                        toggle('calendar');
+                    }
+                }).open();
+            }
+
+            // Function để lấy danh sách ngày có tour
+            function getAvailableTourDates() {
+                const tourOptions = [...document.querySelectorAll('.tour-option')];
+                return tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
+            }
+
+            // Function để tìm ngày gần nhất có tour
+            function getClosestTourDate() {
+                const availableTourDates = getAvailableTourDates();
+                return new Date(availableTourDates[0]); // Giả sử ngày gần nhất có tour là ngày đầu tiên trong danh sách
+            }
+
+            // Khi trang tải, hiển thị dải ngày với ngày đầu tiên là ngày hiện tại
+            window.onload = function () {
+                displayDateRange();
+            };
+        </script>
+
+        <script>
+            const options = document.querySelectorAll('.tour-option');
+            options.forEach(option => {
+                const dayOfWeek = option.getAttribute('data-dayofweek');
+                console.log(dayOfWeek); // Kiểm tra xem giá trị có được in ra không
+            });
+        </script>
+        <script>
+            document.querySelectorAll('.nav-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const saveBtn = document.querySelector('.save-btn');
+
+                saveBtn.addEventListener('click', function () {
+                    const tourId = this.getAttribute('data-tour-id'); // Get tourId from data attribute
+                    const returnUrl = window.location.href; // Current URL
+
+                    addWishlist(tourId, returnUrl);
+                });
+            });
+
+            function addWishlist(tourId, returnUrl) {
+                const request = new XMLHttpRequest();
+                request.open('POST', 'wishlist', true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                const data = `action=add&tourId=${tourId}&returnUrl=${returnUrl}`;
+
+                request.onreadystatechange = function () {
+                    if (request.readyState === XMLHttpRequest.DONE) {
+                        if (request.status === 200) {
+                            const response = JSON.parse(request.responseText);
+                            Toastify({
+                                text: response.message,
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: response.message.includes("Failed") ?
+                                        "linear-gradient(to right, #ff5f6d, #ffc371)" :
+                                        "linear-gradient(to right, #00b09b, #96c93d)",
+                            }).showToast();
+                        } else {
+                            Toastify({
+                                text: "An error occurred while processing your request.",
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                            }).showToast();
+                        }
+                    }
+                };
+
+                request.send(data);
+            }
+        </script>
+
+
+
+
+        <script>
+            function sharePage() {
+                var pageUrl = encodeURIComponent(window.location.href); // Get the current page URL
+                var facebookShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + pageUrl;
+                // Open the share URL in a new window
+                window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
+            }
+        </script>
+
+        <script>
+
+        </script>
+
+        <script>
+            // Mở popup khi nhấn vào "Xem tất cả đánh giá"
+            document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
+                event.preventDefault();
+                var popup = document.getElementById("reviewPopup");
+                var popupContent = document.querySelector(".popup-content");
+
+                popup.classList.add("show");
+                setTimeout(function () {
+                    popupContent.classList.add("show");
+                }, 100); // Delay để popup hiện ra mượt mà
+            });
+
+            // Đóng popup khi nhấn vào nút đóng (x)
+            document.getElementById("closePopup").addEventListener("click", function () {
+                var popup = document.getElementById("reviewPopup");
+                var popupContent = document.querySelector(".popup-content");
+
+                popupContent.classList.remove("show");
+                setTimeout(function () {
+                    popup.classList.remove("show");
+                }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
+            });
+
+            // Đóng popup khi nhấn bên ngoài popup
+            window.addEventListener("click", function (event) {
+                var popup = document.getElementById("reviewPopup");
+                var popupContent = document.querySelector(".popup-content");
+
+                if (event.target == popup) {
+                    popupContent.classList.remove("show");
+                    setTimeout(function () {
+                        popup.classList.remove("show");
+                    }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
+                }
+            });
+        </script>
+
+        <script src="assests/js/searchpage-test.js"></script>
+        </body>
+
+        <%@include file="includes/footer.jsp" %>
