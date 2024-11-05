@@ -14,7 +14,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+        <!-- Include jQuery first -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Boxicons -->
         <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
         <!-- My CSS -->
@@ -25,6 +26,14 @@
         <link rel="stylesheet" href="assests/css/bootstrap.css" />
 
 
+        <!-- Toastify CSS and JavaScript -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/toastify-js@1.11.1/src/toastify.min.css"
+            />
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.10.0/Toastify.min.js"></script>-->
+
+        <!-- Include the external JavaScript file -->
 
         <title>Analytic</title>
         <style>
@@ -243,6 +252,7 @@
                 font-style: italic;
             }
 
+
         </style>
     </head>
     <body>
@@ -359,6 +369,7 @@
                 </div>
 
 
+                <div id="toastContainer" data-message="Welcome back! You have new notifications."></div>
 
 
                 <div class="image-container">
@@ -459,8 +470,8 @@
 
 
         <script src="assests/js/script_profile.js"></script>     
-        <script src="assests/js/notification.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -524,15 +535,12 @@
                 sortDirection[columnIndex] = !isAscending;
             }
 
-
-
-
-
         </script>
-
         <!--<script src="dist/js/theme.min.js"></script>-->
-
+        <!-- Include Toastify JS (before your custom notification.js script) -->
+        <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.11.1/src/toastify.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+        <script src="assests/js/notification.js"></script>
     </body>
 </html>

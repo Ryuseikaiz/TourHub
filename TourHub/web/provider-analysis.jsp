@@ -80,7 +80,7 @@
 
                 <c:if test="${sessionScope.currentUser.role == 'Provider' || sessionScope.currentUser.role == 'Admin'}">
                     <li class="active">
-                        <a href="${sessionScope.currentUser.role == 'Provider' ? '/Project_SWP/provider-analys' : 'admin-analysis.jsp'}">
+                        <a href="${sessionScope.currentUser.role == 'Provider' ? 'provider-analys' : 'admin-analysis.jsp'}">
                             <i class='bx bxs-dashboard' ></i>
                             <span class="text">Dashboard</span>
                         </a>

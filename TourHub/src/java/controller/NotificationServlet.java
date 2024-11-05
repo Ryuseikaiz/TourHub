@@ -5,6 +5,7 @@
 package controller;
 
 import DataAccess.ThienDB;
+import DataAccess.hoang_UserDB;
 import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.Notification;
 import model.User;
 
@@ -98,29 +101,54 @@ public class NotificationServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        try (PrintWriter out = response.getWriter()) {
-            User currentUser = (User) request.getSession().getAttribute("currentUser");
-            if (currentUser == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
+        // Retrieve the current user from the session
+        User currentUser = (User) request.getSession().getAttribute("currentUser");
+        if (currentUser == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not authenticated");
+            return;
+        }
+
+        // Parse the latestNotificationId from the request (default to 0 if not provided)
+        int latestNotificationId = 0;
+        if (request.getParameter("latestNotificationId") != null) {
+            try {
+                latestNotificationId = Integer.parseInt(request.getParameter("latestNotificationId"));
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid latestNotificationId");
                 return;
             }
+        }
 
+        try (PrintWriter out = response.getWriter()) {
             ThienDB notificationsDAO = new ThienDB();
+            hoang_UserDB notiDB = new hoang_UserDB();
             try {
-                List<Notification> notifications = notificationsDAO.getNotificationsByUserId(currentUser.getUser_Id());
-                String notificationsJson = new Gson().toJson(notifications);
+                // Fetch new notifications after the provided latestNotificationId
+                List<Notification> newNotifications = notiDB.getNotificationsAfterId(currentUser.getUser_Id(), latestNotificationId);
 
-                out.write(notificationsJson);
-                out.flush(); // Ensure the response is sent fully
-                System.out.println("DATAAA" + notificationsJson);
+                // Determine if there are new notifications
+                boolean hasNewNotifications = !newNotifications.isEmpty();
+
+                // Prepare the response JSON
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("hasNewNotifications", hasNewNotifications);
+                responseData.put("notifications", newNotifications);
+
+                // Convert response data to JSON and send to client
+                String jsonResponse = new Gson().toJson(responseData);
+                out.write(jsonResponse);
+                out.flush();
+
+                System.out.println("DATA: " + jsonResponse); // Debugging statement (remove in production)
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 out.write("{\"error\": \"Failed to retrieve notifications\"}");
-                out.flush(); // Ensure the error message is sent
+                out.flush();
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Log any IO issues that could affect response
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

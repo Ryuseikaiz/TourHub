@@ -86,8 +86,7 @@ public class ProviderChartServlet extends HttpServlet {
 
         // Get the year parameter from the request (default to the current year if not provided)
         String yearParam = request.getParameter("year");
-        int year;
-        System.out.println("YEARRRR" + yearParam);
+        int year;        
         try {
             // Default to current year if the year parameter is missing or invalid
             year = (yearParam != null && !yearParam.isEmpty()) ? Integer.parseInt(yearParam) : LocalDate.now().getYear();
