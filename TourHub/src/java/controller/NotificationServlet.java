@@ -110,13 +110,9 @@ public class NotificationServlet extends HttpServlet {
                 List<Notification> notifications = notificationsDAO.getNotificationsByUserId(currentUser.getUser_Id());
                 String notificationsJson = new Gson().toJson(notifications);
 
-                // Set appropriate headers to prevent caching
-                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-                response.setHeader("Pragma", "no-cache");
-                response.setDateHeader("Expires", 0);
-
                 out.write(notificationsJson);
                 out.flush(); // Ensure the response is sent fully
+                System.out.println("DATAAA" + notificationsJson);
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

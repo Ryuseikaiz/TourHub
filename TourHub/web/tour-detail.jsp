@@ -1259,7 +1259,7 @@
                 alert("Failed to load tour option details.");
                 });
         }
-    </script>-->
+    </script>
 
     <script>
         function toggle(action) {
@@ -1350,39 +1350,39 @@
         filterTourOptions(selectedDate);
         }
 
-        // Function để mở lịch và đặt ngày mặc định
+        // Function to open the calendar and set the default date
         function openCalendar() {
         flatpickr("#calendarInput", {
         dateFormat: "Y-m-d",
-                defaultDate: new Date(), // Ngày mặc định là ngày hiện tại
-                minDate: "today",
+                defaultDate: new Date(), // Set the default date to today
+                minDate: "today", // Restrict selection to today or future dates
                 onChange: function (selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
-                // Chuyển selectedDate thành chuỗi không có múi giờ (YYYY-MM-DD)
+                // Convert the selected date to a string without timezone (YYYY-MM-DD)
                 const selectedDate = selectedDates[0].toISOString().split('T')[0];
-                // Lấy danh sách ngày có tour và chuyển thành chuỗi dạng YYYY-MM-DD
+                // Get the list of dates with tours and format them as YYYY-MM-DD
                 const availableTourDates = getAvailableTourDates().map(date =>
                         new Date(date).toISOString().split('T')[0]
                         );
-                // Kiểm tra xem selectedDate có nằm trong availableTourDates không
-                if (!availableTourDates.includes(selectedDate)) {
-                // Hiển thị thông báo ngay lập tức
+                // Check if the selected date is in the availableTourDates array
                 const notification = document.getElementById('notification');
+                if (!availableTourDates.includes(selectedDate)) {
+                // Show the notification if no tour is available on the selected date
                 notification.innerText = "Ngày được chọn không có tour nào!";
                 notification.style.display = 'block';
                 } else {
-                // Nếu có tour, cập nhật UI và ẩn thông báo nếu có
+                // If a tour is available, update the UI and hide any previous notification
                 displayDateRange(new Date(selectedDate));
-                const notification = document.getElementById('notification');
                 notification.style.display = 'none';
                 }
                 }
                 },
                 onClose: function () {
-                toggle('calendar');
+                toggle('calendar'); // Close the calendar when finished
                 }
-        }).open();
+        }).open(); // Open the calendar when the function is called
         }
+
 
         // Function để lấy danh sách ngày có tour
         function getAvailableTourDates() {

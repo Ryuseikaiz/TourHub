@@ -149,63 +149,60 @@
 
 
 
-            /* Base Styles */
+            .hidden {
+                display: none;
+            }
+
+            .visible {
+                display: block;
+            }
+
             .notification {
                 position: relative;
                 cursor: pointer;
             }
-            .dropdown{
+
+            .dropdown {
                 margin-right: 20px;
             }
-            /* Dropdown Container */
+
             .dropdown {
-                display: none; /* Hidden by default, can be toggled with JavaScript */
                 position: absolute;
-                top: 40px; /* Adjust based on icon height */
+                top: 40px;
                 right: 0;
-                width: 400px; /* Increased width */
-                max-height: 500px; /* Increased height */
-                background-color: #ffffff; /* White background */
-                color: #333333; /* Dark text color for readability */
+                width: 400px;
+                max-height: 500px;
+                background-color: #ffffff;
+                color: #333333;
                 border-radius: 8px;
                 overflow-y: auto;
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
                 z-index: 1000;
-                font-family: 'Arial', sans-serif; /* Adjusted font */
+                font-family: 'Arial', sans-serif;
             }
 
-            /* Dropdown Content */
             .dropdown-content {
-                padding: 15px; /* Adjusted padding for more spacing */
+                padding: 15px;
             }
 
-            /* Header */
             .dropdown h2 {
                 margin: 10px;
-                font-size: 18px; /* Slightly larger font */
+                font-size: 18px;
                 font-weight: bold;
-                color: #333333; /* Dark color for text */
+                color: #333333;
                 padding-bottom: 10px;
-                border-bottom: 1px solid #e0e0e0; /* Light border */
+                border-bottom: 1px solid #e0e0e0;
             }
 
-            /* Notification Item */
             .notification-item {
                 display: flex;
                 align-items: center;
-                padding: 15px; /* More padding for larger items */
-                border-bottom: 1px solid #f0f0f0; /* Light gray for item separator */
+                padding: 15px;
+                border-bottom: 1px solid #f0f0f0;
             }
 
             .notification-item:last-child {
                 border-bottom: none;
-            }
-
-            .notification-item img {
-                width: 50px; /* Increased image size */
-                height: 50px;
-                border-radius: 50%;
-                margin-right: 15px; /* More space between image and text */
             }
 
             .notification-item .text {
@@ -214,34 +211,38 @@
 
             .notification-item .text p {
                 margin: 0;
-                font-size: 15px; /* Slightly larger font */
-                color: #333333; /* Dark text color */
+                font-size: 15px;
+                color: #333333;
                 line-height: 1.5;
             }
 
             .notification-item .text span {
-                font-size: 13px; /* Slightly larger font for timestamp */
-                color: #666666; /* Muted gray for timestamps */
+                font-size: 13px;
+                color: #666666;
             }
 
-            /* See More Button */
-            .see-more {
+            .see-more button{
                 display: block;
                 width: 100%;
-                padding: 12px; /* Increased padding */
-                background-color: #FD7238; /* Orange button color */
+                padding: 12px;
+                background-color: #FD7238;
                 border: none;
-                color: #ffffff; /* White text */
-                font-size: 15px; /* Slightly larger font */
+                color: #ffffff;
+                font-size: 15px;
                 cursor: pointer;
                 text-align: center;
-                border-radius: 0 0 8px 8px; /* Rounded bottom corners */
-                font-family: 'Arial', sans-serif; /* Ensure consistency with dropdown font */
+                border-radius: 0 0 8px 8px;
             }
 
             .see-more:hover {
-                background-color: #e26229; /* Slightly darker on hover */
+                background-color: #e26229;
+                text-decoration: none;
             }
+
+            .unread p {
+                font-style: italic;
+            }
+
         </style>
     </head>
     <body>
@@ -343,18 +344,18 @@
                 </form>
                 <input type="checkbox" id="switch-mode" hidden>
                 <label for="switch-mode" class="switch-mode"></label>
-                <!-- HTML Code for Dropdown -->
+
+                <!-- HTML Code for Notification Icon and Dropdown -->
                 <a href="javascript:void(0)" class="notification" role="button" onclick="toggleDropdown(event)">
                     <i class='bx bxs-bell'></i>
                 </a>
 
-                <!-- Notification Dropdown -->
-                <div id="notificationDropdown" class="dropdown" style="display: none;">
+                <div id="notificationDropdown" class="dropdown hidden">
                     <h2>Notifications</h2>
                     <div class="dropdown-content">
-                        <p style="display: flex; justify-content: space-between"><strong>New</strong> <a href="#">See all</a></p>
+                        <!-- Content will be dynamically generated by JavaScript -->
                     </div>
-                    <button class="see-more">See previous notifications</button>
+                    <a href="notifications" class="see-more"><button >See previous notifications</button></a>
                 </div>
 
 
@@ -458,80 +459,29 @@
 
 
         <script src="assests/js/script_profile.js"></script>     
+        <script src="assests/js/notification.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const burger = document.querySelector('.burger');
-                        const navigation = document.querySelector('.navigation-admin');
-                        const main = document.querySelector('.main-admin');
-                        const profileCard = document.querySelector('.profile-card'); // Select the profile card
-
-                        burger.addEventListener('click', function () {
-                            navigation.classList.toggle('active');
-                            main.classList.toggle('active');
-                            profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                        });
-                    });
+//                    document.addEventListener('DOMContentLoaded', function () {
+//                        const burger = document.querySelector('.burger');
+//                        const navigation = document.querySelector('.navigation-admin');
+//                        const main = document.querySelector('.main-admin');
+//                        const profileCard = document.querySelector('.profile-card'); // Select the profile card
+//
+//                        burger.addEventListener('click', function () {
+//                            navigation.classList.toggle('active');
+//                            main.classList.toggle('active');
+//                            profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+//                        });
+//                    });
 
 
 
         </script>
-        <script>
-//            function reloadData() {
-//                var date = document.getElementById("date").value;
-//                $.ajax({
-//                    url: "/Project_SWP/provider-analys",
-//                    type: "POST",
-//                    data: {
-//                        date: date
-//                    },
-//                    success: function (data) {
-//                        // Assuming 'data' is a JSON object
-//                        document.querySelector("#totalVisitValue").innerHTML = data.totalVisitATour || 0;
-//                        document.querySelector("#visitTodayValue").innerHTML = data.visitToday || 0;
-//                        document.querySelector("#bookingThisMonthValue").innerHTML = data.bookingThisMonth || 0;
-//                    }
-//                });
-//            }
-//            function calculateDuration() {
-//                // Get the values of the start and end dates
-//                var startDate = document.getElementById("start_Date").value;
-//                var endDate = document.getElementById("end_Date").value;
-//
-//                if (startDate && endDate) {
-//                    // Parse the dates into Date objects
-//                    var start = new Date(startDate);
-//                    var end = new Date(endDate);
-//
-//                    // Calculate the difference in time (milliseconds)
-//                    var diffTime = end - start;
-//
-//                    // Convert the time difference to days (1 day = 24*60*60*1000 milliseconds)
-//                    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-//
-//                    if (diffDays > 0) {
-//                        // Set the day value
-//                        document.getElementById("day").value = diffDays;
-//
-//                        // Set the night value (days - 1)
-//                        document.getElementById("night").value = diffDays - 1;
-//                    } else {
-//                        // If the end date is before the start date, reset the fields
-//                        document.getElementById("day").value = 0;
-//                        document.getElementById("night").value = 0;
-//                    }
-//                } else {
-//                    // Reset the fields if either date is missing
-//                    document.getElementById("day").value = 0;
-//                    document.getElementById("night").value = 0;
-//                }
-//            }
-//            $(function () {
-//                $('[data-toggle="tooltip"]').tooltip()
-//            })
+        <script>//         
             // Keep track of sort directions for each column
             let sortDirection = [true, true, true, true];  // Default to ascending for all columns
 
@@ -574,81 +524,14 @@
                 sortDirection[columnIndex] = !isAscending;
             }
 
-            function toggleDropdown(event) {
-                event.preventDefault(); // Prevents default anchor behavior
-                const dropdown = document.getElementById("notificationDropdown");
-                if (!dropdown) {
-                    console.error('Dropdown element not found');
-                    return;
-                }
 
-                // Toggle visibility
-                dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
 
-                // Fetch notifications only when showing the dropdown
-                if (dropdown.style.display === "block") {
-                    fetchNotifications();
-                }
-            }
 
-            // Close the dropdown when clicking outside of it
-            window.onclick = function (event) {
-                if (!event.target.closest('.notification') && !event.target.closest('#notificationDropdown')) {
-                    const dropdown = document.getElementById("notificationDropdown");
-                    if (dropdown && dropdown.style.display === "block") {
-                        dropdown.style.display = "none";
-                    }
-                }
-            };
 
-            function fetchNotifications() {
-                const notificationContainer = document.querySelector('.dropdown-content');
-                if (!notificationContainer) {
-                    console.error('Notification container element not found');
-                    return;
-                }
-
-                // Show loading message
-                notificationContainer.innerHTML = '<p>Loading...</p>';
-
-                fetch('/Project_SWP/notifications', {method: 'POST'})
-                        .then(response => {
-                            if (!response.ok) {
-                                console.error('Network response was not ok:', response.statusText);
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            notificationContainer.innerHTML = ''; // Clear existing content
-
-                            if (data.length === 0) {
-                                notificationContainer.innerHTML = '<p>No new notifications</p>';
-                                return;
-                            }
-
-                            data.forEach(noti => {
-                                const notificationItem = document.createElement('div');
-                                notificationItem.classList.add('notification-item');
-
-                                const notiContent = `
-                        <div class="text">
-                            <p><strong>${noti.isRead ? noti.message : '<em>' + noti.message + '</em>'}</strong></p>
-                            <span>${noti.dateSent}</span>
-                        </div>
-                    `;
-                                notificationItem.innerHTML = notiContent;
-                                notificationContainer.appendChild(notificationItem);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Fetch operation failed:', error);
-                            notificationContainer.innerHTML = '<p>Failed to load notifications. Please try again later.</p>';
-                        });
-            }
         </script>
 
-        <script src="dist/js/theme.min.js"></script>
+        <!--<script src="dist/js/theme.min.js"></script>-->
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
     </body>
