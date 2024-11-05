@@ -3,9 +3,9 @@ package DataAccess;
 public interface DatabaseInfo {
 
     public static String DRIVERNAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    public static String DBURL = "jdbc:sqlserver://HOFANG42\\SQLHF;databaseName=TourHubV1;encrypt=false;trustServerCertificate=false;loginTimeout=30";
-    public static String USERDB = "sa";
-    public static String PASSDB = "123";
+    public static String DBURL = "jdbc:sqlserver://tourhub.database.windows.net;databaseName=TourHub;encrypt=false;trustServerCertificate=false;loginTimeout=30";
+    public static String USERDB = "tourhub";
+    public static String PASSDB = "Kaikun123@";
 }
 
 //DESKTOP-EQJSVSA : Thien
@@ -13,3 +13,13 @@ public interface DatabaseInfo {
 //justduck : Duc
 //HOFANG42\\SQLHF
 //Khanh\SQLEXPRESS
+
+//package DataAccess;
+//
+//public interface DatabaseInfo {
+//
+//    public static String DRIVERNAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+//    public static String DBURL = "jdbc:sqlserver://tourhub.database.windows.net;databaseName=TourHub;encrypt=false;trustServerCertificate=false;loginTimeout=30";
+//    public static String USERDB = "tourhub";
+//    public static String PASSDB = "Kaikun123@";
+//}
