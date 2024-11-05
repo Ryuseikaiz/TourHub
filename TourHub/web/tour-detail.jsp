@@ -620,6 +620,7 @@
                         </a>
                     </div>
                 </c:if>
+
                 <c:if test="${not empty tour.tour_Img[1]}">
                     <div class="image-1">
                         <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
@@ -678,6 +679,7 @@
             </div>
 
 
+
             <div class="tour-detail">
                 <div class="tour-detail-left-section">
                     <div class="left-section-above">
@@ -726,10 +728,8 @@
                             <span class="start-from">Start From</span>
                             <h4>${tour.price}</h4>
                         </div>
-
                         <button class="find-tour-btn">Find Options</button>
                     </div>
-
                     <div class="view-review">
 
                         <span class="view-review-content">What Travelers Say</span>
@@ -1015,6 +1015,7 @@
                     </c:forEach>
             </ul>
 
+
             <!--            <span>Bà Nà Hills là khu phức hợp giải trí và resort lớn nhất tại Việt Nam. Cùng nhau đi tour và xả láng cả
                             ngày tại Bà Nà Hills ngay nào! Tận hưởng không khí mát lạnh cùng phong cảnh tuyệt vời, ăn hết mình với
                             đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
@@ -1146,7 +1147,10 @@
                     </span>
                 </div>
             </div>
+
         </div>
+
+
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
     </div>
     <!--    <div id="popup5" class="popup">
@@ -1429,4 +1433,4 @@
 <script src="assests/js/searchpage-test.js"></script>
 </body>
 
-<%@include file="includes/footer.jsp" %>
+        <%@include file="includes/footer.jsp" %>
