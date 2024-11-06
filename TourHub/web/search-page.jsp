@@ -573,9 +573,34 @@
             });
 
 
+            $(document).ready(function () {
+                $('.tour-card').click(function (e) {
+                    // Prevent default link behavior if clicking on wishlist button
+                    if ($(e.target).hasClass('wishlist-btn')) {
+                        e.preventDefault();
+                        return;
+                    }
 
+                    var tourId = $(this).find('a').attr('href').split('=')[1];
+
+                    $.ajax({
+                        url: 'UpdateVisitCountServlet', // servlet URL to handle the update
+                        type: 'GET',
+                        data: {id: tourId},
+                        success: function (response) {
+                            console.log('Visit count updated successfully:', response);
+                            // Optionally, add behavior after successful update
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error updating visit count:', error);
+                            // Optionally, handle error case here
+                        }
+                    });
+                });
+            });
         </script>
         <script src="assests/js/searchpage-test.js"></script>
+        <script src="assests/js/UpdateCount.js"></script>
 </body>
 
 <%@include file="includes/footer.jsp" %>

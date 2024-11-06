@@ -418,8 +418,8 @@
 
         <script>
             function toggle(popupId) {
-                var popup = document.getElementById(popupId);
-                popup.style.display = popup.style.display === "block" ? "none" : "block";
+            var popup = document.getElementById(popupId);
+            popup.style.display = popup.style.display === "block" ? "none" : "block";
             }
         </script>
     </head>
@@ -620,6 +620,7 @@
                         </a>
                     </div>
                 </c:if>
+
                 <c:if test="${not empty tour.tour_Img[1]}">
                     <div class="image-1">
                         <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
@@ -678,6 +679,7 @@
             </div>
 
 
+
             <div class="tour-detail">
                 <div class="tour-detail-left-section">
                     <div class="left-section-above">
@@ -726,10 +728,8 @@
                             <span class="start-from">Start From</span>
                             <h4>${tour.price}</h4>
                         </div>
-
                         <button class="find-tour-btn">Find Options</button>
                     </div>
-
                     <div class="view-review">
 
                         <span class="view-review-content">What Travelers Say</span>
@@ -919,6 +919,7 @@
                     </c:forEach>
                 </div>
             </div>
+            <h4>Comment section</h4>
             <jsp:include page="CommentServlet">
                 <jsp:param name="tourId" value="${tourId}" />
             </jsp:include>
@@ -1015,10 +1016,12 @@
                     </c:forEach>
             </ul>
 
+
             <!--            <span>Bà Nà Hills là khu phức hợp giải trí và resort lớn nhất tại Việt Nam. Cùng nhau đi tour và xả láng cả
                             ngày tại Bà Nà Hills ngay nào! Tận hưởng không khí mát lạnh cùng phong cảnh tuyệt vời, ăn hết mình với
                             đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
                             tất cả đều ngay tại đây!</span>
+
 
                         <img src="assests/images/new-image/jojo1.jpg" alt="">
                         <span>Tận hưởng bầu không khí mát lạnh khi bạn "lướt" mây lên đến đỉnh Bà Nà </span>
@@ -1146,7 +1149,11 @@
                     </span>
                 </div>
             </div>
+
         </div>
+
+
+
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
     </div>
     <!--    <div id="popup5" class="popup">
@@ -1173,8 +1180,10 @@
     </div>
     </div>-->
 
-    <div class="tour-content">
 
+
+
+    <div class="tour-content">
 
 
     </div>
@@ -1203,10 +1212,11 @@
                 // Update the content of the popup with the fetched data
                 document.getElementById('popup5').innerHTML = data;
                 toggle('popup5'); // Assuming toggle function is defined to show/hide the popup
-            })
-            .catch(error => {
+                })
+                .catch(error => {
                 console.error("Fetch error: ", error);
                 alert("Failed to load tour option details.");
+
             });
     }
 </script>-->
@@ -1267,8 +1277,10 @@
             section.scrollLeft += 200;
     }
 
-    function scrollLeft1() {
+
+        function scrollLeft1() {
         const section = document.getElementById('date-section');
+
         if (section)
             section.scrollLeft -= 200;
     }
@@ -1347,13 +1359,9 @@
                         displayDateRange(new Date(selectedDate));
                         document.getElementById('notification').style.display = 'none';
                     }
-                }
-            },
-            onClose: function () {
-                toggle('calendar');
+                }).open();
             }
-        }).open();
-    }
+
 
     function getAvailableTourDates() {
         return [...document.querySelectorAll('.tour-option')].map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
@@ -1373,13 +1381,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.save-btn').addEventListener('click', function () {
             addWishlist(this.getAttribute('data-tour-id'), window.location.href);
-        });
-    });
 
-    function addWishlist(tourId, returnUrl) {
+        });
+        });
+        function addWishlist(tourId, returnUrl) {
         const request = new XMLHttpRequest();
         request.open('POST', 'wishlist', true);
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
         request.onreadystatechange = function () {
             if (request.readyState === XMLHttpRequest.DONE) {
                 const responseMessage = request.status === 200 ? JSON.parse(request.responseText).message : "An error occurred.";
@@ -1426,7 +1435,9 @@
 </script>
 
 
+
 <script src="assests/js/searchpage-test.js"></script>
+
 </body>
 
 <%@include file="includes/footer.jsp" %>

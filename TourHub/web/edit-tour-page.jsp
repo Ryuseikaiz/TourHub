@@ -95,92 +95,7 @@
         </head>
         <body>
 
-            <!-- SIDEBAR -->
-            <section id="sidebar">
-                <a href="home" class="brand">
-                    <i class='bx bxs-smile'></i>
-                    <span class="text">TourHub</span>
-                </a>
-                <ul class="side-menu top">
-                    <li>
-                        <a href="user-profile.jsp">
-                            <i class='bx bxs-dashboard' ></i>
-                            <span class="text">User Information</span>
-                        </a>
-                    </li>
-                    <c:if test="${sessionScope.currentUser.role == 'Provider'}">
-                        <li>
-                            <a href="user-booking.jsp">
-                                <i class='bx bxs-shopping-bag-alt' ></i>
-                                <span class="text">Manage Booking</span>
-                            </a>
-                        </li>
-                    </c:if>
-                    <c:if test="${sessionScope.currentUser.role == 'Customer'}">
-                        <li>
-                            <a href="user-booking.jsp">
-                                <i class='bx bxs-shopping-bag-alt' ></i>
-                                <span class="text">My Booking</span>
-                            </a>
-                        </li>
-                    </c:if>
-                    <li>
-                        <a href="#">
-                            <i class='bx bxs-message-dots' ></i>
-                            <span class="text">Message</span>
-                        </a>
-                    </li>
-                    <c:if test="${sessionScope.currentUser.role == 'Provider' || sessionScope.currentUser.role == 'Admin'}">
-                        <li class="">
-                            <a href="${sessionScope.currentUser.role == 'Provider' ? '/Project_SWP/provider-analys' : 'admin-analysis.jsp'}">
-                                <i class='bx bxs-dashboard' ></i>
-                                <span class="text">Dashboard</span>
-                            </a>
-                        </li>   
-                        <li class="active dropdown-btn">
-                            <a href="my-tour">
-                                <i class='bx bxs-briefcase-alt' ></i>
-                                <span class="text">My Tour</span>
-                            </a>
-                        </li> 
-                        <!-- Sub-menu -->
-                        <ul class="sub-menu">
-                            <li><a href="add-tour.jsp" class="active">Add Tour</a></li>                    
-                            <li><a href="#">Feature 3</a></li>
-                        </ul>
-                        <li>
-                            <a href="payment.jsp">
-                                <i class='bx bxs-credit-card'></i>
-                                <span class="text">Payment</span>
-                            </a>
-                        </li> 
-                    </c:if>
-
-                    <!-- Sub-menu -->
-                    <ul class="sub-menu">
-                        <li><a href="add-tour.jsp">Add Tour</a></li>
-                        <li><a href="payment.jsp">Payment</a></li>
-                        <li><a href="#">Feature 3</a></li>
-                    </ul>
-                </ul>
-                <ul class="side-menu">
-                    <li>
-                        <a href="#">
-                            <i class='bx bxs-cog' ></i>
-                            <span class="text">Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="logout" class="logout">
-                            <i class='bx bxs-log-out-circle' ></i>
-                            <span class="text">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </section>
-            <!-- SIDEBAR -->
-
-
+            <%@include file="includes/user-sidebar.jsp" %>
 
             <!-- CONTENT -->
             <section id="content">
@@ -207,20 +122,20 @@
                 <!-- NAVBAR -->
 
 
-                    <!-- MAIN -->
-                    <main>
-                        <c:choose>
-                            <c:when test="${sessionScope.currentUser == null}">
-                                <c:redirect url="home" />
-                            </c:when>
-                            <c:otherwise>                               
-                                <c:set value="${requestScope.tourEdit}" var="tour" />
-                                <div class="table-data">
-                                    <div class="order">
-                                        <h3 class="head">Edit Tour</h3>
-                                        <form action="provider-management?action=save-edit-tour&tourId=${tour.tour_Id}" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
-                                            <div class="form-group">
-                                                <label for="tour_Name">Tour Name: <span style="color: red;">*</span></label>
+                <!-- MAIN -->
+                <main>
+                    <c:choose>
+                        <c:when test="${sessionScope.currentUser == null}">
+                            <c:redirect url="home" />
+                        </c:when>
+                        <c:otherwise>                               
+                            <c:set value="${requestScope.tourEdit}" var="tour" />
+                            <div class="table-data">
+                                <div class="order">
+                                    <h3 class="head">Edit Tour</h3>
+                                    <form action="provider-management?action=save-edit-tour&tourId=${tour.tour_Id}" method="POST" enctype="multipart/form-data" onsubmit="return handleFormSubmit(event)">
+                                        <div class="form-group">
+                                            <label for="tour_Name">Tour Name: <span style="color: red;">*</span></label>
                                             <input type="text" class="form-control" id="tour_Name" name="tour_Name" maxlength="255" value="${tour.tour_Name}" required>
                                         </div>
                                         <div class="form-group">

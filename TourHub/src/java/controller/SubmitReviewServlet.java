@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import model.Booking;
 import model.Review;
-import model.Tour;
 import model.User;
 
 @WebServlet(name = "SubmitReviewServlet", urlPatterns = {"/SubmitReview"})
@@ -24,6 +23,7 @@ public class SubmitReviewServlet extends HttpServlet {
         String tourId = request.getParameter("tourId");
         int ratingStar = Integer.parseInt(request.getParameter("ratingStar"));
         String comment = request.getParameter("comment");
+        int bookId = Integer.parseInt(request.getParameter("bookId")); // Lấy bookId từ request
 
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("currentUser");
@@ -48,6 +48,7 @@ public class SubmitReviewServlet extends HttpServlet {
         review.setTour_Id(tourId);
         review.setRating_Star(ratingStar);
         review.setComment(comment);
+        review.setBook_Id(bookId); // Set bookId vào review
 
         boolean isReviewSubmitted = reviewDB.submitReview(review);
 

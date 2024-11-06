@@ -61,7 +61,8 @@ public class LoginServlet extends HttpServlet {
                 user.setPassword(""); // No password initially for Google users
                 user.setCreated_At(new java.util.Date());
                 user.setUser_Status("Verified");
-
+                user.setAvatar(googleAccount.getPicture());
+                    
                 boolean isRegistered = userDB.registerUser(user);
                 if (!isRegistered) {
                     System.out.println("Failed to register new Google user.");

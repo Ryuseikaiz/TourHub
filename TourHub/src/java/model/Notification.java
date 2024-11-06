@@ -7,6 +7,7 @@ package model;
 import java.sql.Timestamp;
 
 public class Notification {
+
     private int notificationId;
     private int userId;
     private String message;
@@ -24,8 +25,6 @@ public class Notification {
 
     public Notification() {
     }
-    
-    
 
     // Getters and Setters
     public int getNotificationId() {
@@ -68,4 +67,3 @@ public class Notification {
         this.isRead = isRead;
     }
 }
-

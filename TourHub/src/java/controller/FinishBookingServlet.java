@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import model.Booking;
 import model.Company;
+import model.Customer;
+import model.Notification;
 import model.Tour;
 import model.User;
 
@@ -95,7 +98,7 @@ public class FinishBookingServlet extends HttpServlet {
         System.out.println("Discount Id: " + discountId);
         
         KhanhDB u = new KhanhDB();
-        ThienDB cusDB = new ThienDB();
+        ThienDB thienDB = new ThienDB();
         UserDB userDB = new UserDB();
         Booking book = new Booking();
         int discountIdInt = 0;

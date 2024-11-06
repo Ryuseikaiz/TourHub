@@ -16,9 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import model.Booking;
 import model.BookingDetails;
 import model.Discount;
+import model.Notification;
 import model.Review;
 import model.Tour;
 import utils.CSVReader;
@@ -647,13 +649,13 @@ public class hoang_UserDB implements DatabaseInfo {
     //REVIEW
     public List<Review> getTop5ReviewsByLikes() {
         List<Review> reviews = new ArrayList<>();
-        String sql = "SELECT TOP 5 r.review_Id, r.comment, r.rating_Star, r.cus_Id, r.tour_Id, r.likes, u.first_Name, u.last_Name "
+        String sql = "SELECT TOP 5 r.review_Id, r.comment, r.rating_Star, r.cus_Id, r.tour_Id, u.first_Name, u.last_Name "
                 + "FROM Review r "
-                + "JOIN [User] u ON r.user_Id = u.user_Id "
-                + "ORDER BY r.likes DESC";
+                + "JOIN Customer c ON c.cus_Id = r.cus_Id "
+                + "JOIN [User] u ON c.user_Id = u.user_Id "
+                + "ORDER BY r.rating_Star DESC";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Review review = new Review();
@@ -662,7 +664,6 @@ public class hoang_UserDB implements DatabaseInfo {
                     review.setRating_Star(rs.getInt("rating_Star"));
                     review.setCus_Id(rs.getInt("cus_Id"));
                     review.setTour_Id(rs.getString("tour_Id"));
-                    review.setLikeCount(rs.getInt("likes")); // Set the like_Count field
                     review.setFirst_Name(rs.getString("first_Name"));
                     review.setLast_Name(rs.getString("last_Name"));
                     reviews.add(review);
@@ -694,7 +695,51 @@ public class hoang_UserDB implements DatabaseInfo {
         }
         return balance;
     }
-    
+
+    public boolean markNotificationsAsRead(int userId, List<Integer> notificationIds) throws SQLException {
+        if (notificationIds == null || notificationIds.isEmpty()) {
+            return false;
+        }
+
+        String sql = "UPDATE Notifications SET is_read = 1 WHERE user_Id = ? AND notification_Id IN ("
+                + notificationIds.stream().map(id -> "?").collect(Collectors.joining(", ")) + ")";
+
+        try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+
+            // Set each notification ID in the prepared statement
+            for (int i = 0; i < notificationIds.size(); i++) {
+                stmt.setInt(i + 2, notificationIds.get(i));
+            }
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        }
+    }
+
+    public List<Notification> getNotificationsAfterId(int userId, int afterNotificationId) throws SQLException {
+        List<Notification> notifications = new ArrayList<>();
+
+        String sql = "SELECT notification_Id, message, date_sent, is_read FROM Notifications WHERE user_Id = ? AND notification_Id > ? ORDER BY date_sent DESC";
+
+        try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, afterNotificationId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Notification notification = new Notification();
+                notification.setNotificationId(rs.getInt("notification_Id"));
+                notification.setMessage(rs.getString("message"));
+                notification.setDateSent(rs.getTimestamp("date_sent"));
+                notification.setRead(rs.getBoolean("is_read"));
+                notifications.add(notification);
+            }
+        }
+
+        return notifications;
+    }
+
     public static void main(String[] args) {
         List<Discount> tours = new hoang_UserDB().getAllDiscounts();
         for (Discount book : tours) {

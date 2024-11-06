@@ -88,7 +88,6 @@ public class ProviderAnalysServlet extends HttpServlet {
             return; // Stop further processing
         }
 
-        System.out.println("USER PROFILE: " + user.getUser_Id());
         TourDB tourDB = new TourDB();
         CompanyDB companyDB = new CompanyDB();
         hoang_UserDB bookingDB = new hoang_UserDB();
