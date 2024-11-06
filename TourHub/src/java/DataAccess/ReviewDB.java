@@ -42,13 +42,15 @@ public class ReviewDB implements DatabaseInfo {
         return null;
     }
 
-    public static boolean addReview(String comment, int ratingStar, int cusID, String tourId) {
-        String sql = "INSERT INTO Review (comment, rating_Star, cus_Id, tour_Id) VALUES (?, ?, ?, ?)";
+    public static boolean addReview(String comment, int ratingStar, int cusID, String tourId, int bookId) {
+        String sql = "INSERT INTO Review (comment, rating_Star, cus_Id, tour_Id, book_Id) VALUES (?, ?, ?, ?, ?)";
+
         try (Connection conn = getConnect(); PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setString(1, comment);
             statement.setInt(2, ratingStar);
             statement.setInt(3, cusID);
             statement.setString(4, tourId);
+            statement.setInt(5, bookId); // Thêm book_Id để liên kết review với booking cụ thể
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -78,11 +80,10 @@ public class ReviewDB implements DatabaseInfo {
         String sql = "SELECT book_Id, created_At, slot_Order, total_Cost, tour_Id "
                 + "FROM Booking "
                 + "WHERE cus_Id = ? AND book_Status = 'Booked' "
-                + "AND NOT EXISTS (SELECT 1 FROM Review WHERE tour_Id = Booking.tour_Id AND cus_Id = ?)";
+                + "AND NOT EXISTS (SELECT 1 FROM Review WHERE book_Id = Booking.book_Id)";
 
         try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, cusId);
-            ps.setInt(2, cusId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -102,15 +103,16 @@ public class ReviewDB implements DatabaseInfo {
     }
 
     public boolean submitReview(Review review) {
-        String sql = "INSERT INTO Review (comment, rating_Star, cus_Id, tour_Id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Review (comment, rating_Star, cus_Id, tour_Id, book_Id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, review.getComment());
             stmt.setInt(2, review.getRating_Star());
             stmt.setInt(3, review.getCus_Id());
             stmt.setString(4, review.getTour_Id());
+            stmt.setInt(5, review.getBook_Id()); // Thêm book_Id vào câu lệnh SQL
 
             int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
+            return rowsInserted > 0; // Trả về true nếu thêm thành công
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -401,7 +403,8 @@ public class ReviewDB implements DatabaseInfo {
 
     public List<Comment> getCommentsByTourId(String tourId) {
         List<Comment> comments = new ArrayList<>();
-        String sql = "SELECT c.comment_id, c.parent_comment_id, u.first_Name, u.last_Name, c.comment_text, c.created_at "
+        String sql = "SELECT c.comment_id, c.user_id, c.parent_comment_id, u.first_Name, u.last_Name, u.avatar, "
+                + "c.comment_text, c.created_at "
                 + "FROM Comment c JOIN [User] u ON c.user_id = u.user_Id "
                 + "WHERE c.tour_id = ? "
                 + "ORDER BY COALESCE(c.parent_comment_id, c.comment_id), c.created_at";
@@ -412,19 +415,23 @@ public class ReviewDB implements DatabaseInfo {
                 while (rs.next()) {
                     Comment comment = new Comment();
                     comment.setCommentId(rs.getInt("comment_id"));
+                    comment.setUserId(rs.getInt("user_id")); // Đảm bảo lấy và gán đúng `user_id`
 
-                    // Lấy parent_comment_id và kiểm tra NULL
+                    // Kiểm tra và gán `parent_comment_id`
                     int parentCommentId = rs.getInt("parent_comment_id");
                     if (rs.wasNull()) {
-                        comment.setParentCommentId(null); // Nếu là NULL thì gán null
+                        comment.setParentCommentId(null);
                     } else {
-                        comment.setParentCommentId(parentCommentId); // Ngược lại thì gán giá trị bình thường
+                        comment.setParentCommentId(parentCommentId);
                     }
 
+                    // Thiết lập các thông tin khác
                     comment.setFirstName(rs.getString("first_Name"));
                     comment.setLastName(rs.getString("last_Name"));
+                    comment.setAvatar(rs.getString("avatar")); // Lấy đường dẫn avatar
                     comment.setCommentText(rs.getString("comment_text"));
                     comment.setCreatedAt(rs.getTimestamp("created_at"));
+
                     comments.add(comment);
                 }
             }
@@ -435,22 +442,96 @@ public class ReviewDB implements DatabaseInfo {
         return comments;
     }
 
-    public static void main(String[] args) {
-        ReviewDB reviewdb = new ReviewDB();
-        int userId = 1; // Replace with an actual user ID
+    public boolean updateCommentText(int commentId, String newText) {
+        String sql = "UPDATE Comment SET comment_text = ? WHERE comment_id = ?";
+        try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newText);
+            ps.setInt(2, commentId);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-        // Get the booked tours without a review for the specified user ID
-        List<Booking> bookings = reviewdb.getBookedToursWithoutReview(userId);
-        if (bookings.isEmpty()) {
-            System.out.println("No bookings found without reviews for user ID: " + userId);
+    public boolean deleteComment(int commentId) {
+        String deleteRepliesSql = "DELETE FROM Comment WHERE parent_comment_id = ?";
+        String deleteCommentSql = "DELETE FROM Comment WHERE comment_id = ?";
+
+        try (Connection conn = getConnect()) {
+            // Bắt đầu transaction
+            conn.setAutoCommit(false);
+
+            // Xóa tất cả các reply của comment
+            try (PreparedStatement deleteRepliesPs = conn.prepareStatement(deleteRepliesSql)) {
+                deleteRepliesPs.setInt(1, commentId);
+                deleteRepliesPs.executeUpdate();
+            }
+
+            // Xóa comment chính
+            try (PreparedStatement deleteCommentPs = conn.prepareStatement(deleteCommentSql)) {
+                deleteCommentPs.setInt(1, commentId);
+                int rowsDeleted = deleteCommentPs.executeUpdate();
+
+                // Commit transaction sau khi xóa thành công
+                conn.commit();
+                return rowsDeleted > 0;
+            } catch (SQLException e) {
+                // Rollback nếu có lỗi
+                conn.rollback();
+                e.printStackTrace();
+                return false;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Comment getCommentById(int commentId) {
+        String sql = "SELECT * FROM Comment WHERE comment_id = ?";
+        try (Connection conn = getConnect(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, commentId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Comment comment = new Comment();
+                comment.setCommentId(rs.getInt("comment_id"));
+                comment.setUserId(rs.getInt("user_id"));
+                comment.setCommentText(rs.getString("comment_text"));
+                return comment;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        ReviewDB reviewDB = new ReviewDB();
+        String testTourId = "T1221252";  // Thay thế bằng một tourId có thật trong cơ sở dữ liệu
+
+        List<Comment> comments = reviewDB.getCommentsByTourId(testTourId);
+
+        if (comments.isEmpty()) {
+            System.out.println("No comments found for tourId: " + testTourId);
         } else {
-            for (Booking booking : bookings) {
-                System.out.println("Booking ID: " + booking.getBook_Id());
-                System.out.println("Created At: " + booking.getCreated_At());
-                System.out.println("Slot Order: " + booking.getSlot_Order());
-                System.out.println("Total Cost: " + booking.getTotal_Cost());
-                System.out.println("Tour ID: " + booking.getTour_Id());
-                System.out.println("-----");
+            for (Comment comment : comments) {
+                System.out.println("Comment ID: " + comment.getCommentId());
+                System.out.println("User ID: " + comment.getUserId());
+                System.out.println("First Name: " + comment.getFirstName());
+                System.out.println("Last Name: " + comment.getLastName());
+                System.out.println("Comment Text: " + comment.getCommentText());
+                System.out.println("Parent Comment ID: " + comment.getParentCommentId());
+
+                java.sql.Timestamp createdAt = comment.getCreatedAt();
+                if (createdAt != null) {
+                    System.out.println("Created At: " + createdAt.toString());
+                } else {
+                    System.out.println("Created At: NULL");
+                }
+                System.out.println("-----------------------------------");
             }
         }
     }

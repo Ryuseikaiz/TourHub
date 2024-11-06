@@ -604,9 +604,10 @@
             </div>
 
         </div>
-        <c:if test="${not empty tour.tour_Img[0]}">
-            <div class="content flex">
-                <div class="tour-gallery">
+
+        <div class="content flex">
+            <div class="tour-gallery">
+                <c:if test="${not empty tour.tour_Img[0]}">
                     <div class="image-highlight">
                         <img class="tour-img" src="${tour.tour_Img.get(0)}" alt="Tour Image 1">
                         <a href="javascript:void(0)" onclick="toggle('popup1')">
@@ -619,6 +620,7 @@
                         </a>
                     </div>
                 </c:if>
+
                 <c:if test="${not empty tour.tour_Img[1]}">
                     <div class="image-1">
                         <img class="tour-img" src="${tour.tour_Img.get(1)}" alt="Tour Image 2">
@@ -676,298 +678,288 @@
                 </c:if>
             </div>
 
-            <c:if test="${not empty tour.tour_Img[0]}">
-                <div class="image-3">
-                    <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 4">
-                    <a href="javascript:void(0)" onclick="toggle('popup1')">
-                        <div class="img-viewmore">
-                            <h3>
-                                <i class="fa-solid fa-image"></i>
-                                View All Image
-                            </h3>
+
+
+            <div class="tour-detail">
+                <div class="tour-detail-left-section">
+                    <div class="left-section-above">
+                        <div class="average-rating">
+                            <span class="average-rating-point">${tour.average_Review_Rating}</span>
+
+                            <div class="rank">
+                                <span class="rank-type">Excellent</span>
+                                <br>
+                                <span class="number-rating">From ${tour.number_Of_Review} Review</span>
+                            </div>
                         </div>
-                    </a>
-                </div>
-            </c:if>
 
-            <c:if test="${not empty tour.tour_Img[0]}">
-                <div class="image-4">
-                    <img class="tour-img" src="assests/images/tour-images/${tour.tour_Img.get(0)}" alt="Tour Image 5">
-                    <a href="javascript:void(0)" onclick="toggle('popup1')">
-                        <div class="img-viewmore">
-                            <h3>
-                                <i class="fa-solid fa-image"></i>
-                                View All Image
-                            </h3>
-                        </div>
-                    </a>
-                </div>
-            </c:if>
-        </div>
+                        <div class="map">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <div class="map-content">
+                                <span class="view-map">Show map</span>
+                                <br>
+                                <span>${tour.location}</span>
+                            </div>
 
-
-        <div class="tour-detail">
-            <div class="tour-detail-left-section">
-                <div class="left-section-above">
-                    <div class="average-rating">
-                        <span class="average-rating-point">${tour.average_Review_Rating}</span>
-
-                        <div class="rank">
-                            <span class="rank-type">Excellent</span>
-                            <br>
-                            <span class="number-rating">From ${tour.number_Of_Review} Review</span>
                         </div>
                     </div>
 
-                    <div class="map">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                        <div class="map-content">
-                            <span class="view-map">Show map</span>
-                            <br>
-                            <span>${tour.location}</span>
+                    <div class="left-section-below">
+                        <div class="experiment">
+                            <h5>What You'll Experience</h5>
+                            <ul>
+                                <c:forEach var="experience" items="${tourDetailDescription.experiences}">
+                                    <li>${experience}</li>
+                                    </c:forEach>
+                            </ul>
+                            <a href="javascript:void(0)" class="view-more-experiment" onclick="toggle('popup3')">Read More</a>
                         </div>
+                        <div class="split"></div>
 
-                    </div>
-                </div>
-
-                <div class="left-section-below">
-                    <div class="experiment">
-                        <h5>What You'll Experience</h5>
-                        <ul>
-                            <c:forEach var="experience" items="${tourDetailDescription.experiences}">
-                                <li>${experience}</li>
-                                </c:forEach>
-                        </ul>
-                        <a href="javascript:void(0)" class="view-more-experiment" onclick="toggle('popup3')">Read More</a>
-                    </div>
-                    <div class="split"></div>
-
-                    <div class="more-information">
-                        <a href="javascript:void(0)" onclick="toggle('popup2')">Contacts, Facilities, Service Language and More</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tour-detail-right-section">
-                <div class="price-section">
-                    <div class="price">
-                        <span class="start-from">Start From</span>
-                        <h4>${tour.price}</h4>
-                    </div>
-
-                    <button class="find-tour-btn">Find Options</button>
-                </div>
-
-                <div class="view-review">
-
-                    <span class="view-review-content">What Travelers Say</span>
-                    <a href="#" id="viewAllReviewsBtn">See All Reviews</a>
-
-                </div>
-
-                <!-- Popup để hiển thị tất cả các đánh giá -->
-                <div id="reviewPopup" class="popup">
-                    <div class="popup-content card shadow-lg">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h2 class="mb-0">All Reviews</h2>
-                            <span class="close-btn" id="closePopup">&times;</span>
+                        <div class="more-information">
+                            <a href="javascript:void(0)" onclick="toggle('popup2')">Contacts, Facilities, Service Language and More</a>
                         </div>
-                        <div class="card-body">
-                            <div class="all-reviews">
-                                <c:forEach var="review" items="${allReviews}">
-                                    <div class="card mb-3 review-item">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h5 class="card-title text-primary mb-0">${review.first_Name} ${review.last_Name}</h5>
-                                                <div class="review-stars text-warning">
-                                                    <c:forEach var="i" begin="1" end="${review.rating_Star}">
-                                                        ★
-                                                    </c:forEach>
+                    </div>
+                </div>
+
+                <div class="tour-detail-right-section">
+                    <div class="price-section">
+                        <div class="price">
+                            <span class="start-from">Start From</span>
+                            <h4>${tour.price}</h4>
+                        </div>
+                        <button class="find-tour-btn">Find Options</button>
+                    </div>
+                    <div class="view-review">
+
+                        <span class="view-review-content">What Travelers Say</span>
+                        <a href="#" id="viewAllReviewsBtn">See All Reviews</a>
+
+                    </div>
+
+                    <!-- Popup để hiển thị tất cả các đánh giá -->
+                    <div id="reviewPopup" class="popup">
+                        <div class="popup-content card shadow-lg">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h2 class="mb-0">All Reviews</h2>
+                                <span class="close-btn" id="closePopup">&times;</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="all-reviews">
+                                    <c:forEach var="review" items="${allReviews}">
+                                        <div class="card mb-3 review-item">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <h5 class="card-title text-primary mb-0">${review.first_Name} ${review.last_Name}</h5>
+                                                    <div class="review-stars text-warning">
+                                                        <c:forEach var="i" begin="1" end="${review.rating_Star}">
+                                                            ★
+                                                        </c:forEach>
+                                                    </div>
                                                 </div>
+                                                <p class="card-text text-secondary">${review.comment}</p>
                                             </div>
-                                            <p class="card-text text-secondary">${review.comment}</p>
                                         </div>
-                                    </div>
-                                </c:forEach>
+                                    </c:forEach>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
 
 
-                <div class="highlight-review container mt-4">
-                    <div class="review-list">
-                        <c:choose>
-                            <c:when test="${not empty reviews}">
-                                <c:forEach var="review" items="${reviews}">
-                                    <div class="card review-item mb-3 shadow-sm">
-                                        <div class="card-body">
-                                            <h5 class="card-title text-primary">${review.first_Name} ${review.last_Name}</h5>
-                                            <p class="card-text text-secondary mb-2"><i class="fas fa-star text-warning"></i> ${review.rating_Star} / 5</p>
-                                            <p class="card-text"><strong>Comment:</strong> ${review.comment}</p>
+                    <div class="highlight-review container mt-4">
+                        <div class="review-list">
+                            <c:choose>
+                                <c:when test="${not empty reviews}">
+                                    <c:forEach var="review" items="${reviews}">
+                                        <div class="card review-item mb-3 shadow-sm">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-primary">${review.first_Name} ${review.last_Name}</h5>
+                                                <p class="card-text text-secondary mb-2"><i class="fas fa-star text-warning"></i> ${review.rating_Star} / 5</p>
+                                                <p class="card-text"><strong>Comment:</strong> ${review.comment}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="alert alert-info text-center">No review for this tour.</div>
-                            </c:otherwise>
-                        </c:choose>
+                                    </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="alert alert-info text-center">No review for this tour.</div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="tour-itinerary">
-            <h4>Tour Itinerary</h4>
-            <span>
-                <ul>
-                    <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
-                        <li>${itinerary}</li>
-                        </c:forEach>
-                </ul>
-            </span>
-            <a href="javascript:void(0)" onclick="toggle('popup4')">See Complete Itinerary</a>
-        </div>
+            <div class="tour-itinerary">
+                <h4>Tour Itinerary</h4>
+                <span>
+                    <ul>
+                        <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
+                            <li>${itinerary}</li>
+                            </c:forEach>
+                    </ul>
+                </span>
+                <a href="javascript:void(0)" onclick="toggle('popup4')">See Complete Itinerary</a>
+            </div>
 
-        <div class="tour-booking">
-            <h4>Available Ticket(s) for You</h4>
-            <div id="notification" style="display: none; color: red;">Ngày được chọn không có tour nào!</div>
-            <div class="date-picking">
-                <button class="calendar" onclick="openCalendar(); toggle('blur');">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    See Calendar
-                </button>
-
-                <input type="text" id="calendarInput" style="display: none;" />
-                <div class="date-wrapper">
-                    <button class="scroll-left" onclick="scrollLeft1()">
-                        <i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>
+            <div class="tour-booking">
+                <h4>Available Ticket(s) for You</h4>
+                <div id="notification" style="display: none; color: red;">Ngày được chọn không có tour nào!</div>
+                <div class="date-picking">
+                    <button class="calendar" onclick="openCalendar(); toggle('blur');">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        See Calendar
                     </button>
 
-                    <div class="date-section" id="date-section">
-                        <!-- Tạo 14 khung ngày -->
-                        <div class="date-container" data-index="0" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="0"></span>
-                            <span class="date" data-formatteddate="0"></span>
-                        </div>
+                    <input type="text" id="calendarInput" style="display: none;" />
+                    <div class="date-wrapper">
+                        <button class="scroll-left" onclick="scrollLeft1()">
+                            <i class="fa-solid fa-arrow-right fa-flip-horizontal"></i>
+                        </button>
 
-                        <div class="date-container" data-index="1" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="1"></span>
-                            <span class="date" data-formatteddate="1"></span>
-
-                        </div>
-                        <div class="date-container" data-index="2" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="2"></span>
-                            <span class="date" data-formatteddate="2"></span>
-                        </div>
-                        <div class="date-container" data-index="3" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="3"></span>
-                            <span class="date" data-formatteddate="3"></span>
-                        </div>
-                        <div class="date-container" data-index="4" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="4"></span>
-                            <span class="date" data-formatteddate="4"></span>
-                        </div>
-                        <div class="date-container" data-index="5" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="5"></span>
-                            <span class="date" data-formatteddate="5"></span>
-                        </div>
-                        <div class="date-container" data-index="6" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="6"></span>
-                            <span class="date" data-formatteddate="6"></span>
-                        </div>
-                        <div class="date-container" data-index="7" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="7"></span>
-                            <span class="date" data-formatteddate="7"></span>
-                        </div>
-                        <div class="date-container" data-index="8" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="8"></span>
-                            <span class="date" data-formatteddate="8"></span>
-                        </div>
-                        <div class="date-container" data-index="9" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="9"></span>
-                            <span class="date" data-formatteddate="9"></span>
-                        </div>
-                        <div class="date-container" data-index="10" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="10"></span>
-                            <span class="date" data-formatteddate="10"></span>
-                        </div>
-                        <div class="date-container" data-index="11" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="11"></span>
-                            <span class="date" data-formatteddate="11"></span>
-                        </div>
-                        <div class="date-container" data-index="12" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="12"></span>
-                            <span class="date" data-formatteddate="12"></span>
-                        </div>
-                        <div class="date-container" data-index="13" onclick="selectDate(this)">
-                            <span class="day-of-week" data-dayofweek="13"></span>
-                            <span class="date" data-formatteddate="13"></span>
-                        </div>
-                    </div>
-
-
-                    <button class="scroll-right" onclick="scrollRight()">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>                  
-
-            <div class="tour-options-section">
-                <c:forEach items="${tourOptions}" var="option">
-                    <div class="tour-option" data-tour-date="${option.tour_Date}">
-                        <div class="tour-option-left-section">
-                            <span class="option-name">${option.option_Name}</span>
-                            <span class="option-note">${option.option_Description}</span>
-                            <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">Xem chi tiết</a>
-                            <span class="refund-section">${option.day_Of_Week}</span>
-                        </div>
-                        <div class="tour-option-right-section">
-                            <div class="top-pick-logo">Top pick ${option.available_Slots}</div>
-                            <div class="option-price-section">
-                                <div class="option-price">${option.option_Price}</div>
-
-                                <!-- Kiểm tra available_Slots -->
-                                <c:choose>
-                                    <c:when test="${option.available_Slots > 0}">
-                                        <button class="option-pick-btn" 
-                                                onclick="window.location.href = 'optionAdjustment?id=${option.option_Id}&selectedDate=' + selectedDate.toISOString().split('T')[0]">
-                                            Chọn vé
-                                        </button>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <button class="option-pick-btn" disabled>Hết lượt</button>
-                                    </c:otherwise>
-                                </c:choose>
+                        <div class="date-section" id="date-section">
+                            <!-- Tạo 14 khung ngày -->
+                            <div class="date-container" data-index="0" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="0"></span>
+                                <span class="date" data-formatteddate="0"></span>
                             </div>
-                        </div>                            
+
+                            <div class="date-container" data-index="1" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="1"></span>
+                                <span class="date" data-formatteddate="1"></span>
+
+                            </div>
+                            <div class="date-container" data-index="2" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="2"></span>
+                                <span class="date" data-formatteddate="2"></span>
+                            </div>
+                            <div class="date-container" data-index="3" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="3"></span>
+                                <span class="date" data-formatteddate="3"></span>
+                            </div>
+                            <div class="date-container" data-index="4" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="4"></span>
+                                <span class="date" data-formatteddate="4"></span>
+                            </div>
+                            <div class="date-container" data-index="5" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="5"></span>
+                                <span class="date" data-formatteddate="5"></span>
+                            </div>
+                            <div class="date-container" data-index="6" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="6"></span>
+                                <span class="date" data-formatteddate="6"></span>
+                            </div>
+                            <div class="date-container" data-index="7" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="7"></span>
+                                <span class="date" data-formatteddate="7"></span>
+                            </div>
+                            <div class="date-container" data-index="8" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="8"></span>
+                                <span class="date" data-formatteddate="8"></span>
+                            </div>
+                            <div class="date-container" data-index="9" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="9"></span>
+                                <span class="date" data-formatteddate="9"></span>
+                            </div>
+                            <div class="date-container" data-index="10" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="10"></span>
+                                <span class="date" data-formatteddate="10"></span>
+                            </div>
+                            <div class="date-container" data-index="11" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="11"></span>
+                                <span class="date" data-formatteddate="11"></span>
+                            </div>
+                            <div class="date-container" data-index="12" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="12"></span>
+                                <span class="date" data-formatteddate="12"></span>
+                            </div>
+                            <div class="date-container" data-index="13" onclick="selectDate(this)">
+                                <span class="day-of-week" data-dayofweek="13"></span>
+                                <span class="date" data-formatteddate="13"></span>
+                            </div>
+                        </div>
+
+
+                        <button class="scroll-right" onclick="scrollRight()">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>                  
+
+                <div class="tour-options-section">
+                    <c:forEach items="${tourOptions}" var="option">
+                        <div class="tour-option" data-tour-date="${option.tour_Date}">
+                            <div class="tour-option-left-section">
+                                <span class="option-name">${option.option_Name}</span>
+                                <span class="option-note">${option.option_Description}</span>
+                                <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">Xem chi tiết</a>
+                                <span class="refund-section">${option.day_Of_Week}</span>
+                            </div>
+                            <div class="tour-option-right-section">
+                                <div class="top-pick-logo">Top pick ${option.available_Slots}</div>
+                                <div class="option-price-section">
+                                    <div class="option-price">${option.option_Price}</div>
+
+                                    <!-- Kiểm tra available_Slots -->
+                                    <c:choose>
+                                        <c:when test="${option.available_Slots > 0}">
+                                            <button class="option-pick-btn" 
+                                                    onclick="window.location.href = 'optionAdjustment?id=${option.option_Id}&selectedDate=' + selectedDate.toISOString().split('T')[0]">
+                                                Chọn vé
+                                            </button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <button class="option-pick-btn" disabled>Hết lượt</button>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>                            
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+            <h4>Comment section</h4>
+            <jsp:include page="CommentServlet">
+                <jsp:param name="tourId" value="${tourId}" />
+            </jsp:include>
+
+            <div class="tour-rating">
+
+            </div>
+        </div>
+    </div>
+    <!--Popup1-->
+    <div id="popup1">
+        <div id="carouselExampleIndicators" class="carousel slide">
+            <div class="carousel-indicators">
+                <c:forEach var="i" begin="0" end="${fn:length(tour.tour_Img) - 1}">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
+                            class="${i == 0 ? 'active' : ''}" aria-current="${i == 0 ? 'true' : 'false'}"
+                            aria-label="Slide ${i + 1}"></button>
+                </c:forEach>
+            </div>
+            <div class="carousel-inner">
+                <c:forEach var="image" items="${tour.tour_Img}">
+                    <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
+                        <img src="${image}" class="carousel-img d-block w-100" alt="...">
                     </div>
                 </c:forEach>
             </div>
-        </div>
-        <jsp:include page="CommentServlet">
-            <jsp:param name="tourId" value="${tourId}" />
-        </jsp:include>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
 
-        <div class="tour-rating">
-
-        </div>
-    </div>
-</div>
-<!--Popup1-->
-<div id="popup1">
-    <div id="carouselExampleIndicators" class="carousel slide">
-        <div class="carousel-indicators">
-            <c:forEach var="i" begin="0" end="${fn:length(tour.tour_Img) - 1}">
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
-                        class="${i == 0 ? 'active' : ''}" aria-current="${i == 0 ? 'true' : 'false'}"
-                        aria-label="Slide ${i + 1}"></button>
-            </c:forEach>
         </div>
         <div class="carousel-inner">
-            <c:forEach var="image" items="${tour.tour_Img}">
+            <c:forEach var="image" items="assests/images/tour-images/${tour.tour_Img}">
                 <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
                     <img src="${image}" class="carousel-img d-block w-100" alt="...">
                 </div>
@@ -984,93 +976,36 @@
             <span class="visually-hidden">Next</span>
         </button>
 
+        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup1')"></button>
     </div>
-    <div class="carousel-inner">
-        <c:forEach var="image" items="assests/images/tour-images/${tour.tour_Img}">
-            <div class="carousel-item ${image eq tour.tour_Img[0] ? 'active' : ''}">
-                <img src="${image}" class="carousel-img d-block w-100" alt="...">
+    <!--Popup2-->
+    <div id="popup2">
+        <h3>More Information</h3>
+        <div class="information-wrapper">
+            <div class="language-service">
+                <h4>Service Language(s)</h4>
+                <span>Service available in:</span>
+                <ul>
+                    <c:forEach var="language" items="${tourDetailDescription.languageService}">
+                        <li>${language}</li>
+                        </c:forEach>
+                </ul>
             </div>
-        </c:forEach>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
-</div>
-<!--Popup2-->
-<div id="popup2">
-    <h3>More Information</h3>
-    <div class="information-wrapper">
-        <div class="language-service">
-            <h4>Service Language(s)</h4>
-            <span>Service available in:</span>
-            <ul>
-                <c:forEach var="language" items="${tourDetailDescription.languageService}">
-                    <li>${language}</li>
-                    </c:forEach>
-            </ul>
         </div>
-    </div>
-    <div class="extra-information">
-        <h4>Additional Information</h4>
-        <span>
-            <ul>
-                <c:forEach var="info" items="${tourDetailDescription.additionalInformation}">
-                    <li>${info}</li>
-                    </c:forEach>
-            </ul>
-        </span>
-    </div>
-</div>
+        <div class="extra-information">
+            <h4>Additional Information</h4>
+            <span>
+                <ul>
+                    <c:forEach var="info" items="${tourDetailDescription.additionalInformation}">
+                        <li>${info}</li>
+                        </c:forEach>
+                </ul>
+            </span>
+        </div>
 
-<button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup2')">
-</button>
-</div>
-
-<!--Popup3-->
-<div id="popup3">
-    <h3>What You'll Experience</h3>
-    <div class="experiment-wrapper">
-        <ul>
-            <c:forEach var="experience" items="${tourDetailDescription.experiences}">
-                <li>${experience}</li>
-                </c:forEach>
-        </ul>
-
-        <!--            <span>Bà Nà Hills là khu phức hợp giải trí và resort lớn nhất tại Việt Nam. Cùng nhau đi tour và xả láng cả
-                        ngày tại Bà Nà Hills ngay nào! Tận hưởng không khí mát lạnh cùng phong cảnh tuyệt vời, ăn hết mình với
-                        đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
-                        tất cả đều ngay tại đây!</span>
-        
-                    <img src="assests/images/new-image/jojo1.jpg" alt="">
-                    <span>Tận hưởng bầu không khí mát lạnh khi bạn "lướt" mây lên đến đỉnh Bà Nà </span>
-        
-                    <img src="assests/images/new-image/jojo2.jpg" alt="">
-                    <span>Đừng quên "đua tốc độ" và tham gia rất nhiều trò chơi hấp dẫn khác tại Bà Nà nhé! </span>
-        
-                    <img src="assests/images/new-image/jojo3.jpg" alt="">
-                    <span>Ngắm nhìn Bà Nà lấp lánh trong ánh đèn khi hoàng hôn buông xuống</span>-->
+        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup2')"></button>
     </div>
 
-    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup3')"></button>
-</div>
-
-<!--Popup4-->
-<div id="popup4">
-    <h3>Tour Itinerary</h3>
-    <div class="tour-itinerary-wrapper">
-        <ul>
-            <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
-                <li>${itinerary}</li>
-                </c:forEach>
-        </ul>
-    </div>
     <!--Popup3-->
     <div id="popup3">
         <h3>What You'll Experience</h3>
@@ -1080,212 +1015,211 @@
                     <li>${experience}</li>
                     </c:forEach>
             </ul>
-            <!--Popup5-->
-            <div id="popup5">
-                <h4>Tour ghép</h4>
-                <div class="tour-option-detail-wrapper">
-                    <div class="tour-time-popup">
-                        <span>
-                            Thời lượng tour:
-                            ${tour.total_Time}
-                        </span>
 
-                        <span>
-                            Thời gian và điểm đón:
-                            <ul>
-                                <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
-                                <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
-                                    thêm trên trang Sản phẩm để biết thêm chi tiết </li>
-                            </ul>
-                        </span>
-                    </div>
 
-                    <span class="refund-section-popup">
-                        Easy Refund
+            <!--            <span>Bà Nà Hills là khu phức hợp giải trí và resort lớn nhất tại Việt Nam. Cùng nhau đi tour và xả láng cả
+                            ngày tại Bà Nà Hills ngay nào! Tận hưởng không khí mát lạnh cùng phong cảnh tuyệt vời, ăn hết mình với
+                            đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
+                            tất cả đều ngay tại đây!</span>
+
+                        <img src="assests/images/new-image/jojo1.jpg" alt="">
+                        <span>Tận hưởng bầu không khí mát lạnh khi bạn "lướt" mây lên đến đỉnh Bà Nà </span>
+
+                        <img src="assests/images/new-image/jojo2.jpg" alt="">
+                        <span>Đừng quên "đua tốc độ" và tham gia rất nhiều trò chơi hấp dẫn khác tại Bà Nà nhé! </span>
+
+                        <img src="assests/images/new-image/jojo3.jpg" alt="">
+                        <span>Ngắm nhìn Bà Nà lấp lánh trong ánh đèn khi hoàng hôn buông xuống</span>-->
+        </div>
+
+        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup3')"></button>
+    </div>
+
+    <!--Popup4-->
+    <div id="popup4">
+        <h3>Tour Itinerary</h3>
+        <div class="tour-itinerary-wrapper">
+            <ul>
+                <c:forEach var="itinerary" items="${tourDetailDescription.tourItinerary}">
+                    <li>${itinerary}</li>
+                    </c:forEach>
+            </ul>
+        </div>
+
+        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
+    </div>    
+
+    <!--Popup5-->
+    <div id="popup5">
+        <h4>Tour ghép</h4>
+        <div class="tour-option-detail-wrapper">
+            <div class="tour-time-popup">
+                <span>
+                    Thời lượng tour:
+                    ${tour.total_Time}
+                </span>
+
+                <span>
+                    Thời gian và điểm đón:
+                    <ul>
+                        <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
+                        <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
+                            thêm trên trang Sản phẩm để biết thêm chi tiết </li>
+                    </ul>
+                </span>
+            </div>
+
+            <span class="refund-section-popup">
+                Easy Refund
+            </span>
+
+            <div class="price-wrapper">
+                <span class="price-wrapper-inner">1.216.867 VND</span>
+
+                <button>Chọn vé</button>
+            </div>
+
+            <div>
+                <nav id="navbar-example2" class="navbar-inner bg-body-tertiary px-3 mb-3">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#scrollspyHeading1">First</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#scrollspyHeading2">Second</a>
+                        </li>
+                        <li class="nav-item"></li>
+                        <a class="nav-link" href="#scrollspyHeading3">Third</a>
+                        </li>
+                        <li class="nav-item"></li>
+                        <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
+                        </li>
+                        <li class="nav-item"></li>
+                        <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%"
+                     data-bs-smooth-scroll="true" class="navbar-content scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
+                    <h4 id="scrollspyHeading1">First heading</h4>
+                    <span>
+                        Giá đã bao gồm
+                        Bữa ăn:
+
+                        1 buffet trưa
+                        Phương tiện di chuyển:
+
+                        Xe có máy điều hoà để đưa đón và trung chuyển
+                        Dịch vụ khác:
+
+                        Vé vào cửa
+                        Bảo hiểm du lịch
+                        Hướng dẫn viên nói tiếng Việt - Anh
                     </span>
+                    <h4 id="scrollspyHeading2">Second heading</h4>
+                    <span>
+                        Hiệu lực của voucher
 
-                    <div class="price-wrapper">
-                        <span class="price-wrapper-inner">1.216.867 VND</span>
-
-                        <button>Chọn vé</button>
-                    </div>
-                    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup4')"></button>
-                    </button>
+                        Sử dụng vào ngày đã chọn
+                        Có hiệu lực vào mọi ngày bình thường
+                        Có hiệu lực vào mọi ngày lễ
+                        Dành cho khách Việt Nam
+                    </span>
+                    <h4 id="scrollspyHeading3">Third heading</h4>
+                    <span>
+                        Nếu đặt chỗ của bạn đã được xác nhận, nhân viên điều hành tour sẽ liên hệ với bạn qua điện thoại
+                        ít nhất 24 giờ trước khi tour bắt đầu.
+                    </span>
+                    <h4 id="scrollspyHeading4">Fourth heading</h4>
+                    <span>
+                        Đặt chỗ này không thể thay đổi lịch.
+                        Yêu cầu hoàn tiền muộn nhất là 2 ngày trước ngày đi đã chọn của bạn để nhận được 100% hoàn tiền.
+                        Đặt chỗ của bạn sẽ không được hoàn lại nếu bạn yêu cầu hoàn tiền ít hơn 2 ngày trước ngày đi đã
+                        chọn.
+                    </span>
+                    <h4 id="scrollspyHeading5">Fifth heading</h4>
+                    <span>
+                        Điều khoản & Điều kiện
+                        Thông tin chung
+                        Phụ phí 100.000 VND/khách, thanh toán trực tiếp với nhà cung cấp tour, áp dụng vào các ngày khởi
+                        hành tour sau: 18 Th04, 30 Th04, 1 Th05, 31 Th08 – 3 Th09 2024.
+                        Dịch vụ đón trả miễn phí cho khách ở tại trung tâm thành phố Đà Nẵng.
+                        Phí đón trả khách sẽ được áp dụng nếu khách có nguyện vọng được đón trả tại những địa điểm sau:
+                    </span>
                 </div>
-
-                <!--Popup5-->
-                <div id="popup5">
-                    <h4>Tour ghép</h4>
-                    <div class="tour-option-detail-wrapper">
-                        <div class="tour-time-popup">
-                            <span>
-                                Thời lượng tour:
-                                ${tour.total_Time}
-                            </span>
-
-                            <span>
-                                Thời gian và điểm đón:
-                                <ul>
-                                    <li>Khách sẽ được đón tại nơi lưu trú nằm tại trung tâm thành phố Đà Nẵng từ 07:30 – 08:30 </li>
-                                    <li>Đối với khách nằm ngoài khu vực trung tâm thành phố Đà Nẵng, vui lòng tham khảo Thông tin
-                                        thêm trên trang Sản phẩm để biết thêm chi tiết </li>
-                                </ul>
-                            </span>
-                        </div>
-
-                        <span class="refund-section-popup">
-                            Easy Refund
-                        </span>
-
-                        <div class="price-wrapper">
-                            <span class="price-wrapper-inner">1.216.867 VND</span>
-
-                            <button>Chọn vé</button>
-                        </div>
-
-                        <div>
-                            <nav id="navbar-example2" class="navbar-inner bg-body-tertiary px-3 mb-3">
-                                <ul class="nav nav-pills">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#scrollspyHeading1">First</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#scrollspyHeading2">Second</a>
-                                    </li>
-                                    <li class="nav-item"></li>
-                                    <a class="nav-link" href="#scrollspyHeading3">Third</a>
-                                    </li>
-                                    <li class="nav-item"></li>
-                                    <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
-                                    </li>
-                                    <li class="nav-item"></li>
-                                    <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-root-margin="0px 0px -40%"
-                                 data-bs-smooth-scroll="true" class="navbar-content scrollspy-example bg-body-tertiary p-3 rounded-2" tabindex="0">
-                                <h4 id="scrollspyHeading1">First heading</h4>
-                                <span>
-                                    Giá đã bao gồm
-                                    Bữa ăn:
-
-                                    1 buffet trưa
-                                    Phương tiện di chuyển:
-
-                                    Xe có máy điều hoà để đưa đón và trung chuyển
-                                    Dịch vụ khác:
-
-                                    Vé vào cửa
-                                    Bảo hiểm du lịch
-                                    Hướng dẫn viên nói tiếng Việt - Anh
-                                </span>
-                                <h4 id="scrollspyHeading2">Second heading</h4>
-                                <span>
-                                    Hiệu lực của voucher
-
-                                    Sử dụng vào ngày đã chọn
-                                    Có hiệu lực vào mọi ngày bình thường
-                                    Có hiệu lực vào mọi ngày lễ
-                                    Dành cho khách Việt Nam
-                                </span>
-                                <h4 id="scrollspyHeading3">Third heading</h4>
-                                <span>
-                                    Nếu đặt chỗ của bạn đã được xác nhận, nhân viên điều hành tour sẽ liên hệ với bạn qua điện thoại
-                                    ít nhất 24 giờ trước khi tour bắt đầu.
-                                </span>
-                                <h4 id="scrollspyHeading4">Fourth heading</h4>
-                                <span>
-                                    Đặt chỗ này không thể thay đổi lịch.
-                                    Yêu cầu hoàn tiền muộn nhất là 2 ngày trước ngày đi đã chọn của bạn để nhận được 100% hoàn tiền.
-                                    Đặt chỗ của bạn sẽ không được hoàn lại nếu bạn yêu cầu hoàn tiền ít hơn 2 ngày trước ngày đi đã
-                                    chọn.
-                                </span>
-                                <h4 id="scrollspyHeading5">Fifth heading</h4>
-                                <span>
-                                    Điều khoản & Điều kiện
-                                    Thông tin chung
-                                    Phụ phí 100.000 VND/khách, thanh toán trực tiếp với nhà cung cấp tour, áp dụng vào các ngày khởi
-                                    hành tour sau: 18 Th04, 30 Th04, 1 Th05, 31 Th08 – 3 Th09 2024.
-                                    Dịch vụ đón trả miễn phí cho khách ở tại trung tâm thành phố Đà Nẵng.
-                                    Phí đón trả khách sẽ được áp dụng nếu khách có nguyện vọng được đón trả tại những địa điểm sau:
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
-                    </button>
-                </div>
-                <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
-                </button>
-            </div>
-
-            <!--    <div id="popup5" class="popup">
-                    <div class="popup-content">
-                        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')">Close</button>
-            
-                         Dynamic content of the popup 
-                        <div class="tour-option-detail-wrapper">
-            <c:forEach items="${optionDetails}" var="detail">
-                <div>
-                    <h4>Category: 
-                <c:choose>
-                    <c:when test="${detail.categoryId == 1}">Price Includes</c:when>
-                    <c:when test="${detail.categoryId == 2}">Meals</c:when>
-                    <c:when test="${detail.categoryId == 3}">Transport</c:when>
-                    <c:when test="${detail.categoryId == 4}">Additional Services/Items</c:when>
-                    <c:when test="${detail.categoryId == 5}">Price Excludes</c:when>
-                </c:choose>
-            </h4>
-            <span>${detail.detailDescription}</span>
-            </div>
-            </c:forEach>
-            </div>
-            </div>
-            </div>-->
-
-            <div class="tour-content">
-
-
-
             </div>
 
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-        <!--<script>
-            function fetchDetails(optionId) {
-                // Construct the URL using window.location.origin
-                const origin = window.location.origin;
-                var url = origin + `/Project_SWP/getTourOptionDetails?optionId=` + optionId;
-                console.log("Fetching from url: " + url);
-                // Fetch data from the server
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Network response was not ok");
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                        // Update the content of the popup with the fetched data
-                        document.getElementById('popup5').innerHTML = data;
-                        toggle('popup5'); // Assuming toggle function is defined to show/hide the popup
-                    })
-                    .catch(error => {
-                        console.error("Fetch error: ", error);
-                        alert("Failed to load tour option details.");
-                    });
-            }
-        </script>-->
 
-        <script>
+        <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
+    </div>
+    <!--    <div id="popup5" class="popup">
+            <div class="popup-content">
+                <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')">Close</button>
+    
+                 Dynamic content of the popup 
+                <div class="tour-option-detail-wrapper">
+    <c:forEach items="${optionDetails}" var="detail">
+        <div>
+            <h4>Category: 
+        <c:choose>
+            <c:when test="${detail.categoryId == 1}">Price Includes</c:when>
+            <c:when test="${detail.categoryId == 2}">Meals</c:when>
+            <c:when test="${detail.categoryId == 3}">Transport</c:when>
+            <c:when test="${detail.categoryId == 4}">Additional Services/Items</c:when>
+            <c:when test="${detail.categoryId == 5}">Price Excludes</c:when>
+        </c:choose>
+    </h4>
+    <span>${detail.detailDescription}</span>
+    </div>
+    </c:forEach>
+    </div>
+    </div>
+    </div>-->
+
+    <div class="tour-content">
+
+
+
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!--<script>
+    function fetchDetails(optionId) {
+        // Construct the URL using window.location.origin
+        const origin = window.location.origin;
+        var url = origin + `/Project_SWP/getTourOptionDetails?optionId=` + optionId;
+        console.log("Fetching from url: " + url);
+        // Fetch data from the server
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Update the content of the popup with the fetched data
+                document.getElementById('popup5').innerHTML = data;
+                toggle('popup5'); // Assuming toggle function is defined to show/hide the popup
+            })
+            .catch(error => {
+                console.error("Fetch error: ", error);
+                alert("Failed to load tour option details.");
+            });
+    }
+</script>-->
+
+<script>
+            // Toggle function for handling blur and popups
             function toggle(action) {
                 var blur = document.getElementById('blur');
-
                 if (action === 'blur') {
                     // Chỉ kích hoạt blur
                     blur.classList.toggle('active');
@@ -1330,175 +1264,93 @@
                     blur.classList.remove('active');
                 }
             }
-        </script>
 
-        <script>
+            // Scroll date section
             function scrollRight() {
                 const section = document.getElementById('date-section');
-                if (section) {
-                    section.scrollLeft += 200; // Di chuyển về phía phải
-                }
+                if (section)
+                    section.scrollLeft += 200;
             }
 
             function scrollLeft1() {
                 const section = document.getElementById('date-section');
-                if (section) {
-                    section.scrollLeft -= 200; // Di chuyển về phía trái
-                }
+                if (section)
+                    section.scrollLeft -= 200;
             }
 
-            // Lắng nghe sự kiện click ra ngoài popup để tắt hiệu ứng mờ
+            // Close blur effect when clicking outside of popup
             document.addEventListener('click', function (event) {
                 var calendarElement = document.querySelector('.flatpickr-calendar');
                 var blurElement = document.getElementById('blur');
-
-                // Kiểm tra sự tồn tại của các phần tử trước khi xử lý
-                if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar')) {
-                    if (blurElement && blurElement.classList.contains('active')) {
-                        toggle(null);
-                    }
+                if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar') && blurElement && blurElement.classList.contains('active')) {
+                    toggle(null);
                 }
             }, true);
-        </script>
 
-        <script>
-            // Biến lưu ngày được chọn, mặc định là ngày hiện tại
+            // Display 14 days with available tour dates
             let selectedDate = new Date();
-
-            // Function để hiển thị 14 ngày với ngày hiện tại hoặc đã chọn ở giữa
             function displayDateRange() {
                 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-                // Tìm tất cả các phần tử .date-container
                 let dateContainers = document.querySelectorAll('.date-container');
-
-                // Lấy danh sách ngày có tour và sắp xếp theo thứ tự
                 const tourOptions = [...document.querySelectorAll('.tour-option')];
-                const availableTourDates = tourOptions
-                        .map(option => new Date(option.getAttribute('data-tour-date')))
+                const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
                         .sort((a, b) => a - b)
-                        .filter(date => date >= new Date()); // Chỉ lấy những ngày từ hiện tại trở đi
-
-                // Chỉ giữ lại 14 ngày gần nhất có tour
+                        .filter(date => date >= new Date());
                 const closestTourDates = availableTourDates.slice(0, 14);
 
-                // Nếu có ít hơn 14 ngày, ẩn các date-container còn lại
                 for (let i = 0; i < dateContainers.length; i++) {
                     if (i < closestTourDates.length) {
                         const date = closestTourDates[i];
-                        const dayOfWeek = daysOfWeek[date.getDay()];
-                        const formattedDate = date.getDate() + ' thg ' + (date.getMonth() + 1);
-
-                        // Cập nhật nội dung của phần tử date-container
-                        dateContainers[i].querySelector('[data-dayofweek]').innerText = dayOfWeek;
-                        dateContainers[i].querySelector('[data-formatteddate]').innerText = formattedDate;
-
-                        // Cập nhật sự kiện onclick với giá trị ngày mới
+                        dateContainers[i].querySelector('[data-dayofweek]').innerText = daysOfWeek[date.getDay()];
+                        dateContainers[i].querySelector('[data-formatteddate]').innerText = date.getDate() + ' thg ' + (date.getMonth() + 1);
                         dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
-
-                        // Hiển thị date-container nếu có tour
                         dateContainers[i].style.display = 'flex';
-
-                        // Đặt class 'selected' vào ngày đầu tiên trong danh sách
-                        if (i === 0) {
-                            dateContainers[i].classList.add('selected');
+                        dateContainers[i].classList.toggle('selected', i === 0);
+                        if (i === 0)
                             selectedDate = date;
-                        } else {
-                            dateContainers[i].classList.remove('selected');
-                        }
                     } else {
                         dateContainers[i].style.display = 'none';
                     }
                 }
-
-                // Cập nhật các lựa chọn tour dựa trên selectedDate ban đầu
                 filterTourOptions(selectedDate);
             }
 
-
             const daysMapping = {
-                'Sunday': 0,
-                'Monday': 1,
-                'Tuesday': 2,
-                'Wednesday': 3,
-                'Thursday': 4,
-                'Friday': 5,
-                'Saturday': 6
+                'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6
             };
 
-
             function filterTourOptions(selectedDate) {
-                const dayOfWeek = selectedDate.getDay(); // Lấy số ngày trong tuần từ selectedDate
-                console.log("Selected day of week:", dayOfWeek); // Kiểm tra giá trị ngày đã chọn
-
+                const dayOfWeek = selectedDate.getDay();
                 const tourOptions = [...document.querySelectorAll('.tour-option')];
-
                 tourOptions.forEach(option => {
                     const refundSection = option.querySelector('.refund-section').innerText;
-                    console.log("Refund section text:", refundSection); // In ra nội dung refund-section
-                    const optionDayOfWeek = daysMapping[refundSection]; // Sử dụng ánh xạ để lấy số
-
-                    console.log("Option day of week:", optionDayOfWeek); // Kiểm tra giá trị dayOfWeek trong mỗi option
-
-                    // Lấy tour_Date từ option
-                    const tourDateStr = option.getAttribute('data-tour-date'); // Giả sử bạn lưu trữ tour_Date trong thuộc tính data
-                    const tourDate = new Date(tourDateStr); // Chuyển đổi chuỗi ngày thành đối tượng Date
-
-                    // Kiểm tra nếu ngày đã chọn và tour_Date cùng ngày
-                    if (optionDayOfWeek === dayOfWeek && selectedDate.toDateString() === tourDate.toDateString()) {
-                        option.style.display = 'flex'; // Hiển thị tourOption
-                    } else {
-                        option.style.display = 'none'; // Ẩn tourOption
-                    }
+                    const optionDayOfWeek = daysMapping[refundSection];
+                    const tourDateStr = option.getAttribute('data-tour-date');
+                    const tourDate = new Date(tourDateStr);
+                    option.style.display = optionDayOfWeek === dayOfWeek && selectedDate.toDateString() === tourDate.toDateString() ? 'flex' : 'none';
                 });
             }
 
-
-            // Function để xử lý việc chọn ngày trong date-wrapper
             function selectDate(element, dateStr) {
-                console.log("Date string selected:", dateStr);
-                // Xóa class 'selected' khỏi tất cả các ngày
-                let allDates = document.querySelectorAll('.date-container');
-                allDates.forEach(date => date.classList.remove('selected'));
-
-                // Thêm class 'selected' vào phần tử được nhấp vào
+                document.querySelectorAll('.date-container').forEach(date => date.classList.remove('selected'));
                 element.classList.add('selected');
-
-                // Cập nhật ngày đã chọn
                 selectedDate = new Date(dateStr);
-
-                console.log("Updated selectedDate:", selectedDate);
-
                 filterTourOptions(selectedDate);
             }
 
-            // Function để mở lịch và đặt ngày mặc định
             function openCalendar() {
                 flatpickr("#calendarInput", {
-                    dateFormat: "Y-m-d",
-                    defaultDate: new Date(), // Ngày mặc định là ngày hiện tại
-                    minDate: "today",
-                    onChange: function (selectedDates, dateStr, instance) {
+                    dateFormat: "Y-m-d", defaultDate: new Date(), minDate: "today",
+                    onChange: function (selectedDates, dateStr) {
                         if (selectedDates.length > 0) {
-                            // Chuyển selectedDate thành chuỗi không có múi giờ (YYYY-MM-DD)
                             const selectedDate = selectedDates[0].toISOString().split('T')[0];
-
-                            // Lấy danh sách ngày có tour và chuyển thành chuỗi dạng YYYY-MM-DD
-                            const availableTourDates = getAvailableTourDates().map(date =>
-                                new Date(date).toISOString().split('T')[0]
-                            );
-
-                            // Kiểm tra xem selectedDate có nằm trong availableTourDates không
+                            const availableTourDates = getAvailableTourDates().map(date => new Date(date).toISOString().split('T')[0]);
                             if (!availableTourDates.includes(selectedDate)) {
-                                // Hiển thị thông báo ngay lập tức
-                                const notification = document.getElementById('notification');
-                                notification.innerText = "Ngày được chọn không có tour nào!";
-                                notification.style.display = 'block';
+                                document.getElementById('notification').innerText = "Ngày được chọn không có tour nào!";
+                                document.getElementById('notification').style.display = 'block';
                             } else {
-                                // Nếu có tour, cập nhật UI và ẩn thông báo nếu có
                                 displayDateRange(new Date(selectedDate));
-                                const notification = document.getElementById('notification');
-                                notification.style.display = 'none';
+                                document.getElementById('notification').style.display = 'none';
                             }
                         }
                     },
@@ -1508,52 +1360,24 @@
                 }).open();
             }
 
-            // Function để lấy danh sách ngày có tour
             function getAvailableTourDates() {
-                const tourOptions = [...document.querySelectorAll('.tour-option')];
-                return tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
+                return [...document.querySelectorAll('.tour-option')].map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
             }
 
-            // Function để tìm ngày gần nhất có tour
-            function getClosestTourDate() {
-                const availableTourDates = getAvailableTourDates();
-                return new Date(availableTourDates[0]); // Giả sử ngày gần nhất có tour là ngày đầu tiên trong danh sách
-            }
+            window.onload = displayDateRange;
 
-            // Khi trang tải, hiển thị dải ngày với ngày đầu tiên là ngày hiện tại
-            window.onload = function () {
-                displayDateRange();
-            };
-        </script>
-
-        <script>
-            const options = document.querySelectorAll('.tour-option');
-            options.forEach(option => {
-                const dayOfWeek = option.getAttribute('data-dayofweek');
-                console.log(dayOfWeek); // Kiểm tra xem giá trị có được in ra không
-            });
-        </script>
-        <script>
+            // Smooth scroll to section
             document.querySelectorAll('.nav-link').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({behavior: 'smooth', block: 'start'});
                 });
             });
-        </script>
 
-        <script>
+            // Save to wishlist
             document.addEventListener('DOMContentLoaded', function () {
-                const saveBtn = document.querySelector('.save-btn');
-
-                saveBtn.addEventListener('click', function () {
-                    const tourId = this.getAttribute('data-tour-id'); // Get tourId from data attribute
-                    const returnUrl = window.location.href; // Current URL
-
-                    addWishlist(tourId, returnUrl);
+                document.querySelector('.save-btn').addEventListener('click', function () {
+                    addWishlist(this.getAttribute('data-tour-id'), window.location.href);
                 });
             });
 
@@ -1561,93 +1385,53 @@
                 const request = new XMLHttpRequest();
                 request.open('POST', 'wishlist', true);
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-                const data = `action=add&tourId=${tourId}&returnUrl=${returnUrl}`;
-
                 request.onreadystatechange = function () {
                     if (request.readyState === XMLHttpRequest.DONE) {
-                        if (request.status === 200) {
-                            const response = JSON.parse(request.responseText);
-                            Toastify({
-                                text: response.message,
-                                duration: 3000,
-                                gravity: "top",
-                                position: "right",
-                                backgroundColor: response.message.includes("Failed") ?
-                                        "linear-gradient(to right, #ff5f6d, #ffc371)" :
-                                        "linear-gradient(to right, #00b09b, #96c93d)",
-                            }).showToast();
-                        } else {
-                            Toastify({
-                                text: "An error occurred while processing your request.",
-                                duration: 3000,
-                                gravity: "top",
-                                position: "right",
-                                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                            }).showToast();
-                        }
+                        const responseMessage = request.status === 200 ? JSON.parse(request.responseText).message : "An error occurred.";
+                        Toastify({
+                            text: responseMessage,
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: responseMessage.includes("Failed") ? "linear-gradient(to right, #ff5f6d, #ffc371)" : "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
                     }
                 };
-
-                request.send(data);
+                request.send(`action=add&tourId=${tourId}&returnUrl=${returnUrl}`);
             }
-        </script>
 
-
-
-
-        <script>
+            // Share page on Facebook
             function sharePage() {
-                var pageUrl = encodeURIComponent(window.location.href); // Get the current page URL
-                var facebookShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + pageUrl;
-                // Open the share URL in a new window
-                window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
+                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), 'facebook-share-dialog', 'width=626,height=436');
             }
-        </script>
 
-        <script>
-
-        </script>
-
-        <script>
-            // Mở popup khi nhấn vào "Xem tất cả đánh giá"
+            // Open and close review popup
             document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
                 event.preventDefault();
                 var popup = document.getElementById("reviewPopup");
                 var popupContent = document.querySelector(".popup-content");
-
                 popup.classList.add("show");
-                setTimeout(function () {
-                    popupContent.classList.add("show");
-                }, 100); // Delay để popup hiện ra mượt mà
+                setTimeout(() => popupContent.classList.add("show"), 100);
             });
 
-            // Đóng popup khi nhấn vào nút đóng (x)
             document.getElementById("closePopup").addEventListener("click", function () {
                 var popup = document.getElementById("reviewPopup");
                 var popupContent = document.querySelector(".popup-content");
-
                 popupContent.classList.remove("show");
-                setTimeout(function () {
-                    popup.classList.remove("show");
-                }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
+                setTimeout(() => popup.classList.remove("show"), 400);
             });
 
-            // Đóng popup khi nhấn bên ngoài popup
             window.addEventListener("click", function (event) {
                 var popup = document.getElementById("reviewPopup");
-                var popupContent = document.querySelector(".popup-content");
-
                 if (event.target == popup) {
-                    popupContent.classList.remove("show");
-                    setTimeout(function () {
-                        popup.classList.remove("show");
-                    }, 400); // Thời gian đóng tương ứng với thời gian hiệu ứng
+                    document.querySelector(".popup-content").classList.remove("show");
+                    setTimeout(() => popup.classList.remove("show"), 400);
                 }
             });
-        </script>
+</script>
 
-        <script src="assests/js/searchpage-test.js"></script>
-        </body>
 
-        <%@include file="includes/footer.jsp" %>
+<script src="assests/js/searchpage-test.js"></script>
+</body>
+
+<%@include file="includes/footer.jsp" %>

@@ -340,7 +340,7 @@
                             <article class="quote-boxed">
                                 <div class="quote-boxed-aside">
 
-                                    <img class="quote-boxed-image" src="assests/images/tour-images/${tour.tour_Img[0]}" alt="${tour.tour_Name}" style="width: 20vw; height: 20vh;" />
+                                    <img class="quote-boxed-image" src="${tour.tour_Img[0]}" alt="${tour.tour_Name}" style="width: 20vw; height: 20vh;" />
 
                                 </div>
                                 <div class="quote-boxed-main">

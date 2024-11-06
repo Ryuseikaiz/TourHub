@@ -20,11 +20,12 @@ public class Comment {
     private Timestamp createdAt;
     private String firstName;
     private String lastName;
+    private String avatar;
 
     public Comment() {
     }
 
-    public Comment(int commentId, int userId, String tourId, String commentText, Integer parentCommentId, Timestamp createdAt, String firstName, String lastName) {
+    public Comment(int commentId, int userId, String tourId, String commentText, Integer parentCommentId, Timestamp createdAt, String firstName, String lastName, String avatar) {
         this.commentId = commentId;
         this.userId = userId;
         this.tourId = tourId;
@@ -33,6 +34,15 @@ public class Comment {
         this.createdAt = createdAt;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.avatar = avatar;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public int getCommentId() {
