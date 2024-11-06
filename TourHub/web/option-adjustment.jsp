@@ -399,6 +399,8 @@
             peopleContainers.forEach(container => {
                 const peopleInfo = container.querySelector('.people-infomation');
                 const counterDisplay = container.querySelector('.counter-display');
+                
+                console.log("People info: ", peopleInfo);
 
                 if (!peopleInfo || !counterDisplay) {
                     console.error("Cannot find people-infomation or counter-display in container:", container);
@@ -412,7 +414,8 @@
 
                 // Tính tổng số lượng người để kiểm tra điều kiện giảm giá
                 totalPeopleCount += count;
-
+                console.log("Total people count: ", totalPeopleCount);
+                
                 const getElementIdCost = peopleId + '-total-cost-detail';
                 const totalCostDetailElement = document.getElementById(getElementIdCost);
 
@@ -439,6 +442,9 @@
             
             // Update the global variable with the calculated total cost after discount
             currentTotalCost = totalCost;
+            
+            console.log("Current total cost: ", currentTotalCost);
+            
 
             // Cập nhật hiển thị cho tổng tiền và tiền giảm
             const totalDiscountElement = document.querySelector('.total-discount');
@@ -495,7 +501,7 @@
                 const counterDisplay = container.querySelector('.counter-display');
                 const peopleType = container.querySelector('.people-title').textContent;
 
-                if (peopleType.includes("Người lớn") || peopleType.includes("Trẻ em")) {
+                if (peopleType.includes("Người lớn") || peopleType.includes("Trẻ em") || peopleType.includes("Adult") || peopleType.includes("Children")) {
                     totalPeopleCount += parseInt(counterDisplay.getAttribute('data-count'));
                 }
             });

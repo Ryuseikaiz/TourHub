@@ -67,6 +67,7 @@ public class CustomerInformationServlet extends HttpServlet {
         String email = request.getParameter("email");
         String bookId = request.getParameter("bookId");
         String discountCost = request.getParameter("discountCost");
+        String discountId = request.getParameter("discountId");
         String totalNoDis = request.getParameter("totalNoDis");
         
         System.out.println("Total No Dis Tour Pay: " + totalNoDis);
@@ -107,6 +108,7 @@ public class CustomerInformationServlet extends HttpServlet {
         request.setAttribute("book", book);
         request.setAttribute("discountCost", discountCost);
         request.setAttribute("totalNoDis", totalNoDis);
+        request.setAttribute("discountId", discountId);
         request.getRequestDispatcher("/tour-pay.jsp").forward(request, response);
     } 
 

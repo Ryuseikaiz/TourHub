@@ -303,7 +303,7 @@
                 </div>
 
                 <div class="continue-btn-conatiner">
-                    <button class="continue-btn">Complete Payment</button>
+                    <button class="continue-btn" onclick="window.location.href='FinishBooking?id=${book.book_Id}&status=Pending&discountCost=${discountCost}&totalNoDis=${totalNoDis}&discountId=${discountId}'">Complete Payment</button>
                 </div>
 
                 <div class="modal fade" id="statusSuccessModal" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false"> 
@@ -316,7 +316,7 @@
                                 </svg> 
                                 <h4 class="text-success mt-3">Payment Complete!</h4> 
                                 <p class="mt-3">You have successfully book a tour.</p>
-                                <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal" onclick="window.location.href='FinishBooking?id=${book.book_Id}'">Ok</button> 
+                                <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal" onclick="window.location.href='FinishBooking?id=${book.book_Id}&status=Complete&discountId=${discountId}'">Ok</button> 
                             </div> 
                         </div> 
                     </div> 
@@ -329,7 +329,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             let MY_BANK = {
                 BANK_ID: "MB",
-                ACCOUNT_NO: "0364173531"
+                ACCOUNT_NO: "0000871278620"
             };
 
             // Set to store used booking IDs
@@ -380,7 +380,7 @@
             }
 
             try {
-                const response = await fetch("https://script.google.com/macros/s/AKfycby-WzjKU2NrNMSAGWGRn5_AkZ_R7C_sFavklRNNQw4G2O8GQQXPJe_ZHXthb4PTLQqZ/exec");
+                const response = await fetch("https://script.google.com/macros/s/AKfycbzUZ3aGbGOZsAgwgGaRreU4HM0F8fi9RoQZnUE-TWCOYX0sWymFkSlfW_ZA73iV5GCQ/exec");
                 const data = await response.json();
                 const lastPaid = data.data[data.data.length - 1];
 

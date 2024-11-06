@@ -919,6 +919,7 @@
                     </c:forEach>
                 </div>
             </div>
+            <h4>Comment section</h4>
             <jsp:include page="CommentServlet">
                 <jsp:param name="tourId" value="${tourId}" />
             </jsp:include>
@@ -1021,6 +1022,7 @@
                             đủ loại ẩm thực và chơi hết sức với những lễ hội và các hoạt động giải trí đa dạng diễn ra hằng ngày,
                             tất cả đều ngay tại đây!</span>
 
+
                         <img src="assests/images/new-image/jojo1.jpg" alt="">
                         <span>Tận hưởng bầu không khí mát lạnh khi bạn "lướt" mây lên đến đỉnh Bà Nà </span>
 
@@ -1087,13 +1089,13 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#scrollspyHeading2">Second</a>
                         </li>
-                        <li class="nav-item"></li>
+                        <li class="nav-item">
                         <a class="nav-link" href="#scrollspyHeading3">Third</a>
                         </li>
-                        <li class="nav-item"></li>
+                        <li class="nav-item">
                         <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
                         </li>
-                        <li class="nav-item"></li>
+                        <li class="nav-item">
                         <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
                         </li>
                     </ul>
@@ -1151,6 +1153,7 @@
         </div>
 
 
+
         <button type="button" class="btn-close" aria-label="Close" onclick="toggle('popup5')"></button>
     </div>
     <!--    <div id="popup5" class="popup">
@@ -1178,8 +1181,9 @@
     </div>-->
 
 
-    <div class="tour-content">
 
+
+    <div class="tour-content">
 
 
     </div>
@@ -1355,13 +1359,9 @@
                         displayDateRange(new Date(selectedDate));
                         document.getElementById('notification').style.display = 'none';
                     }
-                }
-            },
-            onClose: function () {
-                toggle('calendar');
+                }).open();
             }
-        }).open();
-    }
+
 
     function getAvailableTourDates() {
         return [...document.querySelectorAll('.tour-option')].map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
@@ -1433,6 +1433,7 @@
         }
     });
 </script>
+
 
 
 <script src="assests/js/searchpage-test.js"></script>
