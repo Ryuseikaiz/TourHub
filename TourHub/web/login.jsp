@@ -26,7 +26,19 @@
 
             .form-control, .form-floating {
                 background-color: rgba(255, 255, 255, 0.8) !important;
+
             }
+
+            .success-message {
+                background-color: #d4edda; /* Xanh lá nhạt */
+                color: #155724; /* Xanh lá đậm cho chữ */
+                border: 1px solid #c3e6cb; /* Viền màu xanh lá */
+                padding: 15px;
+                border-radius: 5px;
+                text-align: center;
+                font-weight: bold;
+            }
+
         </style>
     </head>
     <body>
@@ -42,39 +54,47 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10 col-xl-8">
-                        <%
-            String infoMessage = (String) session.getAttribute("infoMessage");
-            if (infoMessage != null) {
+                        <% 
+                            // Hiển thị thông báo thông tin từ session, ví dụ như yêu cầu đăng nhập lại sau khi đăng ký
+                            String infoMessage = (String) session.getAttribute("infoMessage");
+                            if (infoMessage != null) {
                         %>
-                        <div class="alert alert-info text-center" role="alert">
+                        <div class="success-message" role="alert">
                             <%= infoMessage %>
                         </div>
                         <%
-                            session.removeAttribute("infoMessage"); // Clear message after displaying
-                        }
+                            session.removeAttribute("infoMessage"); // Xóa thông báo sau khi hiển thị
+                            }
                         %>
-                        <% String status = request.getParameter("status"); %>
 
-                        <% if ("resetSuccess".equals(status)) { %>
-                        <div class="alert alert-success text-center" role="alert">
+                        <% 
+                            // Kiểm tra nếu có thông báo đổi mật khẩu thành công
+                            String status = request.getParameter("status");
+                            if ("resetSuccess".equals(status)) { 
+                        %>
+                        <div class="success-message" role="alert">
                             Change password successfully! You can log in with your new password.
                         </div>
-                        <% } else { %>
-                        <% String errorMessage = (String) request.getAttribute("message"); %>
 
-                        <% if (errorMessage != null) { %>
-                        <div class="alert alert-danger" role="alert">
+                        <% 
+                            } else { 
+                                // Hiển thị lỗi đăng nhập nếu có
+                                String errorMessage = (String) request.getAttribute("error");
+                                if (errorMessage != null) { 
+                        %>
+                        <div class="alert alert-danger text-center" role="alert">
                             <%= errorMessage %>
                         </div>
-                        <% } %>
-                        <% } %>
+                        <% 
+                                } 
+                            } 
+                        %>
                     </div>
                 </div>
 
-
                 <div class="row gy-5 justify-content-center">
                     <div class="col-12 col-lg-5">
-                        <form action="/Project_SWP/login" method="post">
+                        <form action="login" method="post">
                             <div class="row gy-3 overflow-hidden">
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
@@ -102,11 +122,8 @@
                                             <div class="text-end">
                                                 <a href="forgotpassword.jsp" class="link-secondary text-decoration-none">Forgot password?</a>
                                             </div>
-
-                                        </div>                                                
-
+                                        </div>
                                     </div>
-
                                 </div>
                             </div>
 
@@ -115,7 +132,6 @@
                                     <button class="btn btn-primary btn-lg" type="submit">Log in</button>
                                 </div>
                             </div>
-
                         </form>
                     </div>
                     <div class="col-12 col-lg-2 d-flex align-items-center justify-content-center gap-3 flex-lg-column">
@@ -137,12 +153,6 @@
                     </div> 
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-</body>
-
-
-
-
-
+        </section>
+    </body>
+</html>
