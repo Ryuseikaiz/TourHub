@@ -215,7 +215,7 @@
                                         function reloadData() {
                                             var date = document.getElementById("date").value;
                                             $.ajax({
-                                                url: "/Project_SWP/provider-analys",
+                                                url: "provider-analys",
                                                 type: "POST",
                                                 data: {
                                                     date: date

@@ -13,237 +13,85 @@
 
         <!-- Boxicons -->
         <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/toastify-js@1.11.1/src/toastify.min.css"
+            />
         <!-- My CSS -->
         <link rel="stylesheet" href="assests/css/style_profile.css">       
         <link href="assests/css/customer.css" rel="stylesheet" />
+        <link href="assests/css/notification.css" rel="stylesheet" />
 
         <title>User Profile</title>
         <style>
 
 
-            /* Style the labels */
-            .avatardiv label {
-                margin-bottom: 10px; /* Space below the label */
-                font-weight: bold; /* Bold text */
+            /* Base Styling */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                color: #333;
             }
-
-            /* Style the file input */
-            .avatardiv input[type="file"] {
-                margin-bottom: 20px; /* Space below the input */
-                padding: 10px; /* Add padding */
-                border: 1px solid #ccc; /* Light border */
-                border-radius: 4px; /* Rounded corners */
-                font-size: 14px; /* Font size */
-            }
-
-            /* Style the submit button */
-            .avatardiv button {
-                padding: 10px 20px; /* Vertical and horizontal padding */
-                border: none; /* Remove default border */
-                border-radius: 4px; /* Rounded corners */
-                background-color: #4CAF50; /* Green background */
-                color: white; /* White text color */
-                font-size: 16px; /* Font size */
-                cursor: pointer; /* Pointer cursor on hover */
-                transition: background-color 0.3s; /* Transition effect */
-            }
-
-            /* Change button color on hover */
-            .avatardiv button:hover {
-                background-color: #45a049; /* Darker green on hover */
-            }
-
+            /* Profile Card */
             .profile-card {
-                display: flex; /* Sử dụng Flexbox để tạo cấu trúc cho phần card */
-                justify-content: space-between; /* Căn giữa và phân chia không gian */
+                display: flex;
+                justify-content: space-between;
                 padding: 20px;
                 border: 1px solid #ccc;
                 border-radius: 8px;
                 background-color: #f9f9f9;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                margin: 20px;
             }
 
             .profile-info-left,
             .profile-info-right {
-                flex: 1; /* Chiếm 50% không gian của mỗi phần */
-                margin-right: 20px; /* Thêm khoảng cách bên phải cho phần bên trái */
+                flex: 1;
+                margin-right: 20px;
             }
 
             .profile-info-right {
-                margin-right: 0; /* Đảm bảo không gian cho phần bên phải */
+                margin-right: 0;
             }
 
-            /* Style for the avatar container */
+
             .avatar-container {
                 position: relative;
-                display: inline-block;
-                text-align: center;
-                border: 2px solid black; /* Thêm viền đen */
-                border-radius: 50%; /* Để viền cũng có hình tròn */
-                overflow: hidden; /* Ẩn phần viền ra ngoài nếu có */
+                width: 300px;
+                height: 300px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 4px solid #ddd;
             }
 
-            /* Style for the avatar image */
             .avatar {
-                width: 250px; /* Điều chỉnh chiều rộng */
-                height: 250px; /* Điều chỉnh chiều cao */
-                border-radius: 50%; /* Hình tròn */
-                object-fit: cover; /* Giữ tỷ lệ hình ảnh */
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover; /* Ensures the image fits well inside the circle */
             }
 
-            /* Style for the overlay */
             .avatar-overlay {
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-color: rgba(0, 0, 0, 0.6);
-                border-radius: 50%; /* Hình tròn */
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                opacity: 0;
-                transition: opacity 0.3s ease;
+                cursor: pointer;
+                border-radius: 50%; /* Ensures overlay is also circular */
+                background-color: rgba(0, 0, 0, 0.3); /* Adds a semi-transparent overlay */
+                transition: background-color 0.3s ease;
             }
 
-            /* Show the overlay on hover */
             .avatar-container:hover .avatar-overlay {
-                opacity: 1;
+                background-color: rgba(0, 0, 0, 0.5); /* Darkens overlay on hover */
             }
-
-            /* Common style for both buttons */
-            .upload-label, .upload-btn {
-                color: white;
-                font-size: 16px;
-                padding: 10px 20px;
-                border-radius: 5px;
-                cursor: pointer;
-                display: inline-block;
-                width: 150px; /* Đặt chiều rộng để đảm bảo chúng bằng nhau */
-                text-align: center;
-                margin: 5px; /* Khoảng cách giữa các nút */
-            }
-
-            /* Style for the "Change Avatar" label */
-            .upload-label {
-                background-color: #17a2b8;
-            }
-
-            /* Style for the "Upload" button */
-            .upload-btn {
-                background-color: #28a745;
-                border: none;
-            }
-
-            /* Hover effect for both buttons */
-            .upload-label:hover, .upload-btn:hover {
-                opacity: 0.8;
-            }
-
-            /* Hide the file input field */
-            input[type="file"] {
-                display: none;
-            }
-            /* Base Styles */
-            .notification {
-                position: relative;
-                cursor: pointer;
-            }
-            .dropdown{
-                margin-right: 20px;
-            }
-            /* Dropdown Container */
-            .dropdown {
-                display: none; /* Hidden by default, can be toggled with JavaScript */
-                position: absolute;
-                top: 40px; /* Adjust based on icon height */
-                right: 0;
-                width: 400px; /* Increased width */
-                max-height: 500px; /* Increased height */
-                background-color: #ffffff; /* White background */
-                color: #333333; /* Dark text color for readability */
-                border-radius: 8px;
-                overflow-y: auto;
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-                z-index: 1000;
-                font-family: 'Arial', sans-serif; /* Adjusted font */
-            }
-
-            /* Dropdown Content */
-            .dropdown-content {
-                padding: 15px; /* Adjusted padding for more spacing */
-            }
-
-            /* Header */
-            .dropdown h2 {
-                margin: 10px;
-                font-size: 18px; /* Slightly larger font */
-                font-weight: bold;
-                color: #333333; /* Dark color for text */
-                padding-bottom: 10px;
-                border-bottom: 1px solid #e0e0e0; /* Light border */
-            }
-
-            /* Notification Item */
-            .notification-item {
-                display: flex;
-                align-items: center;
-                padding: 15px; /* More padding for larger items */
-                border-bottom: 1px solid #f0f0f0; /* Light gray for item separator */
-            }
-
-            .notification-item:last-child {
-                border-bottom: none;
-            }
-
-            .notification-item img {
-                width: 50px; /* Increased image size */
-                height: 50px;
-                border-radius: 50%;
-                margin-right: 15px; /* More space between image and text */
-            }
-
-            .notification-item .text {
-                flex: 1;
-            }
-
-            .notification-item .text p {
-                margin: 0;
-                font-size: 15px; /* Slightly larger font */
-                color: #333333; /* Dark text color */
-                line-height: 1.5;
-            }
-
-            .notification-item .text span {
-                font-size: 13px; /* Slightly larger font for timestamp */
-                color: #666666; /* Muted gray for timestamps */
-            }
-
-            /* See More Button */
-            .see-more {
-                display: block;
-                width: 100%;
-                padding: 12px; /* Increased padding */
-                background-color: #FD7238; /* Orange button color */
-                border: none;
-                color: #ffffff; /* White text */
-                font-size: 15px; /* Slightly larger font */
-                cursor: pointer;
-                text-align: center;
-                border-radius: 0 0 8px 8px; /* Rounded bottom corners */
-                font-family: 'Arial', sans-serif; /* Ensure consistency with dropdown font */
-            }
-
-            .see-more:hover {
-                background-color: #e26229; /* Slightly darker on hover */
-            }
-
-            /* Dropdown Toggle */
-            /*            .notification:hover + .dropdown,
-                        .dropdown:hover {
-                            display: block;
-                        }*/
-
 
 
         </style>
@@ -274,13 +122,13 @@
                 <a href="javascript:void(0)" class="notification" role="button" onclick="toggleDropdown(event)">
                     <i class='bx bxs-bell'></i>
                 </a>
-  
-                <div id="notificationDropdown" class="dropdown" style="display: none;">
+
+                <div id="notificationDropdown" class="dropdown hidden">
                     <h2>Notifications</h2>
                     <div class="dropdown-content">
-                        <p style="display: flex; justify-content: space-between"><strong>New</strong> <a href="#">See all</a></p>
+                        <!-- Content will be dynamically generated by JavaScript -->
                     </div>
-                    <button class="see-more">See previous notifications</button>
+                    <a href="notifications" class="see-more"><button >See previous notifications</button></a>
                 </div>
 
 
@@ -356,23 +204,19 @@
                                             </div>
                                         </c:if>
                                     </div>
+                                    <!--Avatar Upload Section-->  
                                     <div class="profile-info-right">
-                                        <div class="profile-info">
-                                            <div class="avatar-container">
-                                                <img id="avatarImg" src="${user.avatar}" class="avatar" alt="${user.avatar}" />
-
-                                                <div class="avatar-overlay">
-                                                    <form id="uploadForm" action="UploadAvatarServlet" method="post" enctype="multipart/form-data">
-                                                        <label for="file-input" class="upload-label">Change Avatar</label>
-                                                        <input id="file-input" type="file" name="avatar" accept="image/*" required onchange="previewImage(event)">
-                                                        <button type="submit" class="upload-btn" id="uploadBtn" style="display:none;">Upload</button>
-                                                        <button type="button" class="upload-btn" id="cancelBtn" style="display:none;" onclick="cancelUpload()">Cancel</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-
+                                        <div class="avatar-container">
+                                            <form  id="uploadAvatarForm" action="UploadAvatarServlet" method="POST">
+                                                <input type="file" id="avatarImg" name="avatarImg" accept=".jpg, .jpeg, .png, .webp" onchange="handleFileChange(event)" style="display: none;">
+                                                <label for="avatarImg" class="avatar-overlay">
+                                                    <img id="avatarImgPreview" src="${user.avatar }" alt="User Avatar" class="avatar">                                                    
+                                                </label>
+                                                <input type="hidden" id="tour_Img_URLs" name="tour_Img_URLs">
+                                            </form>
                                         </div>
                                     </div>
+
                                 </div>
                                 <div class="change-info-button">
                                     <form action="user-updateinfo.jsp">
@@ -384,138 +228,104 @@
                     </div>
                 </div>
             </main>
-            <!-- MAIN -->
+            <!--MAIN--> 
         </section>
-        <!-- CONTENT -->
+        <!-- CONTENT 
 
-
+        <!-- Include profile-related JavaScript -->
         <script src="assests/js/script_profile.js"></script>
+
         <script>
-                                                            function togglePassword() {
-                                                                const passwordField = document.getElementById('passwordDisplay');
-                                                                const button = event.target;
-                                                                if (passwordField.innerHTML === "********") {
-                                                                    passwordField.innerHTML = "${user.password}";
-                                                                    button.textContent = "Hide";
-                                                                } else {
-                                                                    passwordField.innerHTML = "********";
-                                                                    button.textContent = "Show";
-                                                                }
-                                                            }
+                                                    function togglePassword() {
+                                                        const passwordField = document.getElementById('passwordDisplay');
+                                                        const button = event.target;
+                                                        if (passwordField.innerHTML === "********") {
+                                                            passwordField.innerHTML = "${user.password}";
+                                                            button.textContent = "Hide";
+                                                        } else {
+                                                            passwordField.innerHTML = "********";
+                                                            button.textContent = "Show";
+                                                        }
+                                                    }
 
-                                                            document.addEventListener('DOMContentLoaded', function () {
-                                                                const burger = document.querySelector('.burger');
-                                                                const navigation = document.querySelector('.navigation-admin');
-                                                                const main = document.querySelector('.main-admin');
-                                                                const profileCard = document.querySelector('.profile-card'); // Select the profile card
+                                                    document.addEventListener('DOMContentLoaded', function () {
+                                                        const burger = document.querySelector('.burger');
+                                                        const navigation = document.querySelector('.navigation-admin');
+                                                        const main = document.querySelector('.main-admin');
+                                                        const profileCard = document.querySelector('.profile-card');
 
-                                                                burger.addEventListener('click', function () {
-                                                                    navigation.classList.toggle('active');
-                                                                    main.classList.toggle('active');
-                                                                    profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                                                                });
-                                                            });
+                                                        burger.addEventListener('click', function () {
+                                                            navigation.classList.toggle('active');
+                                                            main.classList.toggle('active');
+                                                            profileCard.classList.toggle('active');
+                                                        });
+                                                    });
 
-                                                            function previewImage(event) {
-                                                                const file = event.target.files[0];
-                                                                const imgElement = document.getElementById('avatarImg');
 
-                                                                if (file) {
-                                                                    const reader = new FileReader();
-                                                                    reader.onload = function (e) {
-                                                                        imgElement.src = e.target.result; // Display selected image
-                                                                        document.getElementById('uploadBtn').style.display = 'inline-block'; // Show Upload button
-                                                                        document.getElementById('cancelBtn').style.display = 'inline-block'; // Show Cancel button
-                                                                    };
-                                                                    reader.readAsDataURL(file);
-                                                                }
-                                                            }
-
-                                                            let userAvatarPath = "${user.avatar}";
-                                                            userAvatarPath = userAvatarPath.replace("assestsimages", "assests/images").replace("avatar", "avatar/").replace("imagesavatar", "images/avatar");
-
-                                                            function cancelUpload() {
-                                                                document.getElementById('file-input').value = ''; // Reset file input
-                                                                document.getElementById('uploadBtn').style.display = 'none'; // Hide Upload button
-                                                                document.getElementById('cancelBtn').style.display = 'none'; // Hide Cancel button
-
-                                                                // Reset to saved image path
-                                                                document.getElementById('avatarImg').src = userAvatarPath;
-                                                            }
-
-//                                                            function toggleDropdown(event) {
-//                                                                event.preventDefault(); // Prevents default anchor behavior
-//                                                                const dropdown = document.getElementById("notificationDropdown");
-//                                                                if (!dropdown) {
-//                                                                    console.error('Dropdown element not found');
-//                                                                    return;
-//                                                                }
-//
-//                                                                // Toggle visibility
-//                                                                dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-//
-//                                                                // Fetch notifications only when showing the dropdown
-//                                                                if (dropdown.style.display === "block") {
-//                                                                    fetchNotifications();
-//                                                                }
-//                                                            }
-//
-//                                                            // Close the dropdown when clicking outside of it
-//                                                            window.onclick = function (event) {
-//                                                                if (!event.target.closest('.notification') && !event.target.closest('#notificationDropdown')) {
-//                                                                    const dropdown = document.getElementById("notificationDropdown");
-//                                                                    if (dropdown && dropdown.style.display === "block") {
-//                                                                        dropdown.style.display = "none";
-//                                                                    }
-//                                                                }
-//                                                            };
-//
-//                                                            function fetchNotifications() {
-//                                                                const notificationContainer = document.querySelector('.dropdown-content');
-//                                                                if (!notificationContainer) {
-//                                                                    console.error('Notification container element not found');
-//                                                                    return;
-//                                                                }
-//
-//                                                                // Show loading message
-//                                                                notificationContainer.innerHTML = '<p>Loading...</p>';
-//
-//                                                                fetch('/Project_SWP/notifications', {method: 'POST'})
-//                                                                        .then(response => {
-//                                                                            if (!response.ok) {
-//                                                                                console.error('Network response was not ok:', response.statusText);
-//                                                                                throw new Error('Network response was not ok');
-//                                                                            }
-//                                                                            return response.json();
-//                                                                        })
-//                                                                        .then(data => {
-//                                                                            notificationContainer.innerHTML = ''; // Clear existing content
-//
-//                                                                            if (data.length === 0) {
-//                                                                                notificationContainer.innerHTML = '<p>No new notifications</p>';
-//                                                                                return;
-//                                                                            }
-//
-//                                                                            data.forEach(noti => {
-//                                                                                const notificationItem = document.createElement('div');
-//                                                                                notificationItem.classList.add('notification-item');
-//
-//                                                                                const notiContent = `
-//                        <div class="text">
-//                            <p><strong>${noti.isRead ? noti.message : '<em>' + noti.message + '</em>'}</strong></p>
-//                            <span>${noti.dateSent}</span>
-//                        </div>
-//                    `;
-//                                                                                notificationItem.innerHTML = notiContent;
-//                                                                                notificationContainer.appendChild(notificationItem);
-//                                                                            });
-//                                                                        })
-//                                                                        .catch(error => {
-//                                                                            console.error('Fetch operation failed:', error);
-//                                                                            notificationContainer.innerHTML = '<p>Failed to load notifications. Please try again later.</p>';
-//                                                                        });
-//                                                            }
         </script>
 
+        <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase.js"></script>
+        <script>
+                                                    // Firebase configuration
+                                                    const firebaseConfig = {
+                                                        apiKey: "AIzaSyADteJKp4c9C64kC08pMJs_jYh-Fa5EX6o",
+                                                        authDomain: "tourhub-41aa5.firebaseapp.com",
+                                                        projectId: "tourhub-41aa5",
+                                                        storageBucket: "tourhub-41aa5.appspot.com",
+                                                        messagingSenderId: "556340467473",
+                                                        appId: "1:556340467473:web:2f6de24bdbb33709e51eb0"
+                                                    };
+                                                    firebase.initializeApp(firebaseConfig);
+
+                                                    // Handle file selection and upload to Firebase
+                                                    async function handleFileChange(event) {
+                                                        const file = event.target.files[0];
+
+                                                        if (!file) {
+                                                            alert("No file selected!");
+                                                            return;
+                                                        }
+                                                        if (file.size > 5 * 1024 * 1024) { // 5 MB limit
+                                                            alert("File size exceeds 5MB limit!");
+                                                            return;
+                                                        }
+
+                                                        const storageRef = firebase.storage().ref('avatars/' + file.name);
+                                                        const uploadTask = storageRef.put(file);
+
+                                                        uploadTask.on('state_changed',
+                                                                (snapshot) => {
+                                                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                                            console.log(`Upload is ${progress}% done`);
+                                                        },
+                                                                (error) => {
+                                                            console.error("Upload failed:", error);
+                                                            alert("Failed to upload image. Please try again.");
+                                                        },
+                                                                async () => {
+                                                            try {
+                                                                // Get the download URL after upload completes
+                                                                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+
+                                                                // Set the preview image source and the hidden input value
+                                                                document.getElementById('avatarImgPreview').src = downloadURL;
+                                                                document.getElementById('tour_Img_URLs').value = downloadURL;
+
+                                                                // Only show the submit button or automatically submit after successful upload
+                                                                if (downloadURL) {
+                                                                    document.getElementById("uploadAvatarForm").submit();
+                                                                }
+                                                            } catch (error) {
+                                                                console.error("Failed to retrieve download URL:", error);
+                                                                alert("Failed to retrieve the uploaded image URL. Please try again.");
+                                                            }
+                                                        }
+                                                        );
+                                                    }
+
+        </script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.11.1/src/toastify.min.js"></script>
+        <script src="assests/js/notification.js"></script>
     </body>
 </html>

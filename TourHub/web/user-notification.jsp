@@ -17,6 +17,10 @@
             href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css"
             rel="stylesheet"
             />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/toastify-js@1.11.1/src/toastify.min.css"
+            />
         <!-- My CSS -->
         <link rel="stylesheet" href="assests/css/style_profile.css" />
         <link href="assests/css/customer.css" rel="stylesheet" />      

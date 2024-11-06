@@ -607,7 +607,7 @@ public class ThienDB implements DatabaseInfo {
         return messages;
     }
 
-    public static boolean updateUserAvatar(int userId, String avatarPath) {
+    public boolean updateUserAvatar(int userId, String avatarPath) {
         String sql = "UPDATE [User] SET avatar = ? WHERE user_Id = ?";
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 

@@ -52,7 +52,7 @@ function checkAndMarkNotificationsAsRead() {
 
     if (notificationsToMarkRead.length > 0) {
         $.ajax({
-            url: '/Project_SWP/markNotificationsAsRead',
+            url: 'markNotificationsAsRead',
             type: 'POST',
             data: JSON.stringify({notificationIds: notificationsToMarkRead}),
             contentType: 'application/json',
@@ -78,7 +78,7 @@ function checkAndMarkNotificationsAsRead() {
 // Fetch notifications from the server
 function fetchNotifications() {
     $.ajax({
-        url: '/Project_SWP/notifications',
+        url: 'notifications',
         type: 'POST',
         data: {latestNotificationId: latestNotificationId || 0},
         success: function (response) {

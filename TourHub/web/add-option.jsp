@@ -41,92 +41,7 @@
     <body>
 
 
-        <!-- SIDEBAR -->
-        <section id="sidebar">
-            <a href="home" class="brand">
-                <i class='bx bxs-smile'></i>
-                <span class="text">TourHub</span>
-            </a>
-            <ul class="side-menu top">
-                <li>
-                    <a href="user-profile.jsp">
-                        <i class='bx bxs-dashboard' ></i>
-                        <span class="text">User Information</span>
-                    </a>
-                </li>
-                <c:if test="${sessionScope.currentUser.role == 'Provider'}">
-                    <li>
-                        <a href="pending-bookings">
-                            <i class='bx bxs-shopping-bag-alt' ></i>
-                            <span class="text">Manage Booking</span>
-                        </a>
-                    </li>
-                </c:if>
-                <c:if test="${sessionScope.currentUser.role == 'Customer'}">
-                    <li>
-                        <a href="user-booking.jsp">
-                            <i class='bx bxs-shopping-bag-alt' ></i>
-                            <span class="text">My Booking</span>
-                        </a>
-                    </li>
-                </c:if>
-                <li>
-                    <a href="#">
-                        <i class='bx bxs-message-dots' ></i>
-                        <span class="text">Message</span>
-                    </a>
-                </li>
-                <c:if test="${sessionScope.currentUser.role == 'Provider' || sessionScope.currentUser.role == 'Admin'}">
-                    <li class="">
-                        <a href="${sessionScope.currentUser.role == 'Provider' ? '/Project_SWP/provider-analys' : 'admin-analysis.jsp'}">
-                            <i class='bx bxs-dashboard' ></i>
-                            <span class="text">Dashboard</span>
-                        </a>
-                    </li>   
-                    <li class="active dropdown-btn">
-                        <a href="my-tour">
-                            <i class='bx bxs-briefcase-alt' ></i>
-                            <span class="text">My Tour</span>
-                        </a>
-                    </li> 
-                    <!-- Sub-menu -->
-                    <ul class="sub-menu">
-                        <li><a href="add-tour.jsp" class="active">Add Tour</a></li>                    
-                        <li><a href="#">Feature 3</a></li>
-                    </ul>
-                    <li>
-                        <a href="payment.jsp">
-                            <i class='bx bxs-credit-card'></i>
-                            <span class="text">Payment</span>
-                        </a>
-                    </li> 
-                </c:if>
-
-                <!-- Sub-menu -->
-                <ul class="sub-menu">
-                    <li><a href="add-tour.jsp">Add Tour</a></li>
-                    <li><a href="payment.jsp">Payment</a></li>
-                    <li><a href="#">Feature 3</a></li>
-                </ul>
-            </ul>
-            <ul class="side-menu">
-                <li>
-                    <a href="#">
-                        <i class='bx bxs-cog' ></i>
-                        <span class="text">Settings</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="logout" class="logout">
-                        <i class='bx bxs-log-out-circle' ></i>
-                        <span class="text">Logout</span>
-                    </a>
-                </li>
-            </ul>
-        </section>
-        <!-- SIDEBAR -->
-
-
+        <%@include file="includes/user-sidebar.jsp" %>
 
         <!-- CONTENT -->
         <section id="content">
@@ -248,7 +163,7 @@
 
                             <button type="submit" class="btn btn-primary btn-block">Add Option</button>
                         </form>
-                            
+
                         <script>
                             const btnAddPeople = document.querySelector('.add-people-btn');
                             // Counter to keep track of the number of people sections
@@ -280,7 +195,7 @@
                                 // Append the cloned form to the people section
                                 peopleSection.appendChild(newForm);
                             }
-                            
+
                             btnAddPeople.addEventListener('click', addMorePeople);
                         </script>
 
@@ -298,18 +213,18 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-        
-        
+
+
         <script>
-            document.querySelector("form").addEventListener("submit", function (event) {
-                const daysSelected = document.querySelectorAll("input[name='dayOfWeek']:checked");
-                if (daysSelected.length === 0) {
-                    event.preventDefault();
-                    document.getElementById("dayOfWeekError").style.display = "inline";
-                } else {
-                    document.getElementById("dayOfWeekError").style.display = "none";
-                }
-            });
+                            document.querySelector("form").addEventListener("submit", function (event) {
+                                const daysSelected = document.querySelectorAll("input[name='dayOfWeek']:checked");
+                                if (daysSelected.length === 0) {
+                                    event.preventDefault();
+                                    document.getElementById("dayOfWeekError").style.display = "inline";
+                                } else {
+                                    document.getElementById("dayOfWeekError").style.display = "none";
+                                }
+                            });
         </script>
 
         <script>
