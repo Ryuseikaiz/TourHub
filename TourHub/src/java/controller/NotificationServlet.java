@@ -141,7 +141,6 @@ public class NotificationServlet extends HttpServlet {
                 out.write(jsonResponse);
                 out.flush();
 
-                System.out.println("DATA: " + jsonResponse); // Debugging statement (remove in production)
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

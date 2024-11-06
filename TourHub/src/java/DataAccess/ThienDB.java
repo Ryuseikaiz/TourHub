@@ -792,7 +792,6 @@ public class ThienDB implements DatabaseInfo {
 // Method to add a new notification and return its ID
     public int addNotification(int userId, String message) {
         String sql = "INSERT INTO Notifications (user_Id, message, date_sent, is_read) VALUES (?, ?, GETDATE(), 0)";
-
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, userId);
