@@ -265,6 +265,7 @@
                                             <input type="hidden" id="bookId" name="bookId" value="${book.book_Id}">
                                             <input type="hidden" id="discountCost" name="discountCost" value="${discountCost}">
                                             <input type="hidden" id="totalNoDis" name="totalNoDis" value="${totalNoDis}">
+                                            <input type="hidden" id="discountId" name="discountId" value="${discountId}">
 
                                             <input type="submit" value="SAVE" id="saveBtn" style="display: none;"/>
                                         </form>

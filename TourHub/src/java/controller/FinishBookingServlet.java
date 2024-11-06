@@ -86,48 +86,76 @@ public class FinishBookingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String book_Id_raw = request.getParameter("id");
-        System.out.println(book_Id_raw);
+        String status = request.getParameter("status");
+        String discountCost = request.getParameter("discountCost");
+        String totalNoDis = request.getParameter("totalNoDis");
+        String discountId = request.getParameter("discountId");
+        System.out.println("---Finish Booking");
+        System.out.println("Book id: " + book_Id_raw);
+        System.out.println("Status:" + status);
+        System.out.println("Discount Cost: " + discountCost);
+        System.out.println("Total no dis: " + totalNoDis);
+        System.out.println("Discount Id: " + discountId);
+        
         KhanhDB u = new KhanhDB();
         ThienDB thienDB = new ThienDB();
         UserDB userDB = new UserDB();
-
-        int book_Id = Integer.parseInt(book_Id_raw);
-        try {
-            u.updateBookingStatusToBooked(book_Id);
-        } catch (SQLException ex) {
-            Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         Booking book = new Booking();
+        int discountIdInt = 0;
+        int book_Id = Integer.parseInt(book_Id_raw);
+        
+        if (status.contains("Complete")) {
+            try {
+                u.updateBookingStatusToBooked(book_Id);
+            } catch (SQLException ex) {
+                Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-        try {
-            book = u.getBookingById(book_Id);
-        } catch (SQLException ex) {
-            Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            if (discountCost.contains("-0 VND")) {
+                System.out.println("Not using discount");
+            } else {
+                discountIdInt = Integer.parseInt(discountId);
+                System.out.println("Using discount");
+                try {
+                    u.decrementDiscountQuantity(discountIdInt);
+                } catch (SQLException ex) {
+                    java.util.logging.Logger.getLogger(BookingOverviewServlet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                }
+            }
 
-        BigDecimal amount = book.getTotal_Cost();
-        String pay_Method = "QR";
+            try {
+                book = u.getBookingById(book_Id);
+            } catch (SQLException ex) {
+                Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-        // Get the current date in the format "dd/MM/yyyy"
-        LocalDate currentDate = LocalDate.now();
-        String billDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            BigDecimal amount = book.getTotal_Cost();
+            String pay_Method = "QR";
 
-        try {
-            u.importBill(amount, billDate, pay_Method, book_Id);
-        } catch (SQLException ex) {
-            Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            // Get the current date in the format "dd/MM/yyyy"
+            LocalDate currentDate = LocalDate.now();
+            String billDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        User user = userDB.getUserFromSession(request.getSession());
-        if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
-            sendBookingConfirmationEmail(user.getEmail(), book, user);
-            setBalanceAfterBookingSuccess(book, request, response);
-            String notiMessage = book.getTour_Name() + "just booked successful by " + book.getCus_Name();
-            thienDB.addNotification(thienDB.getCusIdFromUserId(book.getCus_Id()), notiMessage);
-            response.getWriter().write("Email sent successfully!");
+            try {
+                u.importBill(amount, billDate, pay_Method, book_Id);
+            } catch (SQLException ex) {
+                Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            User user = userDB.getUserFromSession(request.getSession());
+            if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
+                sendBookingConfirmationEmail(user.getEmail(), book, user);
+                setBalanceAfterBookingSuccess(book, request, response);
+                response.getWriter().write("Email sent successfully!");
+            } else {
+                response.getWriter().write("Tour status is not 'Booked'.");
+            }
         } else {
-            response.getWriter().write("Tour status is not 'Booked'.");
+            try {
+                book = u.getBookingById(book_Id);
+            } catch (SQLException ex) {
+                Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         request.setAttribute("booking", book);
