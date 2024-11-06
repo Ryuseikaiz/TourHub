@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import model.Booking;
 import model.Company;
+import model.Customer;
+import model.Notification;
 import model.Tour;
 import model.User;
 
@@ -85,49 +88,52 @@ public class FinishBookingServlet extends HttpServlet {
         String book_Id_raw = request.getParameter("id");
         System.out.println(book_Id_raw);
         KhanhDB u = new KhanhDB();
-        ThienDB cusDB = new ThienDB();
+        ThienDB thienDB = new ThienDB();
         UserDB userDB = new UserDB();
+
         int book_Id = Integer.parseInt(book_Id_raw);
         try {
             u.updateBookingStatusToBooked(book_Id);
         } catch (SQLException ex) {
             Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         Booking book = new Booking();
-        
+
         try {
             book = u.getBookingById(book_Id);
         } catch (SQLException ex) {
             Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         BigDecimal amount = book.getTotal_Cost();
         String pay_Method = "QR";
-        
+
         // Get the current date in the format "dd/MM/yyyy"
         LocalDate currentDate = LocalDate.now();
         String billDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        
+
         try {
             u.importBill(amount, billDate, pay_Method, book_Id);
         } catch (SQLException ex) {
             Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         User user = userDB.getUserFromSession(request.getSession());
         if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
             sendBookingConfirmationEmail(user.getEmail(), book, user);
             setBalanceAfterBookingSuccess(book, request, response);
+            String notiMessage = book.getTour_Name() + "just booked successful by " + book.getCus_Name();
+            thienDB.addNotification(thienDB.getCusIdFromUserId(book.getCus_Id()), notiMessage);
             response.getWriter().write("Email sent successfully!");
         } else {
             response.getWriter().write("Tour status is not 'Booked'.");
         }
-      
+
         request.setAttribute("booking", book);
         request.getRequestDispatcher("/booked-tour.jsp").forward(request, response);
     }
-    
+
     private void sendBookingConfirmationEmail(String toEmail, Booking bookedDetail, User userBooking) {
         // Sender's email credentials
         final String fromEmail = "tourhubforlife@gmail.com"; // replace with your email
@@ -146,7 +152,7 @@ public class FinishBookingServlet extends HttpServlet {
                 return new PasswordAuthentication(fromEmail, password);
             }
         });
-        
+
         try {
             // Create a default MimeMessage object
             Message message = new MimeMessage(session);
@@ -168,19 +174,19 @@ public class FinishBookingServlet extends HttpServlet {
                     + "We look forward to providing you with an unforgettable experience!\n\n"
                     + "Best regards,\n"
                     + "TourHub - Buy a tour without leaving your home";
-            
+
             message.setText(emailContent);
 
             // Send message
             Transport.send(message);
             System.out.println("Email sent successfully!");
-            
+
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
-    
-    public void setBalanceAfterBookingSuccess(Booking booking, HttpServletRequest request, HttpServletResponse response) {        
+
+    public void setBalanceAfterBookingSuccess(Booking booking, HttpServletRequest request, HttpServletResponse response) {
         Company company = new CompanyDB().getProviderByTourId(booking.getTour_Id());
         CompanyDB companyDB = new CompanyDB();
         if (company != null && "Booked".equalsIgnoreCase(booking.getBook_Status())) {

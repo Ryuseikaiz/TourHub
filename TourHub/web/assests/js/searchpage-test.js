@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
  */
 
-
 document.getElementById('input-box').addEventListener('input', function () {
     let query = this.value.trim().toLowerCase();
     let resultBox = document.getElementById('result-box');
@@ -40,78 +39,6 @@ function showResults(tours, provinces) {
     const resultBox = document.getElementById('result-box');
     resultBox.innerHTML = ''; // Clear previous results
 
-    // Display provinces section if any
-    if (provinces.length > 0) {
-        const provinceHeader = document.createElement('h3');
-        provinceHeader.textContent = 'Provinces';
-        resultBox.appendChild(provinceHeader);
-
-        provinces.forEach(province => {
-            const listItem = document.createElement('li');
-            listItem.onclick = () => selectProvince(province.province_name);
-            listItem.style.display = 'flex';
-            listItem.style.alignItems = 'center';
-            listItem.style.marginBottom = '10px';
-
-            const imgDiv = document.createElement('div');
-            imgDiv.style.flexShrink = '0';
-
-            const img = document.createElement('img');
-            img.src = `assests/images/provinces/${province.image_url}`;// Use a default image if none provided
-            img.alt = province.province_name;
-            img.style.width = '100px';
-            img.style.height = '100px';
-            img.style.objectFit = 'cover';
-
-            imgDiv.appendChild(img);
-            listItem.appendChild(imgDiv);
-
-            const textSpan = document.createElement('span');
-            textSpan.style.marginLeft = '15px';
-            textSpan.style.fontSize = '18px';
-            textSpan.textContent = province.province_name;
-
-            listItem.appendChild(textSpan);
-            resultBox.appendChild(listItem);
-        });
-    }
-
-    // Display tours section if any
-    if (tours.length > 0) {
-        const tourHeader = document.createElement('h3');
-        tourHeader.textContent = 'Tours';
-        resultBox.appendChild(tourHeader);
-
-        tours.forEach(tour => {
-            const listItem = document.createElement('li');
-            listItem.onclick = () => selectTour(tour.tour_Id);
-            listItem.style.display = 'flex';
-            listItem.style.alignItems = 'center';
-            listItem.style.marginBottom = '10px';
-
-            const imgDiv = document.createElement('div');
-            imgDiv.style.flexShrink = '0';
-
-            const img = document.createElement('img');
-            img.src = `${tour.tour_Img[0]}`;
-            img.alt = tour.tour_Name;
-            img.style.width = '100px';
-            img.style.height = '100px';
-            img.style.objectFit = 'cover';
-
-            imgDiv.appendChild(img);
-            listItem.appendChild(imgDiv);
-
-            const textSpan = document.createElement('span');
-            textSpan.style.marginLeft = '15px';
-            textSpan.style.fontSize = '18px';
-            textSpan.textContent = tour.tour_Name;
-
-            listItem.appendChild(textSpan);
-            resultBox.appendChild(listItem);
-        });
-    }
-
     // If no results are found, show "No results found" message
     if (tours.length === 0 && provinces.length === 0) {
         const noResultsMessage = document.createElement('p');
@@ -120,6 +47,82 @@ function showResults(tours, provinces) {
         noResultsMessage.style.fontSize = '18px';
         noResultsMessage.style.color = 'gray';
         resultBox.appendChild(noResultsMessage);
+    } else {
+        // Display provinces section if any
+        if (provinces.length > 0) {
+            const provinceHeader = document.createElement('h3');
+            provinceHeader.textContent = 'Provinces';
+            resultBox.appendChild(provinceHeader);
+
+            provinces.forEach(province => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('location-link'); // Adding the class to the li element
+                listItem.style.display = 'flex';
+                listItem.style.alignItems = 'center';
+                listItem.style.marginBottom = '10px';
+                listItem.setAttribute('data-id', province.province_id); // Adding data-id attribute
+                listItem.onclick = () => selectProvince(province.province_name);
+
+                const imgDiv = document.createElement('div');
+                imgDiv.style.flexShrink = '0';
+
+                const img = document.createElement('img');
+                img.src = `assests/images/provinces/${province.image_url || 'default.jpg'}`; // Use a default image if none provided
+                img.alt = province.province_name;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+
+                imgDiv.appendChild(img);
+                listItem.appendChild(imgDiv);
+
+                const textSpan = document.createElement('span');
+                textSpan.style.marginLeft = '15px';
+                textSpan.style.fontSize = '18px';
+                textSpan.textContent = province.province_name;
+
+                listItem.appendChild(textSpan);
+                resultBox.appendChild(listItem);
+            });
+        }
+
+        // Display tours section if any
+        if (tours.length > 0) {
+            const tourHeader = document.createElement('h3');
+            tourHeader.textContent = 'Tours';
+            resultBox.appendChild(tourHeader);
+
+            tours.forEach(tour => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('tour-visit-count'); // Adding the class to the li element
+                listItem.setAttribute('data-id', tour.tour_Id); // Adding data-id attribute
+                listItem.onclick = () => selectTour(tour.tour_Id);
+                listItem.style.display = 'flex';
+                listItem.style.alignItems = 'center';
+                listItem.style.marginBottom = '10px';
+
+                const imgDiv = document.createElement('div');
+                imgDiv.style.flexShrink = '0';
+
+                const img = document.createElement('img');
+                img.src = `${tour.tour_Img[0] || 'assets/images/tours/default.jpg'}`;
+                img.alt = tour.tour_Name;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+
+                imgDiv.appendChild(img);
+                listItem.appendChild(imgDiv);
+
+                const textSpan = document.createElement('span');
+                textSpan.style.marginLeft = '15px';
+                textSpan.style.fontSize = '18px';
+                textSpan.textContent = tour.tour_Name;
+
+                listItem.appendChild(textSpan);
+                resultBox.appendChild(listItem);
+            });
+        }
     }
 
     // Display result box if it contains something (either results or "No results found")
@@ -135,7 +138,6 @@ function selectTour(tourId) {
     // Redirect to the Tour page with the selected tour ID
     window.location.href = `SearchTourByIdServlet?tourId=${encodeURIComponent(tourId)}`;
 }
-
 
 function removeDiacritics(str) {
     const diacriticsMap = {

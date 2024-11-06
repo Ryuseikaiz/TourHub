@@ -418,8 +418,8 @@
 
         <script>
             function toggle(popupId) {
-                var popup = document.getElementById(popupId);
-                popup.style.display = popup.style.display === "block" ? "none" : "block";
+            var popup = document.getElementById(popupId);
+            popup.style.display = popup.style.display === "block" ? "none" : "block";
             }
         </script>
     </head>
@@ -1177,6 +1177,7 @@
     </div>
     </div>-->
 
+
     <div class="tour-content">
 
 
@@ -1207,10 +1208,11 @@
                 // Update the content of the popup with the fetched data
                 document.getElementById('popup5').innerHTML = data;
                 toggle('popup5'); // Assuming toggle function is defined to show/hide the popup
-            })
-            .catch(error => {
+                })
+                .catch(error => {
                 console.error("Fetch error: ", error);
                 alert("Failed to load tour option details.");
+
             });
     }
 </script>-->
@@ -1271,8 +1273,10 @@
             section.scrollLeft += 200;
     }
 
-    function scrollLeft1() {
+
+        function scrollLeft1() {
         const section = document.getElementById('date-section');
+
         if (section)
             section.scrollLeft -= 200;
     }
@@ -1377,13 +1381,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.save-btn').addEventListener('click', function () {
             addWishlist(this.getAttribute('data-tour-id'), window.location.href);
-        });
-    });
 
-    function addWishlist(tourId, returnUrl) {
+        });
+        });
+        function addWishlist(tourId, returnUrl) {
         const request = new XMLHttpRequest();
         request.open('POST', 'wishlist', true);
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
         request.onreadystatechange = function () {
             if (request.readyState === XMLHttpRequest.DONE) {
                 const responseMessage = request.status === 200 ? JSON.parse(request.responseText).message : "An error occurred.";
@@ -1431,6 +1436,7 @@
 
 
 <script src="assests/js/searchpage-test.js"></script>
+
 </body>
 
-        <%@include file="includes/footer.jsp" %>
+<%@include file="includes/footer.jsp" %>

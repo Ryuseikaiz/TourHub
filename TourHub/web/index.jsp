@@ -488,8 +488,9 @@
                 };
             });
 
+
         </script>
 
         <script src="assests/js/home.js"></script>
-
+        <script src="assests//js/UpdateCount.js"></script>
         <%@include file="includes/footer.jsp" %>

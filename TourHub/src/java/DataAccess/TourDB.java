@@ -137,6 +137,7 @@ public class TourDB implements DatabaseInfo {
             stmt.setString(1, tourId);  // Set the tour_Id parameter
             stmt.setInt(2, companyId);
             int rowsUpdated = stmt.executeUpdate();
+            System.out.println("THANH CONG OR NOT: " + rowsUpdated);
             return rowsUpdated;
         } catch (SQLException ex) {
             Logger.getLogger(TourDB.class.getName()).log(Level.SEVERE, null, ex);
