@@ -1,5 +1,3 @@
-
-
 // Function to handle button click and toggle active state
 document.querySelectorAll('.group-btn button').forEach(button => {
     button.addEventListener('click', handleButtonClick);
@@ -77,14 +75,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-
-
-
 function displaySearchs(result) {
     console.log(result);
     if (result.length > 0) {
         const content = result.map(item => {
-            return `<li onclick="selectInput('${item.tour_Id}')" style="display: flex; align-items: center; margin-bottom: 10px;">
+            return `<li class="tour-visit-count" data-id=${item.tour_Id} onclick="selectInput('${item.tour_Id}')" style="display: flex; align-items: center; margin-bottom: 10px;">
                         <div style="flex-shrink: 0;">
                             <img src="${item.tour_Img[0]}" alt="${item.tour_Name}" style="width: 100px; height: 100px; object-fit: cover;">
                         </div>
@@ -122,15 +117,15 @@ function displayTours(city) {
         colDiv.style.maxHeight = '450px';
         colDiv.style.minHeight = '450px';
 
-// Create the article element and set its class
+        // Create the article element and set its class
         const article = document.createElement('article');
         article.classList.add('event-default-wrap');
 
-// Create the event default div and set its class
+        // Create the event default div and set its class
         const eventDefault = document.createElement('div');
         eventDefault.classList.add('event-default');
 
-// Create and append the image
+        // Create and append the image
         const figure = document.createElement('figure');
         figure.classList.add('event-default-image');
 
@@ -143,36 +138,35 @@ function displayTours(city) {
         img.style.maxHeight = '300px'; // Set maximum height for the image
         img.style.width = 'auto'; // Allow width to adjust automatically
 
-// Set CSS properties to ensure the image maintains aspect ratio and fits correctly
+        // Set CSS properties to ensure the image maintains aspect ratio and fits correctly
         img.style.objectFit = 'cover'; // This will crop the image to fit without distortion
 
         figure.appendChild(img);
 
-// Append the figure to the event default div
+        // Append the figure to the event default div
         eventDefault.appendChild(figure);
 
-// Create the caption div and set its class
+        // Create the caption div and set its class
         const captionDiv = document.createElement('div');
         captionDiv.classList.add('event-default-caption');
 
         // Create the "Learn more" button
         const learnMoreBtn = document.createElement('a');
 
-// Add classes to style the button
+        // Add classes to style the button
         learnMoreBtn.classList.add('button', 'button-xs', 'button-secondary', 'button-nina', 'tour-visit-count');
 
-// Set the href attribute to link to the detailed tour page, passing the tourId
+        // Set the href attribute to link to the detailed tour page, passing the tourId
         learnMoreBtn.href = `SearchTourByIdServlet?tourId=${tour.tour_Id}`;
 
-// Set the button text
+        // Set the button text
         learnMoreBtn.textContent = "Learn more";
 
-// Optionally, store the tour ID as a data attribute (useful for tracking or event handling)
+        // Optionally, store the tour ID as a data attribute (useful for tracking or event handling)
         learnMoreBtn.setAttribute('data-id', tour.tour_Id);
 
-// Append the "Learn more" button to the caption div
+        // Append the "Learn more" button to the caption div
         captionDiv.appendChild(learnMoreBtn);
-
 
         // Append the caption div to the event default div
         eventDefault.appendChild(captionDiv);
@@ -197,7 +191,6 @@ function displayTours(city) {
 
         // Append the tour name to the tour info div
         tourInfoDiv.appendChild(tourName);
-
 
         // Append the tour info div to the event default inner div
         eventDefaultInner.appendChild(tourInfoDiv);
@@ -230,7 +223,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
 
 document.addEventListener("DOMContentLoaded", function () {
     // Get the search keyword element
@@ -284,7 +276,7 @@ window.addEventListener('click', function (event) {
         });
     }
 });
-//
+
 $(document).ready(function () {
     $('.location-slider').owlCarousel({
         items: 5, // Default items for screens below 480px
@@ -312,48 +304,3 @@ $(document).ready(function () {
 });
 
 
-$(document).ready(function () {
-    $('.location-link').click(function (e) {
-//        e.preventDefault(); // Prevent default link behavior
-
-        var provinceId = $(this).data('id'); // Get province ID
-        $.ajax({
-            url: 'UpdateVisitCountServlet', //servlet URL handle the update
-            type: 'POST',
-            data: {id: provinceId},
-            success: function (response) {
-                console.log('Visit count updated successfully:', response);
-                // Redirect to login.jsp after updating the visit count
-//                window.location.href = 'login.jsp';
-            },
-            error: function (xhr, status, error) {
-                console.error('Error updating visit count:', error);
-                // Optionally, redirect to login.jsp in case of an error as well
-//                window.location.href = 'login.jsp';
-            }
-        });
-    });
-});
-
-$(document).ready(function () {
-    $('.tour-visit-count').click(function (e) {
-//        e.preventDefault(); // Prevent default link behavior
-
-        var tourId = $(this).data('id'); // Get province ID
-        $.ajax({
-            url: 'UpdateVisitCountServlet', //servlet URL handle the update
-            type: 'GET',
-            data: {id: tourId},
-            success: function (response) {
-                console.log('Visit count updated successfully:', response);
-                // Redirect to login.jsp after updating the visit count
-//                window.location.href = 'login.jsp';
-            },
-            error: function (xhr, status, error) {
-                console.error('Error updating visit count:', error);
-                // Optionally, redirect to login.jsp in case of an error as well
-//                window.location.href = 'login.jsp';
-            }
-        });
-    });
-});
