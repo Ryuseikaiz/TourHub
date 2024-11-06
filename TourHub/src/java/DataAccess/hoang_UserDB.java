@@ -67,6 +67,30 @@ public class hoang_UserDB implements DatabaseInfo {
 
         return providerId; // This will return null if no providerId is found
     }
+
+    public Integer getUserIdFromProviderId(int companyId) {
+        String query = "SELECT u.user_Id FROM [User] u JOIN Company c ON u.user_Id = c.user_Id WHERE c.company_Id= ?";
+        Integer providerId = null;
+
+        try (Connection connection = getConnect(); PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, companyId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    providerId = rs.getInt("company_Id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                throw e; // or handle exception as needed
+            } catch (SQLException ex) {
+                Logger.getLogger(hoang_UserDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return providerId; // This will return null if no providerId is found
+    }
 //BOOKINGDB
 
     public int getTotalBookingThisMonth(int companyId) {
