@@ -125,16 +125,18 @@ public class NotificationServlet extends HttpServlet {
             try {
                 // Fetch new notifications after the provided latestNotificationId
                 List<Notification> newNotifications = notiDB.getNotificationsAfterId(currentUser.getUser_Id(), latestNotificationId);
+                List<Notification> allUnReadNotifications = notificationsDAO.getUnreadNotifications(currentUser.getUser_Id());
 
-                // Determine if there are new notifications
+// Determine if there are new notifications
                 boolean hasNewNotifications = !newNotifications.isEmpty();
 
-                // Prepare the response JSON
+// Prepare the response JSON
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put("hasNewNotifications", hasNewNotifications);
-                responseData.put("notifications", newNotifications);
+                responseData.put("newNotifications", newNotifications);
+                responseData.put("allUnReadNotifications", allUnReadNotifications);
 
-                // Convert response data to JSON and send to client
+// Convert response data to JSON and send to client
                 String jsonResponse = new Gson().toJson(responseData);
                 out.write(jsonResponse);
                 out.flush();

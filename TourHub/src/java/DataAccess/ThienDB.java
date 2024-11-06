@@ -815,7 +815,7 @@ public class ThienDB implements DatabaseInfo {
     public List<Notification> getUnreadNotifications(int userId) throws SQLException {
         List<Notification> notifications = new ArrayList<>();
 
-        String sql = "SELECT notification_Id, message, date_sent, is_read FROM Notifications WHERE user_Id = ? AND is_read = 0";
+        String sql = "SELECT notification_Id, message, date_sent, is_read FROM Notifications WHERE user_Id = ? AND is_read = 0 ORDER BY date_sent DESC";
 
         try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 

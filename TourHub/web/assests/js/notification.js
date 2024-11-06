@@ -1,11 +1,12 @@
 let fetchInterval;
-let latestNotificationId = null; // Initialize to null or set the latest ID you already have
+let latestNotificationId = null; // Holds the latest notification ID
+let notificationViewCount = {}; // Tracks view counts for each notification
+let firstLoad = true; // Flag to check if it's the first load
 
-// Toggle the notification dropdown visibility and set up polling if opened
+// Toggle the notification dropdown visibility
 function toggleDropdown(event) {
     event.preventDefault();
     const dropdown = document.getElementById("notificationDropdown");
-
     if (!dropdown) {
         console.error('Dropdown element not found');
         return;
@@ -13,66 +14,107 @@ function toggleDropdown(event) {
 
     const isVisible = dropdown.classList.toggle("visible");
     dropdown.classList.toggle("hidden", !isVisible);
-
     if (isVisible) {
-        fetchNotifications();
-        if (!fetchInterval) {
-            fetchInterval = setInterval(fetchNotifications, 50); // Check every 5 seconds
-        }
-    } else {
-        clearInterval(fetchInterval);
-        fetchInterval = null;
+        incrementNotificationViewCount(); // Increase view count for displayed notifications
+        checkAndMarkNotificationsAsRead(); // Mark as read only if viewed twice
     }
 }
 
-// Close dropdown when clicking outside
+// Close dropdown if clicking outside of it
 window.onclick = function (event) {
     if (!event.target.closest('.notification') && !event.target.closest('#notificationDropdown')) {
         const dropdown = document.getElementById("notificationDropdown");
         if (dropdown && dropdown.classList.contains("visible")) {
             dropdown.classList.remove("visible");
             dropdown.classList.add("hidden");
-            clearInterval(fetchInterval);
-            fetchInterval = null;
         }
     }
 };
+
+// Increment the view count for each notification shown in the dropdown
+function incrementNotificationViewCount() {
+    const notificationItems = document.querySelectorAll('.notification-item');
+    notificationItems.forEach(item => {
+        const notificationId = item.getAttribute('data-id');
+        if (notificationId) {
+            // Increment view count only if it hasn’t reached 2 yet
+            if (!notificationViewCount[notificationId] || notificationViewCount[notificationId] < 2) {
+                notificationViewCount[notificationId] = (notificationViewCount[notificationId] || 0) + 1;
+            }
+        }
+    });
+}
+
+// Marks notifications as read if they’ve been viewed exactly twice
+function checkAndMarkNotificationsAsRead() {
+    // Filter notifications where view count is exactly 2
+    const notificationsToMarkRead = Object.keys(notificationViewCount).filter(id => notificationViewCount[id] === 3);
+
+    if (notificationsToMarkRead.length > 0) {
+        $.ajax({
+            url: '/Project_SWP/markNotificationsAsRead',
+            type: 'POST',
+            data: JSON.stringify({notificationIds: notificationsToMarkRead}),
+            contentType: 'application/json',
+            success: function () {
+                // Update UI for each notification marked as read
+                notificationsToMarkRead.forEach(id => {
+                    const notificationItem = document.querySelector(`.notification-item[data-id="${id}"] p`);
+                    if (notificationItem) {
+                        notificationItem.style.fontWeight = 'normal';
+                    }
+                });
+
+                // Clear the view count for notifications marked as read to prevent further processing
+                notificationsToMarkRead.forEach(id => delete notificationViewCount[id]);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error('Failed to mark notifications as read:', textStatus, errorThrown);
+            }
+        });
+    }
+}
 
 // Fetch notifications from the server
 function fetchNotifications() {
     $.ajax({
         url: '/Project_SWP/notifications',
         type: 'POST',
-        data: {latestNotificationId: latestNotificationId || 0}, // Send the latestNotificationId or 0 if null
+        data: {latestNotificationId: latestNotificationId || 0},
         success: function (response) {
             if (response.hasNewNotifications) {
-                showNotifications(response.notifications);
+                displayNotifications(response.newNotifications);
+                const latestNotification = response.newNotifications[0];
 
-                // Update latest notification ID and show a toast for each new notification
-                if (response.notifications.length > 0) {
-                    const latestNotification = response.notifications[0];
-                    if (latestNotification.notificationId !== latestNotificationId) {
-                        latestNotificationId = latestNotification.notificationId;
-                        showToastNotification(latestNotification.message); // Show toast for the newest notification
+                // Show a toast notification only on the first load with a new notification
+                if (latestNotification && latestNotification.notificationId !== latestNotificationId) {
+                    latestNotificationId = latestNotification.notificationId;
+
+                    // Only show Toastify notification on the first load
+                    if (firstLoad) {
+//                        showToastNotification(latestNotification.message);
+                        firstLoad = false; // Set to false after first load
+                    } else {
+                        showToastNotification(latestNotification.message);
                     }
                 }
             }
+
+            // Display all unread notifications
+            displayNotifications(response.allUnReadNotifications);
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.error('AJAX request failed:', textStatus, errorThrown);
-            const dropdownContent = document.querySelector('.dropdown-content');
-            dropdownContent.innerHTML = '<p>Failed to load notifications. Please try again later.</p>';
-            document.getElementById('notificationDropdown').classList.add('visible');
         }
     });
 }
 
-// Display notifications in the dropdown
-function showNotifications(notifications) {
+// Display notifications in the dropdown, tracking views
+function displayNotifications(notifications) {
     const dropdownContent = document.querySelector('.dropdown-content');
-    dropdownContent.innerHTML = ''; // Clear existing notifications
+    dropdownContent.innerHTML = ''; // Clear current notifications
 
-    const latestNotifications = notifications.slice(0, 5); // Limit to 5 notifications
+    const latestNotifications = notifications.slice(0, 5); // Show up to 5 notifications
 
     if (latestNotifications.length === 0) {
         const noResultsMessage = document.createElement('p');
@@ -81,54 +123,65 @@ function showNotifications(notifications) {
         dropdownContent.appendChild(noResultsMessage);
     } else {
         latestNotifications.forEach(notification => {
-            const notificationItem = document.createElement('div');
-            notificationItem.classList.add('notification-item');
-            notificationItem.style.display = 'flex';
-            notificationItem.style.alignItems = 'center';
-            notificationItem.style.marginBottom = '10px';
-            notificationItem.setAttribute('data-id', notification.notificationId);
-
-            const textDiv = document.createElement('div');
-            textDiv.classList.add('text');
-            textDiv.style.flex = '1';
-
-            const messageP = document.createElement('p');
-            messageP.style.fontSize = '15px';
-            messageP.style.color = '#333333';
-
-            if (notification.isRead == 0) {
-                messageP.style.fontWeight = 'bold';
+            const notificationId = notification.notificationId;
+            // Initialize view count only if it's the first time displaying this notification
+            if (!notificationViewCount[notificationId]) {
+                notificationViewCount[notificationId] = 1;
             }
 
-            messageP.textContent = notification.message || 'No message available';
-            textDiv.appendChild(messageP);
-
-            const timestampSpan = document.createElement('span');
-            timestampSpan.style.fontSize = '13px';
-            timestampSpan.style.color = '#666666';
-            timestampSpan.textContent = notification.dateSent || 'Unknown date';
-            textDiv.appendChild(timestampSpan);
-
-            notificationItem.appendChild(textDiv);
+            const notificationItem = createNotificationElement(notification);
             dropdownContent.appendChild(notificationItem);
         });
     }
-    dropdownContent.classList.remove('hidden'); // Show dropdown if it was hidden
 }
 
-// Display a toast notification with message
-function showToastNotification(message, type = 'success') {
+// Creates a notification element for display
+function createNotificationElement(notification) {
+    const notificationId = notification.notificationId;
+
+    const notificationItem = document.createElement('div');
+    notificationItem.classList.add('notification-item');
+    notificationItem.style.display = 'flex';
+    notificationItem.style.alignItems = 'center';
+    notificationItem.style.marginBottom = '10px';
+    notificationItem.setAttribute('data-id', notificationId);
+
+    const textDiv = document.createElement('div');
+    textDiv.classList.add('text');
+    textDiv.style.flex = '1';
+
+    const messageP = document.createElement('p');
+    messageP.style.fontSize = '15px';
+    messageP.style.color = '#333333';
+    messageP.style.fontWeight = (notification.isRead == 0 && notificationViewCount[notificationId] < 2) ? 'bold' : 'normal';
+    messageP.textContent = notification.message || 'No message available';
+
+    const timestampSpan = document.createElement('span');
+    timestampSpan.style.fontSize = '13px';
+    timestampSpan.style.color = '#666666';
+    timestampSpan.textContent = notification.dateSent || 'Unknown date';
+
+    textDiv.appendChild(messageP);
+    textDiv.appendChild(timestampSpan);
+    notificationItem.appendChild(textDiv);
+
+    return notificationItem;
+}
+
+// Displays a toast notification with the provided message
+function showToastNotification(message) {
     Toastify({
         text: message,
         duration: 3000,
         gravity: "bottom",
         position: "right",
-        backgroundColor: type === 'success' ? "green" : "red",
+        padding: "20px",
+        backgroundColor: "linear-gradient(to right, #F39C12, #FFD564)",
         stopOnFocus: true
     }).showToast();
 }
 
-// Initialize continuous polling regardless of dropdown visibility
+// Start fetching notifications every 500ms
 if (!fetchInterval) {
-    fetchInterval = setInterval(fetchNotifications, 50); // Check every 5 seconds
+    fetchInterval = setInterval(fetchNotifications, 500); // Fetch notifications every 500ms
 }
