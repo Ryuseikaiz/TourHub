@@ -107,22 +107,8 @@ public class BookingOverviewServlet extends HttpServlet {
         System.out.println("Discount Cost: " + discountCost);
         System.out.println("Discount Id: " + discountId);
         System.out.println("Total no dis: " + totalNoDis);
-        
-        int discountIdInt = 0;
-        
+                
         System.out.println("Option ID: " + optionIdString);
-        
-        if (discountCost.contains("-0 VND")) {
-            System.out.println("Not using discount");
-        } else {
-            discountIdInt = Integer.parseInt(discountId);
-            System.out.println("Using discount");
-            try {
-                khanhDB.decrementDiscountQuantity(discountIdInt);
-            } catch (SQLException ex) {
-                java.util.logging.Logger.getLogger(BookingOverviewServlet.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            }
-        }
 
         if (selectedDateString == null || totalCost == null || bookingDetail == null || optionIdString == null) {
 
@@ -233,6 +219,7 @@ public class BookingOverviewServlet extends HttpServlet {
         request.setAttribute("discountCost", discountCost);
         request.setAttribute("totalNoDis", totalNoDis);
         request.setAttribute("user", user);
+        request.setAttribute("discountId", discountId);
         request.getRequestDispatcher("/booking-overview.jsp").forward(request, response);
     }
 

@@ -1086,13 +1086,13 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#scrollspyHeading2">Second</a>
                         </li>
-                        <li class="nav-item"></li>
+                        <li class="nav-item">
                         <a class="nav-link" href="#scrollspyHeading3">Third</a>
                         </li>
-                        <li class="nav-item"></li>
+                        <li class="nav-item">
                         <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
                         </li>
-                        <li class="nav-item"></li>
+                        <li class="nav-item">
                         <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
                         </li>
                     </ul>
