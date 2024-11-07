@@ -30,7 +30,7 @@ public class ValidateOtp extends HttpServlet {
                 // User registration: confirm OTP and update user status to 'verified'
                 UserDB userDB = new UserDB();
                 userDB.updateUser_StatusToVerified(email);
-                request.setAttribute("message", "Registration successful! You can now log in.");
+                request.setAttribute("infoMessage", "Registration successful! You can now log in.");
                 dispatcher = request.getRequestDispatcher("login.jsp");
             } else if ("forgotPassword".equals(type)) {
                 // Password reset: redirect to new password page
