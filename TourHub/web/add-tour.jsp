@@ -148,8 +148,7 @@
             <div id="toastContainer" data-message="<c:out value='${message}' />"></div>
         </section>
         <!-- CONTENT -->
-        <script src="assests/js/script_profile.js"></script>     
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="assests/js/script_profile.js"></script>             
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -171,7 +170,10 @@
                                             });
         
                 </script>-->
+        <!--<script src="dist/js/theme.min.js"></script>-->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+        <script src="./assests/js/edit-tour.js"></script>
         <script type="text/javascript">
                                     const firebaseConfig = {
                                         apiKey: "AIzaSyADteJKp4c9C64kC08pMJs_jYh-Fa5EX6o",
@@ -232,8 +234,7 @@
                                         imgDiv.appendChild(imgElement);
                                     }
         </script>
-        <!--<script src="dist/js/theme.min.js"></script>-->
-        <script src="./assests/js/edit-tour.js"></script>
+
 
     </body>
 </html>

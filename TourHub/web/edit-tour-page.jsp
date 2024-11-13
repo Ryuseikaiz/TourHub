@@ -241,7 +241,7 @@
             </section>
             <!-- CONTENT -->
 
-
+            <script src="assests/js/edit-tour.js"></script>
             <script src="assests/js/script_profile.js"></script>     
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -326,9 +326,30 @@
                                                                                     imgDiv.appendChild(imgElement);
                                                                                 }
             </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+            <script>
+                window.onload = function () {
+                    const message = '<c:out value="${message}" />';
+                    if (message) {
+                        Toastify({
+                            text: message,
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                            close: true, // Enables the close button
+                            style: {
+                                fontSize: "18px", // Makes the text larger
+                                padding: "20px", // Increases padding for a bigger appearance
+                                borderRadius: "8px" // Optional: makes the corners more rounded
+                            }
+                        }).showToast();
+                    }
+                };
+            </script>
 
-            <script src="assests/js/edit-tour.js"></script>
+            <c:remove var="message" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+            <script src="assests/js/notification.js"></script>
         </script>
     </body>
 </html>
