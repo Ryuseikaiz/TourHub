@@ -172,7 +172,7 @@ function createNotificationElement(notification) {
 function showToastNotification(message) {
     Toastify({
         text: message,
-        duration: 3000,
+        duration: 30000,
         gravity: "bottom",
         position: "right",
         padding: "20px",
