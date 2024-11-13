@@ -3,10 +3,8 @@ package utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,11 +22,9 @@ public class CSVReader {
         List<Tour> tours = new ArrayList<>();
         String line;
 
-        // Define date formats with both `/` and `-` as separators
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy/MM/dd");
-        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat format4 = new SimpleDateFormat("dd-MM-yyyy");
+        // Define the parsing and formatting date formats
+        SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         // Use InputStreamReader with UTF-8 encoding to read the file
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
@@ -49,8 +45,8 @@ public class CSVReader {
                     // Parse the data into appropriate types
                     String tourName = values.get(0);
                     String tourDescription = values.get(1);
-                    Date startDate = parseDate(values.get(2), format1, format2, format3, format4);
-                    Date endDate = parseDate(values.get(3), format1, format2, format3, format4);
+                    Date startDate = parseDate(values.get(2), inputFormat, outputFormat);
+                    Date endDate = parseDate(values.get(3), inputFormat, outputFormat);
                     String location = values.get(4);
                     int slot = Integer.parseInt(values.get(5));
                     LocalDate currentDate = LocalDate.now();
@@ -60,7 +56,7 @@ public class CSVReader {
                     long durationInMillis = endDate.getTime() - startDate.getTime();
                     long days = TimeUnit.MILLISECONDS.toDays(durationInMillis) + 1;
                     long nights = days - 1;
-                    String duration = days + "D" + nights + "N";
+                    String duration = days + "N" + nights + "D";
 
                     // Add new Tour object to the list
                     tours.add(new Tour(tourName, tourDescription, startDate, endDate, location, duration, slot, "Pending", createAt));
@@ -76,7 +72,7 @@ public class CSVReader {
         return tours;
     }
 
-// Helper method to parse a line with quoted fields
+    // Helper method to parse a line with quoted fields
     private List<String> parseCsvLine(String line) {
         List<String> values = new ArrayList<>();
         StringBuilder current = new StringBuilder();
@@ -98,19 +94,15 @@ public class CSVReader {
         return values;
     }
 
-// Helper method to parse date in multiple formats
-    private Date parseDate(String dateStr, SimpleDateFormat... formats) throws ParseException {
-        for (SimpleDateFormat format : formats) {
-            try {
-                return new Date(format.parse(dateStr).getTime());
-            } catch (ParseException ignored) {
-                // Try the next format
-            }
-        }
-        throw new ParseException("Unparseable date: " + dateStr, 0);
+    // Helper method to parse and format date
+    private Date parseDate(String dateStr, SimpleDateFormat inputFormat, SimpleDateFormat outputFormat) throws ParseException {
+        dateStr = dateStr.trim();
+        java.util.Date parsedDate = inputFormat.parse(dateStr); // Parse using the input format
+        String formattedDate = outputFormat.format(parsedDate); // Format to the desired output format
+        return Date.valueOf(formattedDate);
     }
-// Method to get the latest file in a directory
 
+    // Method to get the latest file in a directory
     public File getLatestFileFromDir(String dirPath) {
         File dir = new File(dirPath);
 
@@ -133,8 +125,8 @@ public class CSVReader {
         // Return the latest file (first file after sorting)
         return files[0];
     }
-    // Method to delete all files in a directory
 
+    // Method to delete all files in a directory
     public void deleteAllFilesInDir(String dirPath) {
         File dir = new File(dirPath);
 
@@ -158,26 +150,6 @@ public class CSVReader {
             } else {
                 System.out.println("Failed to delete file: " + file.getName());
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        CSVReader csvReader = new CSVReader();
-        String dirPath = "E:/FPTU/Major 5/SWP/project/TourHub/TourHub/web/assests/tour-imported/";
-
-        // Get the latest file from the specified directory
-        File latestFile = csvReader.getLatestFileFromDir(dirPath);
-
-        if (latestFile != null) {
-            System.out.println("Reading tours from file: " + latestFile.getName());
-
-            // Read the tours from the latest file
-            List<Tour> tours = csvReader.readTourFromFile(latestFile.toString());
-            for (Tour tour : tours) {
-                System.out.println(tour.toString());
-            }
-        } else {
-            System.out.println("No suitable file found to read tours from.");
         }
     }
 }
