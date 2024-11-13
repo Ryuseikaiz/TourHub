@@ -26,6 +26,7 @@
         <link rel="stylesheet" href="assests/css/style.css" />
 
 
+
         <link rel="stylesheet" href="assests/css/style_profile.css" media="print" onload="this.media = 'all'">
         <link rel="stylesheet" href="assests/css/customer.css" media="print" onload="this.media = 'all'">
         <link rel="stylesheet" href="assests/css/provider_analysis.css" media="print" onload="this.media = 'all'">
@@ -33,99 +34,23 @@
         <link rel="stylesheet" href="assests/css/bootstrap.css" media="print" onload="this.media = 'all'">
         <link rel="stylesheet" href="assests/css/style.css" media="print" onload="this.media = 'all'">
         <link rel="stylesheet" href="assests/css/mytour.css" media="print" onload="this.media = 'all'">
+
         <!-- Toasify JavaScript -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/toastify-js@1.11.1/src/toastify.min.css"
+            />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
-        <title>Analytic</title>
-        <style>
-        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+        <link rel="stylesheet" href="assests/css/notification.css" />
+        <title>Analytic</title>        
+
     </head>
     <body>
 
-
-        <!-- SIDEBAR -->
-        <section id="sidebar">
-            <a href="home" class="brand">
-                <i class='bx bxs-smile'></i>
-                <span class="text">TourHub</span>
-            </a>
-            <ul class="side-menu top">
-                <li>
-                    <a href="user-profile.jsp">
-                        <i class='bx bxs-dashboard' ></i>
-                        <span class="text">User Information</span>
-                    </a>
-                </li>
-                <c:if test="${sessionScope.currentUser.role == 'Provider'}">
-                    <li>
-                        <a href="pending-bookings">
-                            <i class='bx bxs-shopping-bag-alt' ></i>
-                            <span class="text">Manage Booking</span>
-                        </a>
-                    </li>
-                </c:if>
-                <c:if test="${sessionScope.currentUser.role == 'Customer'}">
-                    <li>
-                        <a href="user-booking.jsp">
-                            <i class='bx bxs-shopping-bag-alt' ></i>
-                            <span class="text">My Booking</span>
-                        </a>
-                    </li>
-                </c:if>      
-                <li>
-                    <a href="#">
-                        <i class='bx bxs-message-dots' ></i>
-                        <span class="text">Message</span>
-                    </a>
-                </li>
-
-
-                <c:if test="${sessionScope.currentUser.role == 'Provider' || sessionScope.currentUser.role == 'Admin'}">
-                    <li class="">
-                        <a href="${sessionScope.currentUser.role == 'Provider' ? '/Project_SWP/provider-analys' : 'admin-analysis.jsp'}">
-                            <i class='bx bxs-dashboard' ></i>
-                            <span class="text">Dashboard</span>
-                        </a>
-                    </li>   
-                    <li class="active dropdown-btn">                        
-                        <a href="my-tour">
-                            <i class='bx bxs-briefcase-alt' ></i>
-                            <span class="text">My Tour</span>
-                        </a>
-                    </li>                       
-                    <li>
-                        <a href="provider-management?action=show-withdraw-page">
-                            <i class='bx bxs-credit-card'></i>
-                            <span class="text">Widthdraw</span>
-                        </a>
-                    </li> 
-                    <li>
-                        <a href="discount">
-                            <i class='bx bxs-discount'></i>
-                            <span class="text">Manage Discounts</span>
-                        </a>
-                    </li>
-                </c:if>
-
-            </ul>
-            <ul class="side-menu">
-                <li>
-                    <a href="#">
-                        <i class='bx bxs-cog' ></i>
-                        <span class="text">Settings</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="logout" class="logout">
-                        <i class='bx bxs-log-out-circle' ></i>
-                        <span class="text">Logout</span>
-                    </a>
-                </li>
-            </ul>
-        </section>
-        <!-- SIDEBAR -->
-
-
+        <%@include file="includes/user-sidebar.jsp" %>
 
         <!-- CONTENT -->
         <section id="content">
@@ -141,10 +66,21 @@
                 </form>
                 <input type="checkbox" id="switch-mode" hidden>
                 <label for="switch-mode" class="switch-mode"></label>
-                <a href="#" class="notification">
-                    <i class='bx bxs-bell' ></i>
-                    <!-- <span class="num">8</span> -->
+                <!-- HTML Code for Notification Icon and Dropdown -->
+                <a href="javascript:void(0)" class="notification" role="button" onclick="toggleDropdown(event)">
+                    <i class='bx bxs-bell'></i>
                 </a>
+
+                <div id="notificationDropdown" class="dropdown hidden">
+                    <h2>Notifications</h2>
+                    <div class="dropdown-content">
+                        <!-- Content will be dynamically generated by JavaScript -->
+                    </div>
+                    <a href="notifications" class="see-more"><button >See previous notifications</button></a>
+                </div>
+
+
+                <div id="toastContainer" data-message="Welcome back! You have new notifications."></div>
                 <div class="image-container">
                     <img src="assests/images/avatar.jpg" alt="User Avatar" class="avatar">
                 </div>
@@ -232,75 +168,69 @@
                                     <div class="row row-50">
                                         <c:forEach var="tour" items="${tours}">
                                             <div class="col-md-6 col-xl-4 lazy">
-                                                <article class="event-default-wrap" style="background: rgba(0, 0, 0, 0.1); border-radius: 10px">
+                                                <article class="event-default-wrap" style="background: rgba(0, 0, 0, 0.1); border-radius: 10px; max-width: 300px; margin: auto;">
                                                     <c:choose>
                                                         <c:when test="${tour.tour_Status == 'Hidden' || tour.tour_Status == 'Banned'}">
                                                             <div class="event-default darken-effect">
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <div class="event-default  no-blur-effect">
+                                                                <div class="event-default no-blur-effect">
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                            <figure class="event-default-image" style="position: relative; max-width: 250px; margin: auto;">
-                                                                <figure class="event-default-image skeleton" style="max-width: 300px; margin: auto; margin-top: 15px">
-                                                                    <img data-src="${tour.tour_Img[0]}" alt="${tour.tour_Name}" style="min-height: 250px; max-height: 450px; object-fit: cover; width: 100%;" class="lazy fade-in">
-                                                                </figure>
-                                                                <c:if test="${tour.tour_Status ne 'Banned'}">
-                                                                    <div class="event-default-caption" style="position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; width: 0px; height: 0px">
-                                                                        <a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" 
-                                                                           class="button button-xs button-secondary button-nina tour-visit-count" 
-                                                                           style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;">
-                                                                            Edit
-                                                                        </a>
-                                                                        <a href="provider-management?action=add-option&tourId=${tour.tour_Id}" 
-                                                                           class="button button-xs button-secondary button-nina tour-visit-count" 
-                                                                           style="font-size: 12px; font-weight: bold; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;">
-                                                                            Add Option
-                                                                        </a>
-                                                                        <c:if test="${tour.tour_Status == 'Active'}">
-                                                                            <a href="javascript:void(0);" 
-                                                                               class="button button-xs button-secondary button-nina tour-visit-count action-link approve" 
-                                                                               style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;"
-                                                                               onclick="showModal('${tour.tour_Id}', 'Hidden')">
-                                                                                Hidden
-                                                                            </a>
-                                                                        </c:if>
-                                                                        <c:if test="${tour.tour_Status == 'Hidden'}">
-                                                                            <a href="javascript:void(0);" 
-                                                                               class="button button-xs button-secondary button-nina tour-visit-count" 
-                                                                               style="font-size: 12px; padding: 2px 5px; line-height: 1; display: inline-block; text-align: center;"
-                                                                               onclick="showModal('${tour.tour_Id}', 'Active')">
-                                                                                Active
-                                                                            </a>
-                                                                        </c:if>
 
-                                                                    </div>
+                                                            <!-- Image -->
+                                                            <figure class="event-default-image" style="position: relative; max-width: 250px; margin: auto;">
+                                                                <img data-src="${tour.tour_Img[0]}" alt="${tour.tour_Name}" style="min-height: 250px; max-height: 450px; object-fit: cover; width: 100%;" class="lazy fade-in">
+
+                                                                <!-- Hide Button in Top Right Corner -->
+                                                                <c:if test="${tour.tour_Status == 'Active'}">
+                                                                    <a href="javascript:void(0);" class="button button-xs button-secondary button-nina tour-visit-count action-link approve hidden-button" 
+                                                                       style="position: absolute; top: 10px; right: 10px;" 
+                                                                       onclick="showModal('${tour.tour_Id}', 'Hidden')">
+                                                                        <i class="fas fa-eye-slash"></i>
+                                                                    </a>
+                                                                </c:if>
+                                                                <c:if test="${tour.tour_Status == 'Hidden'}">
+                                                                    <a href="javascript:void(0);" class="button button-xs button-secondary button-nina tour-visit-count active-button" 
+                                                                       style="position: absolute; top: 10px; right: 10px;" 
+                                                                       onclick="showModal('${tour.tour_Id}', 'Active')">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </a>
                                                                 </c:if>
                                                             </figure>
 
-                                                        </div>
-                                                        <div class="event-default-inner"  style="justify-content: center !important; width: 100%";>
-                                                            <div>
-                                                                <h5>
-                                                                    <a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" class="event-default-title">${tour.tour_Name}</a>
-                                                                </h5>
-                                                            </div>
-                                                        </div>
-                                                </article>
-                                            </div>
-                                        </c:forEach>
-                                    </div>
-                                </div>
-                            </div>
+                                                            <div class="button-container">
+                                                                <!-- Edit Button -->
+                                                                <a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" class="button button-xs edit-button">
+                                                                    <i class="fas fa-edit"></i> <span>Edit</span>
+                                                                </a>
 
-                        </c:if>
-                        <!-- Display All Tours if providerTours is available -->   
-                        <c:if test="${empty tours}">
-                            <h4 style="margin-top: 30px; display: flex; text-align: center; width: 100%">No Tour Available</h4>
-                        </c:if>
-                    </c:otherwise>
-                </c:choose>
-                </div>
+                                                                <!-- Add Option Button -->
+                                                                <a href="provider-management?action=add-option&tourId=${tour.tour_Id}" class="button button-xs add-option-button">
+                                                                    <i class="fas fa-plus-circle"></i> <span>Add option</span>
+                                                                </a>
+                                                            </div>
+
+
+                                                            <!-- Tour Name -->
+                                                            <div class="event-default-inner" style="justify-content: center !important; text-align: center; width: 100%;">
+                                                                <h5><a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" class="event-default-title">${tour.tour_Name}</a></h5>
+                                                            </div>
+                                                            </article>
+                                                        </div>
+                                                    </c:forEach>
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                </c:if>
+                                <!-- Display All Tours if providerTours is available -->   
+                                <c:if test="${empty tours}">
+                                    <h4 style="margin-top: 30px; display: flex; text-align: center; width: 100%">No Tour Available</h4>
+                                </c:if>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
                 </div>
 
             </main> 
@@ -324,18 +254,18 @@
         <script src="assests/js/script_profile.js"></script>     
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-                                                                                   document.addEventListener('DOMContentLoaded', function () {
-                                                                                       const burger = document.querySelector('.burger');
-                                                                                       const navigation = document.querySelector('.navigation-admin');
-                                                                                       const main = document.querySelector('.main-admin');
-                                                                                       const profileCard = document.querySelector('.profile-card'); // Select the profile card
+                                                                           document.addEventListener('DOMContentLoaded', function () {
+                                                                               const burger = document.querySelector('.burger');
+                                                                               const navigation = document.querySelector('.navigation-admin');
+                                                                               const main = document.querySelector('.main-admin');
+                                                                               const profileCard = document.querySelector('.profile-card'); // Select the profile card
 
-                                                                                       burger.addEventListener('click', function () {
-                                                                                           navigation.classList.toggle('active');
-                                                                                           main.classList.toggle('active');
-                                                                                           profileCard.classList.toggle('active'); // Toggle the active class on the profile card
-                                                                                       });
-                                                                                   });
+                                                                               burger.addEventListener('click', function () {
+                                                                                   navigation.classList.toggle('active');
+                                                                                   main.classList.toggle('active');
+                                                                                   profileCard.classList.toggle('active'); // Toggle the active class on the profile card
+                                                                               });
+                                                                           });
         </script>
         <script>
             function reloadData() {
@@ -487,9 +417,29 @@
                     }
                 };
             }
+            document.addEventListener("DOMContentLoaded", () => {
+                const lazyElements = document.querySelectorAll(".lazy, .skeleton");
+
+                lazyElements.forEach((element) => {
+                    if (element.tagName === "IMG") {
+                        // For images, wait until they're fully loaded
+                        element.addEventListener("load", () => {
+                            element.classList.add("loaded");
+                        });
+                    } else {
+                        // For other elements, simulate loading completion
+                        setTimeout(() => {
+                            element.classList.add("loaded");
+                        }, 500); // Adjust delay as needed
+                    }
+                });
+            });
+
         </script>
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
 
-        <script src="dist/js/theme.min.js"></script>
+        <!--<script src="dist/js/theme.min.js"></script>-->
+        <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.11.1/src/toastify.min.js"></script>
+        <script src="assests/js/notification.js"></script>
     </body>
 </html>

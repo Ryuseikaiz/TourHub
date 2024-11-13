@@ -22,6 +22,7 @@ public class Review {
     private List<ReviewReply> replies;
     private int likes;
     private int likeCount;
+    private int Book_Id;
 
     public Review() {
     }
@@ -37,6 +38,14 @@ public class Review {
         this.replies = replies;
         this.likes = likes;
         this.likeCount = likeCount;
+    }
+
+    public int getBook_Id() {
+        return Book_Id;
+    }
+
+    public void setBook_Id(int Book_Id) {
+        this.Book_Id = Book_Id;
     }
 
     public int getLikeCount() {

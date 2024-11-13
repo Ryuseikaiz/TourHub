@@ -2,13 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Comment" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Tour Comments</title>
-        <!-- Bootstrap CSS -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
         <style>
@@ -18,8 +18,6 @@
                 margin: 20px auto;
                 padding: 15px;
             }
-
-            /* Comment item styles */
             .comment-item {
                 background-color: #f0f2f5;
                 padding: 10px;
@@ -28,10 +26,8 @@
                 border: 1px solid #ddd;
                 position: relative;
             }
-
-            /* Reply styles (thụt lề so với comment) */
             .reply-item {
-                margin-left: 50px; /* Tăng khoảng cách cho reply */
+                margin-left: 50px;
                 background-color: #ffffff;
                 padding: 10px;
                 border-radius: 8px;
@@ -39,8 +35,6 @@
                 border: 1px solid #ddd;
                 position: relative;
             }
-
-            /* Đường nối từ comment đến reply */
             .reply-item::before {
                 content: '';
                 position: absolute;
@@ -50,7 +44,6 @@
                 width: 2px;
                 background-color: #ddd;
             }
-
             .comment-avatar {
                 width: 40px;
                 height: 40px;
@@ -58,40 +51,33 @@
                 background-color: #ddd;
                 margin-right: 10px;
             }
-
             .comment-body {
                 flex: 1;
             }
-
             .comment-header {
                 font-weight: bold;
                 margin-bottom: 5px;
                 font-size: 14px;
-                text-align: left; /* Đặt phần tên căn về bên trái */
+                text-align: left;
             }
-
             .comment-text {
                 font-size: 14px;
                 margin-bottom: 10px;
-                text-align: left; /* Đặt nội dung bình luận căn về bên trái */
+                text-align: left;
             }
-
-            /* Reply button styling */
-            .reply-btn {
+            .reply-btn, .edit-btn, .delete-btn {
                 font-size: 12px;
                 color: #007bff;
                 cursor: pointer;
                 display: inline-block;
                 margin-top: 5px;
+                margin-right: 10px;
             }
-
-            /* Reply input form, initially hidden */
-            .reply-input {
+            .reply-input, .edit-input {
                 margin-top: 10px;
                 display: none;
             }
-
-            .reply-input textarea {
+            .reply-input textarea, .edit-input textarea {
                 width: 100%;
                 height: 60px;
                 margin-bottom: 10px;
@@ -100,8 +86,6 @@
                 border-radius: 5px;
                 font-size: 14px;
             }
-
-            /* Submit button styles */
             .submit-btn {
                 background-color: #1877f2;
                 color: white;
@@ -111,25 +95,44 @@
                 font-size: 14px;
                 cursor: pointer;
             }
-
             .submit-btn:hover {
                 background-color: #145dbf;
             }
-
-            /* No comment styling */
             .no-comment {
                 text-align: center;
                 margin-bottom: 20px;
                 font-size: 14px;
                 color: #888;
             }
-
-            /* Divider between comments */
             .comment-divider {
                 height: 1px;
                 background-color: #ccc;
                 margin: 10px 0;
             }
+            .comment-header {
+                position: relative;
+                font-weight: bold;
+                margin-bottom: 5px;
+                font-size: 14px;
+                text-align: left;
+            }
+
+            .icon-actions {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+
+            .edit-icon, .delete-icon {
+                color: #007bff;
+                cursor: pointer;
+                margin-left: 10px;
+            }
+
+            .edit-icon:hover, .delete-icon:hover {
+                color: #0056b3;
+            }
+
         </style>
     </head>
     <body>
@@ -140,45 +143,77 @@
                 </c:when>
                 <c:otherwise>
                     <c:forEach var="comment" items="${comments}">
-                        <!-- Chỉ hiển thị các comment gốc (parentCommentId == null) -->
                         <c:if test="${comment.parentCommentId == null}">
-                            <div class="comment-item">
+                            <div class="comment-item" id="comment-${comment.commentId}">
                                 <div class="d-flex">
-                                    <div class="comment-avatar"></div> <!-- Placeholder for avatar -->
+                                    <div class="comment-avatar">
+                                        <img src="${comment.avatar}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                                    </div>
                                     <div class="comment-body">
-                                        <div class="comment-header">${comment.firstName} ${comment.lastName}</div>
-                                        <div class="comment-text">${comment.commentText}</div>
+                                        <div class="comment-header">
+                                            ${comment.firstName} ${comment.lastName}
+                                            <span class="text-muted" style="font-size: 12px;">
+                                                - <fmt:formatDate value="${comment.createdAt}" pattern="dd/MM/yyyy HH:mm" />
+                                            </span>
+                                            <!-- Nút Edit và Delete icon ở góc phải -->
+                                            <div class="icon-actions">
+                                                <c:if test="${currentUserId != -1 && comment.userId == currentUserId}">
+                                                    <i class="fas fa-edit edit-icon" onclick="showEditForm(${comment.commentId})"></i>
+                                                    <i class="fas fa-trash delete-icon" onclick="deleteComment(${comment.commentId})"></i>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                        <div id="commentText-${comment.commentId}" class="comment-text">${comment.commentText}</div>
 
-                                        <!-- Chỉ hiển thị nút reply nếu người dùng đã đăng nhập -->
-                                        <c:choose>
-                                            <c:when test="${empty currentUser}">
-                                                <!-- Người dùng chưa đăng nhập, không hiển thị form reply -->
-                                            </c:when>
-                                            <c:otherwise>
-                                                <div class="reply-btn" onclick="showReplyForm(${comment.commentId})">Reply</div>
-                                                <div id="replyForm-${comment.commentId}" class="reply-input">
-                                                    <textarea id="replyText-${comment.commentId}" placeholder="Write your reply..."></textarea>
-                                                    <button class="submit-btn" onclick="submitReply('${tourId}', ${comment.commentId})">Submit Reply</button>
-                                                </div>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <!-- Nút Reply và form trả lời -->
+                                        <c:if test="${currentUserId != -1}">
+                                            <div class="reply-btn" onclick="showReplyForm(${comment.commentId})">Reply</div>
+                                        </c:if>
+                                        <div id="replyForm-${comment.commentId}" class="reply-input" style="display:none;">
+                                            <textarea id="replyText-${comment.commentId}" placeholder="Write your reply..."></textarea>
+                                            <button class="submit-btn" onclick="submitReply('${tourId}', ${comment.commentId})">Submit Reply</button>
+                                        </div>
+                                        <div id="editForm-${comment.commentId}" class="edit-input" style="display:none;">
+                                            <textarea id="editText-${comment.commentId}">${comment.commentText}</textarea>
+                                            <button class="submit-btn" onclick="submitEdit(${comment.commentId})">Save</button>
+                                            <button class="submit-btn" onclick="cancelEdit(${comment.commentId})">Cancel</button>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Hiển thị reply cho comment này -->
                                 <c:forEach var="reply" items="${comments}">
                                     <c:if test="${reply.parentCommentId == comment.commentId}">
-                                        <div class="reply-item d-flex">
-                                            <div class="comment-avatar"></div> <!-- Placeholder for avatar -->
+                                        <div class="reply-item d-flex" id="comment-${reply.commentId}">
+                                            <div class="comment-avatar">
+                                                <img src="${reply.avatar}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                                            </div>
                                             <div class="comment-body">
-                                                <div class="comment-header">${reply.firstName} ${reply.lastName}</div>
-                                                <div class="comment-text">${reply.commentText}</div>
+                                                <div class="comment-header">
+                                                    ${reply.firstName} ${reply.lastName}
+                                                    <span class="text-muted" style="font-size: 12px;">
+                                                        - <fmt:formatDate value="${reply.createdAt}" pattern="dd/MM/yyyy HH:mm" />
+                                                    </span>
+                                                    <!-- Nút Edit và Delete icon cho reply ở góc phải -->
+                                                    <div class="icon-actions">
+                                                        <c:if test="${currentUserId != -1 && reply.userId == currentUserId}">
+                                                            <i class="fas fa-edit edit-icon" onclick="showEditForm(${reply.commentId})"></i>
+                                                            <i class="fas fa-trash delete-icon" onclick="deleteComment(${reply.commentId})"></i>
+                                                        </c:if>
+                                                    </div>
+                                                </div>
+                                                <div id="commentText-${reply.commentId}" class="comment-text">${reply.commentText}</div>
+
+                                                <!-- Form chỉnh sửa cho reply -->
+                                                <div id="editForm-${reply.commentId}" class="edit-input" style="display:none;">
+                                                    <textarea id="editText-${reply.commentId}">${reply.commentText}</textarea>
+                                                    <button class="submit-btn" onclick="submitEdit(${reply.commentId})">Save</button>
+                                                    <button class="submit-btn" onclick="cancelEdit(${reply.commentId})">Cancel</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </c:if>
                                 </c:forEach>
-
-                                <!-- Đường phân cách cho mỗi comment -->
                                 <div class="comment-divider"></div>
                             </div>
                         </c:if>
@@ -186,87 +221,142 @@
                 </c:otherwise>
             </c:choose>
 
-            <!-- Form nhập bình luận mới -->
-            <c:choose>
-                <c:when test="${empty currentUser}">
-                    <div class="no-comment">You need to login to comment.</div>
-                </c:when>
-                <c:otherwise>
-                    <div class="comment-item">
-                        <div class="d-flex">
-                            <div class="comment-avatar"></div> <!-- Placeholder for avatar -->
-                            <div class="comment-body">
-                                <textarea id="newCommentText" placeholder="Write your comment..." rows="3" class="form-control"></textarea>
-                                <button class="submit-btn mt-2" onclick="submitComment('${tourId}')">Submit Comment</button>
-                            </div>
+            <!-- Form nhập bình luận mới, chỉ hiển thị khi người dùng đã đăng nhập -->
+            <c:if test="${not empty sessionScope.currentUser}">
+                <div class="comment-item">
+                    <div class="d-flex">
+                        <div class="comment-avatar">
+                            <!-- Lấy avatar của người dùng hiện tại từ session -->
+                            <img src="${sessionScope.currentUser.avatar}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                        </div>
+                        <div class="comment-body">
+                            <textarea id="newCommentText" placeholder="Write your comment..." rows="3" class="form-control"></textarea>
+                            <button class="submit-btn mt-2" onclick="submitComment('${tourId}')">Submit Comment</button>
                         </div>
                     </div>
-                </c:otherwise>
-            </c:choose>
+                </div>
+            </c:if>
+
         </div>
 
-        <!-- Bootstrap JS (optional for advanced Bootstrap components) -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
         <script>
-                                    function showReplyForm(commentId) {
-                                        document.getElementById('replyForm-' + commentId).style.display = 'block';
-                                    }
+            function showReplyForm(commentId) {
+                document.getElementById('replyForm-' + commentId).style.display = 'block';
+            }
 
-                                    function submitReply(tourId, parentCommentId) {
-                                        var replyText = document.getElementById('replyText-' + parentCommentId).value;
+            function showEditForm(commentId) {
+                document.getElementById('editForm-' + commentId).style.display = 'block';
+            }
 
-                                        if (replyText.trim() !== '') {
-                                            fetch('CommentServlet', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                                },
-                                                body: 'commentText=' + encodeURIComponent(replyText) +
-                                                        '&parentCommentId=' + encodeURIComponent(parentCommentId) +
-                                                        '&tourId=' + encodeURIComponent(tourId)
-                                            }).then(response => response.text())
-                                                    .then(result => {
-                                                        if (result.trim() === "Success") {
-                                                            alert('Reply submitted');
-                                                            location.reload();
-                                                        } else {
-                                                            alert('Error submitting reply.');
-                                                        }
-                                                    }).catch(error => {
-                                                console.error('Error submitting reply:', error);
-                                            });
-                                        } else {
-                                            alert('Please enter a reply');
-                                        }
-                                    }
+            function cancelEdit(commentId) {
+                document.getElementById('editForm-' + commentId).style.display = 'none';
+            }
 
-                                    function submitComment(tourId) {
-                                        var commentText = document.getElementById('newCommentText').value;
+            function submitEdit(commentId) {
+                // Lấy nội dung mới từ ô nhập liệu và loại bỏ khoảng trắng thừa
+                var newText = document.getElementById('editText-' + commentId).value.trim();
 
-                                        if (commentText.trim() !== '') {
-                                            fetch('CommentServlet', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                                },
-                                                body: 'commentText=' + encodeURIComponent(commentText) + '&tourId=' + encodeURIComponent(tourId)
-                                            }).then(response => response.text())
-                                                    .then(result => {
-                                                        if (result.trim() === "Success") {
-                                                            alert('Comment submitted');
-                                                            location.reload();
-                                                        } else {
-                                                            alert('Error submitting comment.');
-                                                        }
-                                                    }).catch(error => {
-                                                console.error('Error submitting comment:', error);
-                                            });
-                                        } else {
-                                            alert('Please enter a comment');
-                                        }
-                                    }
+                // Kiểm tra xem nội dung mới không rỗng
+                if (newText !== '') {
+                    fetch('CommentServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: 'action=edit&commentId=' + encodeURIComponent(commentId) + '&commentText=' + encodeURIComponent(newText)
+                    })
+                            .then(response => response.text())
+                            .then(result => {
+                                if (result.trim() === "Success") {
+                                    // Reload lại trang sau khi chỉnh sửa thành công
+                                    location.reload();
+                                } else {
+                                    alert('Error editing comment.'); // Thông báo lỗi nếu không thành công
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error editing comment:', error); // Ghi log lỗi nếu có sự cố với request
+                            });
+                } else {
+                    alert('Please enter text for the comment.'); // Thông báo nếu người dùng để trống nội dung
+                }
+            }
+
+
+
+            function deleteComment(commentId) {
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    fetch('CommentServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: 'action=delete&commentId=' + encodeURIComponent(commentId)
+                    }).then(response => response.text())
+                            .then(result => {
+                                if (result.trim() === "Success") {
+                                    document.getElementById('comment-' + commentId).remove();
+                                } else {
+                                    alert('Error deleting comment.');
+                                }
+                            }).catch(error => {
+                        console.error('Error deleting comment:', error);
+                    });
+                }
+            }
+
+            function submitReply(tourId, parentCommentId) {
+                var replyText = document.getElementById('replyText-' + parentCommentId).value;
+
+                if (replyText.trim() !== '') {
+                    fetch('CommentServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: 'action=add&commentText=' + encodeURIComponent(replyText) +
+                                '&tourId=' + encodeURIComponent(tourId) +
+                                '&parentCommentId=' + encodeURIComponent(parentCommentId)
+                    }).then(response => response.text())
+                            .then(result => {
+                                if (result.trim() === "Success") {
+                                    location.reload();  // Tải lại trang để hiển thị trả lời mới
+                                } else {
+                                    alert('Error submitting reply.');
+                                }
+                            }).catch(error => {
+                        console.error('Error submitting reply:', error);
+                    });
+                } else {
+                    alert('Please enter a reply');
+                }
+            }
+
+            function submitComment(tourId) {
+                var commentText = document.getElementById('newCommentText').value;
+
+                if (commentText.trim() !== '') {
+                    fetch('CommentServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: 'action=add&commentText=' + encodeURIComponent(commentText) + '&tourId=' + encodeURIComponent(tourId)
+                    }).then(response => response.text())
+                            .then(result => {
+                                if (result.trim() === "Success") {
+                                    location.reload();  // Tải lại trang để hiển thị bình luận mới
+                                } else {
+                                    alert('Error submitting comment.');
+                                }
+                            }).catch(error => {
+                        console.error('Error submitting comment:', error);
+                    });
+                } else {
+                    alert('Please enter a comment');
+                }
+            }
+
         </script>
     </body>
 </html>

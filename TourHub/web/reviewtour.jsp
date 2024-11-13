@@ -3,6 +3,7 @@
 <%@ page import="model.Booking" %>
 <%@ page import="model.User" %>
 <%@ page import="DataAccess.ReviewDB" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,27 +14,25 @@
         <link rel="stylesheet" href="assests/css/style_profile.css">
         <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-
         <title>Tour Reviews</title>
     </head>
     <body>
         <!-- SIDEBAR -->
-         <%@include file="includes/user-sidebar.jsp" %>
+        <%@include file="includes/user-sidebar.jsp" %>
         <!-- SIDEBAR -->
 
         <!-- CONTENT -->
         <section id="content">
             <nav>
-                <i class='bx bx-menu' ></i>
+                <i class='bx bx-menu'></i>
                 <form action="#">
                     <div class="form-input">
                         <input type="search" placeholder="Searching for tour...">
-                        <button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
+                        <button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
                     </div>
                 </form>
                 <a href="#" class="notification">
-                    <i class='bx bxs-bell' ></i>
+                    <i class='bx bxs-bell'></i>
                     <span class="num">8</span>
                 </a>
                 <a href="#" class="profile">
@@ -70,7 +69,6 @@
                         <c:forEach var="booking" items="${bookedTours}">
                             <div class="col-md-4">
                                 <div class="tour-card">
-                                    <!-- Access the tour image from tourImages map using the tour_Id -->
                                     <img src="${tourImages[booking.tour_Id]}" class="tour-image" alt="Tour Image">
                                     <div class="tour-details">
                                         <h3 class="tour-title">${booking.tour_Name}</h3>
@@ -80,12 +78,12 @@
                                             <strong>Quantity:</strong> ${booking.slot_Order} <br>
                                             <strong>Total Cost:</strong> $${booking.total_Cost}
                                         </p>
-                                        <a href="javascript:void(0)" class="review-button" onclick="openReviewPopup('${booking.tour_Id}')">Review</a>
+                                        <!-- Thêm bookId vào để truyền cùng với tourId -->
+                                        <a href="javascript:void(0)" class="review-button" onclick="openReviewPopup('${booking.tour_Id}', ${booking.book_Id})">Review</a>
                                     </div>
                                 </div>
                             </div>
                         </c:forEach>
-
                     </div>
                 </c:if>
 
@@ -96,8 +94,9 @@
                         <h2>Submit Review</h2>
                         <form action="SubmitReview" method="post">
                             <input type="hidden" name="tourId" id="tourIdInput">
+                            <!-- Thêm input ẩn để truyền bookId -->
+                            <input type="hidden" name="bookId" id="bookIdInput">
 
-                            <!-- Rating Star Section -->
                             <div class="form-group">
                                 <label for="ratingStar">Rating:</label>
                                 <div class="star-rating">
@@ -110,32 +109,29 @@
                                 <input type="hidden" id="ratingStar" name="ratingStar" value="0" required>
                             </div>
 
-                            <!-- Comment Section -->
                             <div class="form-group">
                                 <label for="comment">Comment:</label>
                                 <textarea id="comment" name="comment" class="form-control" rows="3" required></textarea>
                             </div>
 
-                            <!-- Submit Button -->
                             <button type="submit" class="btn btn-primary btn-block">Submit Review</button>
                         </form>
                     </div>
                 </div>
             </main>
         </section>
-        <!-- CONTENT -->
 
         <!-- Scripts -->
         <script>
-            function openReviewPopup(tourId) {
-                const modal = document.getElementById('reviewPopup');
+            // Chỉnh sửa hàm để lấy thêm bookId
+            function openReviewPopup(tourId, bookId) {
                 document.getElementById('tourIdInput').value = tourId;
-                modal.classList.add('show');
+                document.getElementById('bookIdInput').value = bookId; // Set bookId vào input
+                document.getElementById('reviewPopup').classList.add('show');
             }
 
             function closeReviewPopup() {
-                const modal = document.getElementById('reviewPopup');
-                modal.classList.remove('show');
+                document.getElementById('reviewPopup').classList.remove('show');
             }
 
             const stars = document.querySelectorAll('.star');
@@ -147,36 +143,20 @@
                     ratingInput.value = ratingValue;
 
                     stars.forEach(s => {
-                        if (s.getAttribute('data-value') <= ratingValue) {
-                            s.classList.add('selected');
-                        } else {
-                            s.classList.remove('selected');
-                        }
+                        s.classList.toggle('selected', s.getAttribute('data-value') <= ratingValue);
                     });
                 });
 
                 star.addEventListener('mouseover', () => {
                     const hoverValue = star.getAttribute('data-value');
-                    stars.forEach(s => {
-                        if (s.getAttribute('data-value') <= hoverValue) {
-                            s.classList.add('selected');
-                        } else {
-                            s.classList.remove('selected');
-                        }
-                    });
+                    stars.forEach(s => s.classList.toggle('selected', s.getAttribute('data-value') <= hoverValue));
                 });
 
                 star.addEventListener('mouseout', () => {
                     const ratingValue = ratingInput.value;
-                    stars.forEach(s => {
-                        if (s.getAttribute('data-value') <= ratingValue) {
-                            s.classList.add('selected');
-                        } else {
-                            s.classList.remove('selected');
-                        }
-                    });
+                    stars.forEach(s => s.classList.toggle('selected', s.getAttribute('data-value') <= ratingValue));
                 });
             });
         </script>
     </body>
-</html>
+</html> 

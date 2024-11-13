@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +35,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import model.Booking;
 import model.Company;
+import model.Customer;
+import model.Notification;
 import model.Tour;
 import model.User;
 
@@ -93,14 +96,14 @@ public class FinishBookingServlet extends HttpServlet {
         System.out.println("Discount Cost: " + discountCost);
         System.out.println("Total no dis: " + totalNoDis);
         System.out.println("Discount Id: " + discountId);
-        
+
         KhanhDB u = new KhanhDB();
-        ThienDB cusDB = new ThienDB();
+        ThienDB thienDB = new ThienDB();
         UserDB userDB = new UserDB();
         Booking book = new Booking();
         int discountIdInt = 0;
         int book_Id = Integer.parseInt(book_Id_raw);
-        
+
         if (status.contains("Complete")) {
             try {
                 u.updateBookingStatusToBooked(book_Id);
@@ -108,7 +111,7 @@ public class FinishBookingServlet extends HttpServlet {
                 Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (discountCost.contains("-0 VND")) {
+            if (discountCost == null) {
                 System.out.println("Not using discount");
             } else {
                 discountIdInt = Integer.parseInt(discountId);
@@ -143,6 +146,14 @@ public class FinishBookingServlet extends HttpServlet {
             if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
                 sendBookingConfirmationEmail(user.getEmail(), book, user);
                 setBalanceAfterBookingSuccess(book, request, response);
+
+                String msgProvider = user.getFirst_Name() + " " + user.getLast_Name() + " just book your tour " + book.getTour_Name();
+                String msgCustomer = "You just book success " + book.getTour_Name() + " go to My Booking Section to check your booking, Have a good day!";
+                int userCompanyId = new CompanyDB().getProviderByTourId(book.getTour_Id()).getUser_Id();
+                int userCustomerId = new UserDB().getUserFromSession(request.getSession()).getUser_Id();
+                thienDB.addNotification(userCustomerId, msgCustomer);
+                thienDB.addNotification(userCompanyId, msgProvider);
+
                 response.getWriter().write("Email sent successfully!");
             } else {
                 response.getWriter().write("Tour status is not 'Booked'.");

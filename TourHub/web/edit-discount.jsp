@@ -172,7 +172,7 @@
                                 <option value="2" <%= discount.getRequire().equals("8") ? "selected" : "" %>>8 slots</option>
                                 <option value="2" <%= discount.getRequire().equals("9") ? "selected" : "" %>>9 slots</option>
                                 <option value="2" <%= discount.getRequire().equals("10") ? "selected" : "" %>>10 slots</option>
-                                
+
                                 <!-- Additional options as needed -->
                             </select>
                         </div>
@@ -206,5 +206,18 @@
         <!-- CONTENT -->
 
         <script src="assests/js/script_profile.js"></script>
+        <script>
+            // Thiết lập giá trị min cho startDate và endDate
+            const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại
+
+            document.getElementById("startDate").setAttribute("min", today); // Giới hạn startDate từ ngày hiện tại trở đi
+            document.getElementById("endDate").setAttribute("min", today); // Giới hạn endDate từ ngày hiện tại trở đi
+
+            // Khi thay đổi startDate, cập nhật giá trị min cho endDate
+            document.getElementById("startDate").addEventListener("change", function () {
+                const startDate = this.value;
+                document.getElementById("endDate").setAttribute("min", startDate); // endDate phải sau startDate
+            });
+        </script>
     </body>
 </html>

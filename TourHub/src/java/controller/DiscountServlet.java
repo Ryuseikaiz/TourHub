@@ -49,7 +49,7 @@ public class DiscountServlet extends HttpServlet {
             }
         } else {
             // Redirect unauthorized users to an error page
-            response.sendRedirect("unauthorized.jsp");
+            response.sendRedirect("login.jsp");
         }
     }
 
@@ -78,7 +78,7 @@ public class DiscountServlet extends HttpServlet {
             }
         } else {
             // Redirect unauthorized users to an error page
-            response.sendRedirect("unauthorized.jsp");
+            response.sendRedirect("login.jsp");
         }
     }
 
