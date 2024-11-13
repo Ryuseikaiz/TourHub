@@ -146,12 +146,14 @@ public class FinishBookingServlet extends HttpServlet {
             if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
                 sendBookingConfirmationEmail(user.getEmail(), book, user);
                 setBalanceAfterBookingSuccess(book, request, response);
+
                 String msgProvider = user.getFirst_Name() + " " + user.getLast_Name() + " just book your tour " + book.getTour_Name();
                 String msgCustomer = "You just book success " + book.getTour_Name() + " go to My Booking Section to check your booking, Have a good day!";
                 int userCompanyId = new CompanyDB().getProviderByTourId(book.getTour_Id()).getUser_Id();
                 int userCustomerId = new UserDB().getUserFromSession(request.getSession()).getUser_Id();
                 thienDB.addNotification(userCustomerId, msgCustomer);
                 thienDB.addNotification(userCompanyId, msgProvider);
+
                 response.getWriter().write("Email sent successfully!");
             } else {
                 response.getWriter().write("Tour status is not 'Booked'.");
