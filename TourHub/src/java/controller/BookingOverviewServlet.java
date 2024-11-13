@@ -220,6 +220,7 @@ public class BookingOverviewServlet extends HttpServlet {
         request.setAttribute("totalNoDis", totalNoDis);
         request.setAttribute("user", user);
         request.setAttribute("discountId", discountId);
+        request.setAttribute("previousSelectedDate", selectedDateString);
         request.getRequestDispatcher("/booking-overview.jsp").forward(request, response);
     }
 

@@ -84,7 +84,7 @@
         <!--<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">-->
         <!--[if lt IE 10]>
           <div
-            style="
+            style=" 
               background: #212121;
               padding: 10px 0;
               box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.3);
@@ -586,7 +586,7 @@
                                     <div class="tour-duration-container">
                                         <i class="fa-regular fa-clock"></i>
                                         <span class="tour-duration-text">Tour Duration | </span>
-                                        <span class="tour-duration">${tour.total_Time} Hours</span>
+                                        <span class="tour-duration">${tour.total_Time}</span>
                                     </div>
                                 </div>                                                      
                             </div>
@@ -1297,7 +1297,7 @@
             if (i < closestTourDates.length) {
                 const date = closestTourDates[i];
                 dateContainers[i].querySelector('[data-dayofweek]').innerText = daysOfWeek[date.getDay()];
-                dateContainers[i].querySelector('[data-formatteddate]').innerText = date.getDate() + ' thg ' + (date.getMonth() + 1);
+                dateContainers[i].querySelector('[data-formatteddate]').innerText = date.getDate() + '/' + (date.getMonth() + 1);
                 dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
                 dateContainers[i].style.display = 'flex';
                 dateContainers[i].classList.toggle('selected', i === 0);
@@ -1423,6 +1423,24 @@
             setTimeout(() => popup.classList.remove("show"), 400);
         }
     });
+
+    // Giả sử 'tour' là một đối tượng chứa các giá trị average_Review_Rating và number_Of_Review
+    const averageRating = ${tour.average_Review_Rating};
+    const rankTypeElement = document.querySelector('.rank .rank-type');
+
+    if (averageRating === 0.0) {
+        rankTypeElement.textContent = 'No rating';
+    } else if (averageRating > 0.0 && averageRating <= 1.0) {
+        rankTypeElement.textContent = 'Bad';
+    } else if (averageRating > 1.0 && averageRating <= 2.0) {
+        rankTypeElement.textContent = 'Kinda bad';
+    } else if (averageRating > 2.0 && averageRating <= 3.0) {
+        rankTypeElement.textContent = 'Not so good';
+    } else if (averageRating > 3.0 && averageRating <= 4.0) {
+        rankTypeElement.textContent = 'Good';
+    } else if (averageRating > 4.0 && averageRating <= 5.0) {
+        rankTypeElement.textContent = 'Excellent';
+    }
 </script>
 
 
