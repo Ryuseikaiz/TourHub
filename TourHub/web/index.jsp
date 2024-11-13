@@ -328,7 +328,7 @@
         </section> 
         <section class="section section-lg text-center bg-gray-lighter novi-background bg-cover">
             <div class="container container-bigger">
-                <h3>Lasted Comments</h3>
+                <h3>Lasted Reviews</h3>
                 <div class="divider divider-decorate"></div>
                 <!-- Owl Carousel-->
                 <div class="owl-carousel owl-layout-1" data-items="1" data-dots="true" data-nav="true" data-stage-padding="0" data-loop="" data-margin="30" data-mouse-drag="false" data-autoplay="">
@@ -341,7 +341,11 @@
                                 <div class="quote-boxed-aside">
 
                                     <img class="quote-boxed-image" src="${tour.tour_Img[0]}" alt="${tour.tour_Name}" style="width: 20vw; height: 20vh;" />
-
+                                    <div class="review-stars text-warning">
+                                        <c:forEach var="i" begin="1" end="${review.rating_Star}">
+                                            ★
+                                        </c:forEach>
+                                    </div>
                                 </div>
                                 <div class="quote-boxed-main">
                                     <div class="quote-boxed-text">

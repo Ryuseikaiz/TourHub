@@ -1,45 +1,54 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : Nov 1, 2024, 10:49:27 PM
-    Author     : hoang
-*/
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+/* Darkening and Brightening Effects */
 .darken-effect {
-    filter: brightness(0.4); /* Darkens the content by 40% */
+    position: relative;
 }
 
-.no-darken-effect {
-    filter: brightness(1) !important; /* Keeps the content at normal brightness */
-}
-.button-primary {
-    background-color: #f39c12; /* Orange background */
-    color: white; /* White text */
-    border: none; /* No border */
-    padding: 12px 24px; /* Padding for size */
-    text-align: center; /* Center text */
-    text-decoration: none; /* No underline */
-    font-size: 16px; /* Font size */
-    font-weight: bold; /* Bold text */
-    border-radius: 15px; /* Rounded corners */
-    cursor: pointer; /* Pointer on hover */
-    display: inline-block;
+.darken-effect::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+    z-index: 0; /* Places overlay behind other content */
+    pointer-events: none; /* Overlay doesn’t block interaction */
 }
 
-.button-primary:hover {
-    background-color: #2C20C0; /* Slightly darker shade on hover */
+/* Ensure buttons stay bright */
+.button-container, .button-xs {
+    position: relative;
+    z-index: 1; /* Higher than overlay */
 }
-/* Skeleton loading effect */
-/* Skeleton loading effect */
+
+/* Lazy Loading Fade-In */
+.lazy {
+    opacity: 0; /* Start with hidden opacity */
+    transition: opacity 0.8s ease; /* Smooth fade-in effect */
+}
+
+/* Fade-in effect when content is fully loaded */
+.lazy.loaded {
+    opacity: 1; /* Fully visible when `loaded` class is added */
+}
+
+/* Skeleton Loading Effect */
 .skeleton {
-    background: #eee; /* Light gray placeholder */
+    background: #eee; /* Light gray placeholder background */
     position: relative;
     overflow: hidden;
+    opacity: 1; /* Visible by default */
+    transition: opacity 0.8s ease; /* Smooth fade-in when loading completes */
 }
 
-/* Animation for skeleton loading effect */
+/* Skeleton Animation */
 .skeleton::before {
     content: "";
     position: absolute;
@@ -61,65 +70,101 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     }
 }
 
-/* Fade-in effect when image is fully loaded */
-.lazy {
-    opacity: 0;
-    transition: opacity 0.8s ease;
+/* Hide skeleton effect when content is fully loaded */
+.skeleton.loaded {
+    opacity: 1; /* Full visibility on load */
+    background: transparent; /* Remove the skeleton background */
+}
+.skeleton.loaded::before {
+    display: none; /* Hide the loading animation */
 }
 
-.fade-in.loaded {
-    opacity: 1;
-}
-
-/* Remove skeleton effect once image is loaded */
-.fade-in.loaded + .skeleton {
-    display: none;
-}
-
-/* Initial hidden state for lazy divs */
-.lazy {
-    opacity: 0;
-    transition: opacity 0.8s ease; /* Fade-in effect */
-}
-
-.fade-in {
-    opacity: 1;
-}
-.filter-status {
+/* Button Styles */
+.button-xs {
+    font-size: 10px !important;
+    padding: 4px 6px !important;
+    border-radius: 6px !important;
+    min-width: 70px !important;
+    color: white !important;
     display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
+/* Primary Button */
+.button-primary {
+    background-color: #f39c12; /* Orange background */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 15px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+}
+.button-primary:hover {
+    background-color: #2C20C0; /* Darker on hover */
+}
+
+/* Edit and Add Option Buttons */
+.edit-button, .add-option-button {
+    background: linear-gradient(45deg, #FFA500, #FF8C00) !important;
+    margin: 0 5px;
+}
+.edit-button:hover, .add-option-button:hover {
+    background: linear-gradient(45deg, #FF8C00, #FFA500) !important;
+    transform: translateY(-2px);
+}
+
+/* Hidden and Active Buttons */
+.hidden-button, .active-button {
+    background: linear-gradient(45deg, #1E3A8A, #2747A1) !important;
+}
+.hidden-button:hover, .active-button:hover {
+    background: linear-gradient(45deg, #2747A1, #1E3A8A) !important;
+    transform: translateY(-2px);
+}
+
+/* Button Container */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Radio Button Group */
 .radio-group {
     margin-left: 30px;
     display: flex;
     gap: 10px;
     align-items: center;
 }
-
 .radio-group input[type="radio"] {
-    display: none; /* Hide the default radio buttons */
+    display: none;
 }
-
 .radio-group label {
-
-    padding: 10px 15px; /* Add padding for better clickable area */
-    border: 2px solid #f39c12; /* Border color */
-    border-radius: 4px; /* Slightly rounded corners */
-    background-color: #f39c12; /* Background color */
-    cursor: pointer; /* Change cursor on hover */
-    transition: background-color 0.3s, border-color 0.3s; /* Smooth transitions */
+    padding: 10px 15px;
+    border: 2px solid #f39c12;
     border-radius: 15px;
+    background-color: #f39c12;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    color: white;
 }
-
 .radio-group input[type="radio"]:checked + label {
-    background-color: #2C20C0; /* Background color when checked */
-    color: white; /* Change text color when checked */
-    border-color: #0056b3; /* Darker border color when checked */
+    background-color: #2C20C0;
+    border-color: #0056b3;
 }
 
-/* Modal Background */
-/* Modal Background */
+/* Modal Styles */
 .custom-modal {
     display: none;
     position: fixed;
@@ -129,22 +174,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+    background-color: rgba(0, 0, 0, 0.5);
 }
-
-/* Modal Content Box */
 .custom-modal-content {
-    background-color: #fff; /* White background */
-    margin: 15% auto; /* Center in the screen */
-    padding: 30px; /* Padding for internal spacing */
-    border-radius: 12px; /* Rounded corners */
-    width: 400px; /* Set a fixed width */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
-    text-align: center; /* Centered content */
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
     position: relative;
 }
-
-/* Close Button Style */
 .custom-close {
     color: #aaa;
     position: absolute;
@@ -155,69 +196,57 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     cursor: pointer;
     transition: color 0.3s;
 }
-
-.custom-close:hover,
-.custom-close:focus {
+.custom-close:hover, .custom-close:focus {
     color: #000;
 }
-
-/* Modal Title */
 #modalTitle {
-    font-size: 20px; /* Smaller header size */
+    font-size: 20px;
     margin-bottom: 10px;
 }
-
-/* Modal Details Text */
 .custom-modal-details {
     font-size: 14px;
     color: #666;
     margin-bottom: 20px;
 }
-
-/* Modal Buttons Style */
 .custom-modal-buttons {
     margin-top: 20px;
     display: flex;
     justify-content: center;
     gap: 15px;
 }
-
-.custom-button-primary {
-    background-color: #f39c12; /* Orange background */
-    color: #fff; /* White text */
-    border: none; /* Remove borders */
-    padding: 12px 24px; /* Padding for the button */
-    font-size: 16px; /* Font size */
-    font-weight: bold; /* Bold text */
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer; /* Pointer on hover */
-    transition: background-color 0.3s ease; /* Smooth transition */
-}
-
-.custom-button-primary:hover {
-    background-color: #d48910; /* Darker orange on hover */
-}
-
-.custom-button-secondary {
-    background-color: #2c3e50; /* Dark blue background */
-    color: #fff; /* White text */
-    border: none;
+.custom-button-primary, .custom-button-secondary {
     padding: 12px 24px;
     font-size: 16px;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    color: #fff;
+    border: none;
 }
-
+.custom-button-primary {
+    background-color: #f39c12;
+}
+.custom-button-primary:hover {
+    background-color: #d48910;
+}
+.custom-button-secondary {
+    background-color: #2c3e50;
+}
 .custom-button-secondary:hover {
-    background-color: #1a242f; /* Darker blue on hover */
+    background-color: #1a242f;
 }
 
+/* Black Blur Effect */
 .black-blur {
-    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
-    filter: blur(px); /* Adjust the blur effect */
+    background-color: rgba(0, 0, 0, 0.6);
+    filter: blur(5px); /* Adjust blur */
     border-radius: 10px;
     position: relative;
     z-index: 1;
+}
+
+/* Icon Inside Buttons */
+.button-xs i {
+    font-size: 12px !important;
 }

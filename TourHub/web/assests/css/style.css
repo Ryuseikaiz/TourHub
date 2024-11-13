@@ -140,6 +140,7 @@ label {
 }
 
 p {
+    width: 74%;
     margin: 0;
 }
 
@@ -6835,7 +6836,7 @@ textarea.form-input.form-input-lg {
     .quote-boxed {
         transform: translateY(-30px);
         margin-bottom: -30px;
-        margin-left: -400px;
+        /*margin-left: -400px;*/
     }
     .quote-boxed > * {
         display: inline-block;

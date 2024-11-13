@@ -131,7 +131,7 @@
                     <a href="notifications" class="see-more"><button >See previous notifications</button></a>
                 </div>
 
-
+                <div id="toastContainer" data-message="Welcome back! You have new notifications."></div>
                 <div class="image-container">
                     <img src="${user.avatar}" alt="User Avatar" class="avatar">
                 </div>
