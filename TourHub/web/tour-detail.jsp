@@ -1277,6 +1277,7 @@
                     section.scrollLeft -= 200;
             }
 
+
     // Close blur effect when clicking outside of popup
     document.addEventListener('click', function (event) {
         var calendarElement = document.querySelector('.flatpickr-calendar');
@@ -1362,6 +1363,7 @@
 
             window.onload = displayDateRange;
 
+
             // Smooth scroll to section
             document.querySelectorAll('.nav-link').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
@@ -1376,6 +1378,7 @@
                     addWishlist(this.getAttribute('data-tour-id'), window.location.href);
                 });
             });
+
 
             function addWishlist(tourId, returnUrl) {
                 const request = new XMLHttpRequest();
@@ -1400,6 +1403,7 @@
             function sharePage() {
                 window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), 'facebook-share-dialog', 'width=626,height=436');
             }
+
 
     // Open and close review popup
     document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
@@ -1442,6 +1446,7 @@
     } else if (averageRating > 4.0 && averageRating <= 5.0) {
         rankTypeElement.textContent = 'Excellent';
     }
+
 </script>
 
 

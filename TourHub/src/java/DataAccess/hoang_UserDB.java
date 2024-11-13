@@ -102,7 +102,8 @@ public class hoang_UserDB implements DatabaseInfo {
                 + "JOIN Tour t ON b.tour_Id = t.tour_Id "
                 + "WHERE t.company_Id = ? "
                 + "AND MONTH(b.book_Date) = MONTH(GETDATE()) "
-                + "AND YEAR(b.book_Date) = YEAR(GETDATE())";
+                + "AND YEAR(b.book_Date) = YEAR(GETDATE())"
+                + "AND book_Status = 'Booked'";
 
         try (Connection connection = getConnect(); PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, companyId); // Set the company ID parameter
