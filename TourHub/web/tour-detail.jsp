@@ -84,7 +84,7 @@
         <!--<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">-->
         <!--[if lt IE 10]>
           <div
-            style="
+            style=" 
               background: #212121;
               padding: 10px 0;
               box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.3);
@@ -586,7 +586,7 @@
                                     <div class="tour-duration-container">
                                         <i class="fa-regular fa-clock"></i>
                                         <span class="tour-duration-text">Tour Duration | </span>
-                                        <span class="tour-duration">${tour.total_Time} Hours</span>
+                                        <span class="tour-duration">${tour.total_Time}</span>
                                     </div>
                                 </div>                                                      
                             </div>
@@ -1277,41 +1277,39 @@
                     section.scrollLeft -= 200;
             }
 
-            // Close blur effect when clicking outside of popup
-            document.addEventListener('click', function (event) {
-                var calendarElement = document.querySelector('.flatpickr-calendar');
-                var blurElement = document.getElementById('blur');
-                if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar') && blurElement && blurElement.classList.contains('active')) {
-                    toggle(null);
-                }
-            }, true);
 
-            // Display 14 days with available tour dates
-            let selectedDate = new Date();
-            function displayDateRange() {
-                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                let dateContainers = document.querySelectorAll('.date-container');
-                const tourOptions = [...document.querySelectorAll('.tour-option')];
-                const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
-                        .sort((a, b) => a - b)
-                        .filter(date => date >= new Date());
-                const closestTourDates = availableTourDates.slice(0, 14);
+    // Close blur effect when clicking outside of popup
+    document.addEventListener('click', function (event) {
+        var calendarElement = document.querySelector('.flatpickr-calendar');
+        var blurElement = document.getElementById('blur');
+        if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar') && blurElement && blurElement.classList.contains('active')) {
+            toggle(null);
+        }
+    }, true);
 
-                for (let i = 0; i < dateContainers.length; i++) {
-                    if (i < closestTourDates.length) {
-                        const date = closestTourDates[i];
-                        dateContainers[i].querySelector('[data-dayofweek]').innerText = daysOfWeek[date.getDay()];
-                        dateContainers[i].querySelector('[data-formatteddate]').innerText = date.getDate() + ' thg ' + (date.getMonth() + 1);
-                        dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
-                        dateContainers[i].style.display = 'flex';
-                        dateContainers[i].classList.toggle('selected', i === 0);
-                        if (i === 0)
-                            selectedDate = date;
-                    } else {
-                        dateContainers[i].style.display = 'none';
-                    }
-                }
-                filterTourOptions(selectedDate);
+    // Display 14 days with available tour dates
+    let selectedDate = new Date();
+    function displayDateRange() {
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let dateContainers = document.querySelectorAll('.date-container');
+        const tourOptions = [...document.querySelectorAll('.tour-option')];
+        const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
+                .sort((a, b) => a - b)
+                .filter(date => date >= new Date());
+        const closestTourDates = availableTourDates.slice(0, 14);
+
+        for (let i = 0; i < dateContainers.length; i++) {
+            if (i < closestTourDates.length) {
+                const date = closestTourDates[i];
+                dateContainers[i].querySelector('[data-dayofweek]').innerText = daysOfWeek[date.getDay()];
+                dateContainers[i].querySelector('[data-formatteddate]').innerText = date.getDate() + '/' + (date.getMonth() + 1);
+                dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
+                dateContainers[i].style.display = 'flex';
+                dateContainers[i].classList.toggle('selected', i === 0);
+                if (i === 0)
+                    selectedDate = date;
+            } else {
+                dateContainers[i].style.display = 'none';
             }
 
             const daysMapping = {
@@ -1365,6 +1363,7 @@
 
             window.onload = displayDateRange;
 
+
             // Smooth scroll to section
             document.querySelectorAll('.nav-link').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
@@ -1379,6 +1378,7 @@
                     addWishlist(this.getAttribute('data-tour-id'), window.location.href);
                 });
             });
+
 
             function addWishlist(tourId, returnUrl) {
                 const request = new XMLHttpRequest();
@@ -1404,29 +1404,49 @@
                 window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), 'facebook-share-dialog', 'width=626,height=436');
             }
 
-            // Open and close review popup
-            document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
-                event.preventDefault();
-                var popup = document.getElementById("reviewPopup");
-                var popupContent = document.querySelector(".popup-content");
-                popup.classList.add("show");
-                setTimeout(() => popupContent.classList.add("show"), 100);
-            });
 
-            document.getElementById("closePopup").addEventListener("click", function () {
-                var popup = document.getElementById("reviewPopup");
-                var popupContent = document.querySelector(".popup-content");
-                popupContent.classList.remove("show");
-                setTimeout(() => popup.classList.remove("show"), 400);
-            });
+    // Open and close review popup
+    document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
+        event.preventDefault();
+        var popup = document.getElementById("reviewPopup");
+        var popupContent = document.querySelector(".popup-content");
+        popup.classList.add("show");
+        setTimeout(() => popupContent.classList.add("show"), 100);
+    });
 
-            window.addEventListener("click", function (event) {
-                var popup = document.getElementById("reviewPopup");
-                if (event.target == popup) {
-                    document.querySelector(".popup-content").classList.remove("show");
-                    setTimeout(() => popup.classList.remove("show"), 400);
-                }
-            });
+    document.getElementById("closePopup").addEventListener("click", function () {
+        var popup = document.getElementById("reviewPopup");
+        var popupContent = document.querySelector(".popup-content");
+        popupContent.classList.remove("show");
+        setTimeout(() => popup.classList.remove("show"), 400);
+    });
+
+    window.addEventListener("click", function (event) {
+        var popup = document.getElementById("reviewPopup");
+        if (event.target == popup) {
+            document.querySelector(".popup-content").classList.remove("show");
+            setTimeout(() => popup.classList.remove("show"), 400);
+        }
+    });
+
+    // Giả sử 'tour' là một đối tượng chứa các giá trị average_Review_Rating và number_Of_Review
+    const averageRating = ${tour.average_Review_Rating};
+    const rankTypeElement = document.querySelector('.rank .rank-type');
+
+    if (averageRating === 0.0) {
+        rankTypeElement.textContent = 'No rating';
+    } else if (averageRating > 0.0 && averageRating <= 1.0) {
+        rankTypeElement.textContent = 'Bad';
+    } else if (averageRating > 1.0 && averageRating <= 2.0) {
+        rankTypeElement.textContent = 'Kinda bad';
+    } else if (averageRating > 2.0 && averageRating <= 3.0) {
+        rankTypeElement.textContent = 'Not so good';
+    } else if (averageRating > 3.0 && averageRating <= 4.0) {
+        rankTypeElement.textContent = 'Good';
+    } else if (averageRating > 4.0 && averageRating <= 5.0) {
+        rankTypeElement.textContent = 'Excellent';
+    }
+
 </script>
 
 
