@@ -180,13 +180,6 @@
                     <i class="bx bxs-bell"></i>
                     <!-- <span class="num">8</span> -->
                 </a>
-                <div class="image-container">
-                    <img
-                        src="assests/images/avatar.jpg"
-                        alt="User Avatar"
-                        class="avatar"
-                        />
-                </div>
             </nav>
             <!-- NAVBAR -->
 

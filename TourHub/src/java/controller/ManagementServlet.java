@@ -24,6 +24,7 @@ import model.FAQ;
 import model.ReportError;
 import model.Tour;
 import model.User;
+import model.Withdrawals;
 
 /**
  *
@@ -90,6 +91,14 @@ public class ManagementServlet extends HttpServlet {
 
             case "delete-faq":
                 faqManage(request, response);
+                break;
+
+            case "withdrawal-manage":
+                viewWithdrawalList(request, response);
+                break;
+
+            case "accept-withdrawal":
+                withdrawalManage(request, response);
                 break;
 
             default:
@@ -266,6 +275,26 @@ public class ManagementServlet extends HttpServlet {
             request.getSession().setAttribute("error", "An unexpected error occurred.");
             response.sendRedirect("error.jsp");
         }
+    }
+
+    protected void viewWithdrawalList(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        ThienDB withdrawal = new ThienDB();
+        List<Withdrawals> withdrawalList = withdrawal.getWithdrawal();
+        request.setAttribute("data", withdrawalList);
+        request.setAttribute("type", "withdrawal");
+        System.out.println(withdrawalList);
+        request.getRequestDispatcher("display.jsp").forward(request, response);
+    }
+
+    protected void withdrawalManage(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String withdrawalId = request.getParameter("id");
+        String providerId = request.getParameter("proId");
+        String money = request.getParameter("money");
+        ThienDB WithdrawalDAO = new ThienDB();
     }
 
     @Override

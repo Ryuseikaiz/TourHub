@@ -1,8 +1,9 @@
-<%@ page contentType="text/html; charset=UTF-8" %> <%@ page import="model.User"
-                                                            %> <%@ page import="DataAccess.UserDB"%> <%@ taglib
-                                                            uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <%@ taglib
-        uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-        <jsp:useBean id="currentUser" class="model.User" scope="session" />
+<%@ page contentType="text/html; charset=UTF-8" %> 
+<%@ page import="model.User"%> 
+<%@ page import="DataAccess.UserDB"%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<jsp:useBean id="currentUser" class="model.User" scope="session" />
         <!DOCTYPE html>
         <html lang="en">
             <head>
@@ -233,9 +234,7 @@
                         <a href="#" class="notification">
                             <i class="bx bxs-bell"></i>
                         </a>
-                        <div class="image-container">
-                            <img src="assests/images/avatar.jpg" alt="User Avatar" class="avatar" />
-                        </div>
+                        
                     </nav>
 
                     <main>
@@ -348,7 +347,7 @@
                                                             };
                                                             xhr.send("action=cancelbook&id=" + bookingId);
                                                         }
-                                                        
+
                                                         function refundBooking(event, bookingId) {
                                                             event.preventDefault(); // Ngăn chặn việc gửi biểu mẫu
                                                             const xhr = new XMLHttpRequest();

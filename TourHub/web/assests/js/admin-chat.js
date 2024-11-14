@@ -12,7 +12,7 @@ function fetchActiveChatUsers() {
             var userList = $('#activeUserList');
             userList.empty();
             $.each(data, function (index, user) {
-                userList.append('<div class="user" onclick="openChat(' + user.user_Id + ')">' + user.first_Name + user.last_Name + ' (ID: ' + user.user_Id + ')</div>');
+                userList.append('<div class="user" onclick="openChat(' + user.user_Id + ')">' + user.first_Name + ' ' + user.last_Name + ' (ID: ' + user.user_Id + ')</div>');
             });
         },
         error: function (xhr, status, error) {
@@ -29,7 +29,7 @@ function fetchAdminChat() {
             var userList = $('#activeAdmin');
             userList.empty();
             $.each(data, function (index, user) {
-                userList.append('<div class="user" onclick="openChat(' + user.user_Id + ')">' + user.first_Name + user.last_Name + '</div>');
+                userList.append('<div class="user" onclick="openChat(' + user.user_Id + ')">' + user.first_Name + ' ' + user.last_Name + '</div>');
             });
         },
         error: function (xhr, status, error) {
@@ -38,10 +38,11 @@ function fetchAdminChat() {
     });
 }
 
-
 function openChat(userId) {
     currentUserId = userId;
     receiverId = userId;
+    user1 = currentUserId; // Gán user1 là currentUserId
+    user2 = receiverId; // Gán user2 là receiverId
     fetchChatMessages(userId);
 }
 
@@ -67,6 +68,9 @@ function fetchChatMessages(userId) {
                 var messageClass = message.senderId === currentUserId ? 'message mine' : 'message theirs';
                 messageContainer.append('<div class="' + messageClass + '">' + message.messageText + '</div>');
             });
+
+            // Tự động cuộn xuống cuối mỗi lần có tin nhắn mới
+            messageContainer.scrollTop(messageContainer[0].scrollHeight);
         },
 
         error: function (xhr, status, error) {
@@ -74,6 +78,17 @@ function fetchChatMessages(userId) {
         }
     });
 }
+
+
+$(document).ready(function() {
+    // Sự kiện nhấn Enter để gửi tin nhắn
+    $('#messageInput').on('keypress', function(event) {
+        if (event.which === 13) { // Kiểm tra nếu phím nhấn là Enter (keyCode 13)
+            event.preventDefault(); // Ngăn không cho gửi form nếu người dùng nhấn Enter
+            sendMessage(); // Gọi hàm gửi tin nhắn
+        }
+    });
+});
 
 function sendMessage() {
     var messageText = $('#messageInput').val(); // Lấy nội dung tin nhắn
@@ -97,6 +112,7 @@ function sendMessage() {
         },
         error: function (xhr, status, error) {
             console.error('Lỗi khi gửi tin nhắn:', error);
+            alert('Đã có lỗi khi gửi tin nhắn. Vui lòng thử lại.');
         }
     });
 }

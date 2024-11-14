@@ -56,8 +56,10 @@ public class ChatControllerServlet extends HttpServlet {
                     getChatRooms(request, response, currentUserId);
                     break;
                 case "getAdminRoom":
-                    getAdminRoom(request,response, currentUserId);
+                    getAdminRoom(request, response, currentUserId);
                     break;
+                case "adminPreChat":
+                    adminPreChat(request, response, currentUserId);
                 default:
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     break;
@@ -71,7 +73,7 @@ public class ChatControllerServlet extends HttpServlet {
     private void getChatMessages(HttpServletRequest request, HttpServletResponse response, int currentUserId)
             throws IOException {
         int userId = Integer.parseInt(request.getParameter("userId"));
-        System.out.println("chatmess"+userId);
+        System.out.println("chatmess" + userId);
         List<Message> messages = ThienDB.getChatMessages(currentUserId, userId);
         System.out.println(messages);
         Gson gson = new Gson();
@@ -90,11 +92,11 @@ public class ChatControllerServlet extends HttpServlet {
         String messageText = request.getParameter("messageText");
 
         Message message = null;
-        if(user1 == currentUserId){
-             message = new Message(user1, user2, messageText);
+        if (user1 == currentUserId) {
+            message = new Message(user1, user2, messageText);
         }
-        
-        if(user2 == currentUserId){
+
+        if (user2 == currentUserId) {
             message = new Message(user2, user1, messageText);
         }
 
@@ -119,7 +121,7 @@ public class ChatControllerServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
     }
-    
+
     // Lấy danh sách người dùng đang hoạt động cho currentUserId
     private void getAdminRoom(HttpServletRequest request, HttpServletResponse response, int currentUserId)
             throws IOException {
@@ -130,6 +132,14 @@ public class ChatControllerServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
+    }
+
+    private void adminPreChat(HttpServletRequest request, HttpServletResponse response, int currentUserId)
+            throws IOException {
+        ThienDB message = new ThienDB();
+        message.AdminPreMessage(currentUserId);
+        System.out.println("adminPreChatFunction");
+        response.sendRedirect("user-chat.jsp");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
