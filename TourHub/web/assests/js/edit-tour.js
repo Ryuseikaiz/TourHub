@@ -87,7 +87,7 @@ function calculateDuration() {
 
 function removeImage(tourId, imageToRemove) {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/Project_SWP/provider-management?action=remove-image", true);
+    xhr.open("POST", "/provider-management?action=remove-image", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function () {

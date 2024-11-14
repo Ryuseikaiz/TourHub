@@ -114,7 +114,7 @@ function fetchMonthlyBookings() {
     const year = $('#yearPicker').val() || new Date().getFullYear();
     console.log('Selected Year:', year);
 
-    fetch(`charts?year=${year}`)
+    fetch(`/charts?year=${year}`)
             .then(response => {
                 console.log('Response Status:', response.status);
                 if (!response.ok)
@@ -174,7 +174,7 @@ function fetchMonthlyProfits() {
 
     const year = $('#yearPicker').val() || new Date().getFullYear();
 
-    fetch(`charts?year=${year}`)
+    fetch(`/charts?year=${year}`)
             .then(response => {
                 if (!response.ok)
                     throw new Error('Network response was not ok');
@@ -248,7 +248,7 @@ async function fetchHotDestinations() {
     const year = $('#yearPicker').val() || new Date().getFullYear();
 
     try {
-        const response = await fetch(`charts?year=${year}`);
+        const response = await fetch(`/charts?year=${year}`);
         if (!response.ok)
             throw new Error('Network response was not ok');
 
