@@ -16,7 +16,7 @@ public class VerifyServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("email");
         int sessionOtp = (int) session.getAttribute("otp");
@@ -34,13 +34,13 @@ public class VerifyServlet extends HttpServlet {
             // OTP matches, proceed with verification
             UserDB userDB = new UserDB();
             userDB.updateUser_StatusToVerified(email);  // Update user to "verified"
-            
+
             session.removeAttribute("otp");  // Remove OTP from session after verification
             session.removeAttribute("email");
-            
+
             // Redirect to login page or a success page
-            request.setAttribute("message", "Email verified successfully. You can now log in.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.setAttribute("infoMessage", "Email verified successfully. You can now log in.");
+            response.sendRedirect("login.jsp");
         } else {
             // OTP does not match
             request.setAttribute("error", "Invalid OTP. Please try again.");

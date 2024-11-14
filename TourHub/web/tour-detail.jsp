@@ -16,6 +16,15 @@
             />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta charset="utf-8" />
+        <meta property="og:title" content="${tour.tour_Name}" />
+        <meta property="og:description" content="Khám phá tour ${tour.tour_Name} tại ${tour.location}. Tour kéo dài ${tour.total_Time} giờ với các điểm đến nổi bật và cảnh đẹp." />
+
+        <c:if test="${not empty tour.tour_Img}">
+            <meta property="og:image" content="${tour.tour_Img.get(0)}" />
+        </c:if>
+
+        <meta property="og:url" content="https://tourhub.azurewebsites.net/displayTourDetail?id=${tour.tour_Id}" />
+        <meta property="og:type" content="website" />
         <link
             rel="icon"
             href="assests/images/logo-favicon/logo.png"
@@ -1402,7 +1411,7 @@
 
             // Share page on Facebook
             function sharePage() {
-                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), 'facebook-share-dialog', 'width=626,height=436');
+                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), '_blank');
             }
 
             // Open and close review popup
