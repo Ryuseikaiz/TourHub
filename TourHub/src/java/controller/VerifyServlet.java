@@ -39,8 +39,8 @@ public class VerifyServlet extends HttpServlet {
             session.removeAttribute("email");
             
             // Redirect to login page or a success page
-            request.setAttribute("message", "Email verified successfully. You can now log in.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.setAttribute("infoMessage", "Email verified successfully. You can now log in.");
+            response.sendRedirect("login.jsp");
         } else {
             // OTP does not match
             request.setAttribute("error", "Invalid OTP. Please try again.");
