@@ -665,6 +665,24 @@ public class KhanhDB {
             e.printStackTrace(); // Xử lý ngoại lệ SQL
         }
     }
+    
+    public String getMapLinkByTourId(String tourId) {
+        String mapLink = null;
+        String sql = "SELECT map_Link FROM Tour WHERE tour_Id = ?";
+
+        try (Connection conn = getConnect(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, tourId); // Set the tourId parameter
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                mapLink = rs.getString("map_Link"); // Retrieve the map_Link value
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return mapLink; // Return the map link or null if not found
+    }
 
     public static void main(String[] args) {
         KhanhDB userDB = new KhanhDB();

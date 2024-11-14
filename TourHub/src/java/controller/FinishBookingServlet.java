@@ -108,7 +108,7 @@ public class FinishBookingServlet extends HttpServlet {
                 Logger.getLogger(FinishBookingServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (discountCost.contains("-0 VND")) {
+            if (discountCost == null) {
                 System.out.println("Not using discount");
             } else {
                 discountIdInt = Integer.parseInt(discountId);

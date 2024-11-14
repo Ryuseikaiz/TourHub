@@ -24,7 +24,13 @@
         <link rel="stylesheet" href="assests/css/bootstrap.css" />
         <link rel="stylesheet" href="assests/css/add-option.css" />
 
-        <title>Analytic</title>
+        
+        <!-- Include Toastify CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.1/Toastify.min.css">
+        <!-- Include Toastify JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.1/Toastify.min.js"></script> 
+        
+        <title>Add Tour Options</title>
         <style>
             body {
                 background-color: #f4f4f4;
@@ -288,6 +294,7 @@
                 </div>
             </main>          
             <!-- MAIN -->
+            <div id="toastContainer" data-message="<c:out value='${message}' />"></div>
         </section>
         <!-- CONTENT -->
 

@@ -71,6 +71,9 @@ public class TourDetailServlet extends HttpServlet {
         // Lấy thông tin tour
         Tour tour = u.getTourById(rawTourId);
         request.setAttribute("tour", tour);
+        
+        String mapLink = u.getMapLinkByTourId(rawTourId);
+        request.setAttribute("mapLink", mapLink);
 
         // Lấy danh sách TourOption
         List<TourOption> tourOptions = u.getAllTourOptionsByTourId(rawTourId);

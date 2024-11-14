@@ -820,61 +820,61 @@
 
                         <div class="date-section" id="date-section">
                             <!-- Tạo 14 khung ngày -->
-                            <div class="date-container" data-index="0" onclick="selectDate(this)">
+                            <div class="date-container" data-index="0" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="0"></span>
                                 <span class="date" data-formatteddate="0"></span>
                             </div>
 
-                            <div class="date-container" data-index="1" onclick="selectDate(this)">
+                            <div class="date-container" data-index="1" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="1"></span>
                                 <span class="date" data-formatteddate="1"></span>
 
                             </div>
-                            <div class="date-container" data-index="2" onclick="selectDate(this)">
+                            <div class="date-container" data-index="2" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="2"></span>
                                 <span class="date" data-formatteddate="2"></span>
                             </div>
-                            <div class="date-container" data-index="3" onclick="selectDate(this)">
+                            <div class="date-container" data-index="3" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="3"></span>
                                 <span class="date" data-formatteddate="3"></span>
                             </div>
-                            <div class="date-container" data-index="4" onclick="selectDate(this)">
+                            <div class="date-container" data-index="4" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="4"></span>
                                 <span class="date" data-formatteddate="4"></span>
                             </div>
-                            <div class="date-container" data-index="5" onclick="selectDate(this)">
+                            <div class="date-container" data-index="5" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="5"></span>
                                 <span class="date" data-formatteddate="5"></span>
                             </div>
-                            <div class="date-container" data-index="6" onclick="selectDate(this)">
+                            <div class="date-container" data-index="6" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="6"></span>
                                 <span class="date" data-formatteddate="6"></span>
                             </div>
-                            <div class="date-container" data-index="7" onclick="selectDate(this)">
+                            <div class="date-container" data-index="7" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="7"></span>
                                 <span class="date" data-formatteddate="7"></span>
                             </div>
-                            <div class="date-container" data-index="8" onclick="selectDate(this)">
+                            <div class="date-container" data-index="8" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="8"></span>
                                 <span class="date" data-formatteddate="8"></span>
                             </div>
-                            <div class="date-container" data-index="9" onclick="selectDate(this)">
+                            <div class="date-container" data-index="9" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="9"></span>
                                 <span class="date" data-formatteddate="9"></span>
                             </div>
-                            <div class="date-container" data-index="10" onclick="selectDate(this)">
+                            <div class="date-container" data-index="10" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="10"></span>
                                 <span class="date" data-formatteddate="10"></span>
                             </div>
-                            <div class="date-container" data-index="11" onclick="selectDate(this)">
+                            <div class="date-container" data-index="11" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="11"></span>
                                 <span class="date" data-formatteddate="11"></span>
                             </div>
-                            <div class="date-container" data-index="12" onclick="selectDate(this)">
+                            <div class="date-container" data-index="12" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="12"></span>
                                 <span class="date" data-formatteddate="12"></span>
                             </div>
-                            <div class="date-container" data-index="13" onclick="selectDate(this)">
+                            <div class="date-container" data-index="13" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="13"></span>
                                 <span class="date" data-formatteddate="13"></span>
                             </div>
@@ -893,7 +893,7 @@
                             <div class="tour-option-left-section">
                                 <span class="option-name">${option.option_Name}</span>
                                 <span class="option-note">${option.option_Description}</span>
-                                <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">Xem chi tiết</a>
+                                <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">See detail</a>
                                 <span class="refund-section">${option.day_Of_Week}</span>
                             </div>
                             <div class="tour-option-right-section">
@@ -906,11 +906,11 @@
                                         <c:when test="${option.available_Slots > 0}">
                                             <button class="option-pick-btn" 
                                                     onclick="window.location.href = 'optionAdjustment?id=${option.option_Id}&selectedDate=' + selectedDate.toISOString().split('T')[0]">
-                                                Chọn vé
+                                                Choose ticket
                                             </button>
                                         </c:when>
                                         <c:otherwise>
-                                            <button class="option-pick-btn" disabled>Hết lượt</button>
+                                            <button class="option-pick-btn" disabled>Not available</button>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -1288,9 +1288,14 @@
         const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         let dateContainers = document.querySelectorAll('.date-container');
         const tourOptions = [...document.querySelectorAll('.tour-option')];
-        const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
-                .sort((a, b) => a - b)
-                .filter(date => date >= new Date());
+
+        // Lấy danh sách ngày có tour và loại bỏ các ngày trùng nhau
+        const availableTourDates = [...new Set(tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString()))]
+            .map(dateStr => new Date(dateStr))
+            .sort((a, b) => a - b)
+            .filter(date => date >= new Date());
+
+        // Lấy 14 ngày đầu tiên
         const closestTourDates = availableTourDates.slice(0, 14);
 
         for (let i = 0; i < dateContainers.length; i++) {
@@ -1301,8 +1306,7 @@
                 dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
                 dateContainers[i].style.display = 'flex';
                 dateContainers[i].classList.toggle('selected', i === 0);
-                if (i === 0)
-                    selectedDate = date;
+                if (i === 0) selectedDate = date;
             } else {
                 dateContainers[i].style.display = 'none';
             }
