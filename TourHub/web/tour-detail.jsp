@@ -820,61 +820,61 @@
 
                         <div class="date-section" id="date-section">
                             <!-- Tạo 14 khung ngày -->
-                            <div class="date-container" data-index="0" onclick="selectDate(this)">
+                            <div class="date-container" data-index="0" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="0"></span>
                                 <span class="date" data-formatteddate="0"></span>
                             </div>
 
-                            <div class="date-container" data-index="1" onclick="selectDate(this)">
+                            <div class="date-container" data-index="1" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="1"></span>
                                 <span class="date" data-formatteddate="1"></span>
 
                             </div>
-                            <div class="date-container" data-index="2" onclick="selectDate(this)">
+                            <div class="date-container" data-index="2" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="2"></span>
                                 <span class="date" data-formatteddate="2"></span>
                             </div>
-                            <div class="date-container" data-index="3" onclick="selectDate(this)">
+                            <div class="date-container" data-index="3" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="3"></span>
                                 <span class="date" data-formatteddate="3"></span>
                             </div>
-                            <div class="date-container" data-index="4" onclick="selectDate(this)">
+                            <div class="date-container" data-index="4" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="4"></span>
                                 <span class="date" data-formatteddate="4"></span>
                             </div>
-                            <div class="date-container" data-index="5" onclick="selectDate(this)">
+                            <div class="date-container" data-index="5" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="5"></span>
                                 <span class="date" data-formatteddate="5"></span>
                             </div>
-                            <div class="date-container" data-index="6" onclick="selectDate(this)">
+                            <div class="date-container" data-index="6" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="6"></span>
                                 <span class="date" data-formatteddate="6"></span>
                             </div>
-                            <div class="date-container" data-index="7" onclick="selectDate(this)">
+                            <div class="date-container" data-index="7" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="7"></span>
                                 <span class="date" data-formatteddate="7"></span>
                             </div>
-                            <div class="date-container" data-index="8" onclick="selectDate(this)">
+                            <div class="date-container" data-index="8" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="8"></span>
                                 <span class="date" data-formatteddate="8"></span>
                             </div>
-                            <div class="date-container" data-index="9" onclick="selectDate(this)">
+                            <div class="date-container" data-index="9" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="9"></span>
                                 <span class="date" data-formatteddate="9"></span>
                             </div>
-                            <div class="date-container" data-index="10" onclick="selectDate(this)">
+                            <div class="date-container" data-index="10" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="10"></span>
                                 <span class="date" data-formatteddate="10"></span>
                             </div>
-                            <div class="date-container" data-index="11" onclick="selectDate(this)">
+                            <div class="date-container" data-index="11" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="11"></span>
                                 <span class="date" data-formatteddate="11"></span>
                             </div>
-                            <div class="date-container" data-index="12" onclick="selectDate(this)">
+                            <div class="date-container" data-index="12" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="12"></span>
                                 <span class="date" data-formatteddate="12"></span>
                             </div>
-                            <div class="date-container" data-index="13" onclick="selectDate(this)">
+                            <div class="date-container" data-index="13" onclick="selectDate(this)" style="min-width: 120px">
                                 <span class="day-of-week" data-dayofweek="13"></span>
                                 <span class="date" data-formatteddate="13"></span>
                             </div>
@@ -893,7 +893,7 @@
                             <div class="tour-option-left-section">
                                 <span class="option-name">${option.option_Name}</span>
                                 <span class="option-note">${option.option_Description}</span>
-                                <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">Xem chi tiết</a>
+                                <a href="javascript:void(0)" class="tour-option-detail" onclick="toggle('popup5')">See detail</a>
                                 <span class="refund-section">${option.day_Of_Week}</span>
                             </div>
                             <div class="tour-option-right-section">
@@ -906,11 +906,11 @@
                                         <c:when test="${option.available_Slots > 0}">
                                             <button class="option-pick-btn" 
                                                     onclick="window.location.href = 'optionAdjustment?id=${option.option_Id}&selectedDate=' + selectedDate.toISOString().split('T')[0]">
-                                                Chọn vé
+                                                Choose ticket
                                             </button>
                                         </c:when>
                                         <c:otherwise>
-                                            <button class="option-pick-btn" disabled>Hết lượt</button>
+                                            <button class="option-pick-btn" disabled>Not available</button>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -1086,14 +1086,14 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#scrollspyHeading2">Second</a>
                         </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="#scrollspyHeading3">Third</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#scrollspyHeading3">Third</a>
                         </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
                         </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
                         </li>
                     </ul>
                 </nav>
@@ -1260,18 +1260,18 @@
                 }
             }
 
-    // Scroll date section
-    function scrollRight() {
-        const section = document.getElementById('date-section');
-        if (section)
-            section.scrollLeft += 200;
-    }
+            // Scroll date section
+            function scrollRight() {
+                const section = document.getElementById('date-section');
+                if (section)
+                    section.scrollLeft += 200;
+            }
 
-    function scrollLeft1() {
-        const section = document.getElementById('date-section');
-        if (section)
-            section.scrollLeft -= 200;
-    }
+            function scrollLeft1() {
+                const section = document.getElementById('date-section');
+                if (section)
+                    section.scrollLeft -= 200;
+            }
 
             // Close blur effect when clicking outside of popup
             document.addEventListener('click', function (event) {
@@ -1288,27 +1288,32 @@
                 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 let dateContainers = document.querySelectorAll('.date-container');
                 const tourOptions = [...document.querySelectorAll('.tour-option')];
-                const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
+
+                // Lấy danh sách ngày có tour và loại bỏ các ngày trùng nhau
+                const availableTourDates = [...new Set(tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString()))]
+                        .map(dateStr => new Date(dateStr))
                         .sort((a, b) => a - b)
                         .filter(date => date >= new Date());
+
+                // Lấy 14 ngày đầu tiên
                 const closestTourDates = availableTourDates.slice(0, 14);
 
-        for (let i = 0; i < dateContainers.length; i++) {
-            if (i < closestTourDates.length) {
-                const date = closestTourDates[i];
-                dateContainers[i].querySelector('[data-dayofweek]').innerText = daysOfWeek[date.getDay()];
-                dateContainers[i].querySelector('[data-formatteddate]').innerText = date.getDate() + '/' + (date.getMonth() + 1);
-                dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
-                dateContainers[i].style.display = 'flex';
-                dateContainers[i].classList.toggle('selected', i === 0);
-                if (i === 0)
-                    selectedDate = date;
-            } else {
-                dateContainers[i].style.display = 'none';
+                for (let i = 0; i < dateContainers.length; i++) {
+                    if (i < closestTourDates.length) {
+                        const date = closestTourDates[i];
+                        dateContainers[i].querySelector('[data-dayofweek]').innerText = daysOfWeek[date.getDay()];
+                        dateContainers[i].querySelector('[data-formatteddate]').innerText = date.getDate() + '/' + (date.getMonth() + 1);
+                        dateContainers[i].onclick = () => selectDate(dateContainers[i], date.toISOString());
+                        dateContainers[i].style.display = 'flex';
+                        dateContainers[i].classList.toggle('selected', i === 0);
+                        if (i === 0)
+                            selectedDate = date;
+                    } else {
+                        dateContainers[i].style.display = 'none';
+                    }
+                }
+                filterTourOptions(selectedDate);
             }
-        }
-        filterTourOptions(selectedDate);
-    }
 
             const daysMapping = {
                 'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6
@@ -1333,31 +1338,31 @@
                 filterTourOptions(selectedDate);
             }
 
-    function openCalendar() {
-        flatpickr("#calendarInput", {
-            dateFormat: "Y-m-d", defaultDate: new Date(), minDate: "today",
-            onChange: function (selectedDates, dateStr) {
-                if (selectedDates.length > 0) {
-                    const selectedDate = selectedDates[0].toISOString().split('T')[0];
-                    const availableTourDates = getAvailableTourDates().map(date => new Date(date).toISOString().split('T')[0]);
-                    if (!availableTourDates.includes(selectedDate)) {
-                        document.getElementById('notification').innerText = "Ngày được chọn không có tour nào!";
-                        document.getElementById('notification').style.display = 'block';
-                    } else {
-                        displayDateRange(new Date(selectedDate));
-                        document.getElementById('notification').style.display = 'none';
+            function openCalendar() {
+                flatpickr("#calendarInput", {
+                    dateFormat: "Y-m-d", defaultDate: new Date(), minDate: "today",
+                    onChange: function (selectedDates, dateStr) {
+                        if (selectedDates.length > 0) {
+                            const selectedDate = selectedDates[0].toISOString().split('T')[0];
+                            const availableTourDates = getAvailableTourDates().map(date => new Date(date).toISOString().split('T')[0]);
+                            if (!availableTourDates.includes(selectedDate)) {
+                                document.getElementById('notification').innerText = "Ngày được chọn không có tour nào!";
+                                document.getElementById('notification').style.display = 'block';
+                            } else {
+                                displayDateRange(new Date(selectedDate));
+                                document.getElementById('notification').style.display = 'none';
+                            }
+                        }
+                    },
+                    onClose: function () {
+                        toggle('calendar');
                     }
-                }
-            },
-            onClose: function () {
-                toggle('calendar');
+                }).open();
             }
-        }).open();
-    }
 
-    function getAvailableTourDates() {
-        return [...document.querySelectorAll('.tour-option')].map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
-    }
+            function getAvailableTourDates() {
+                return [...document.querySelectorAll('.tour-option')].map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
+            }
 
             window.onload = displayDateRange;
 
@@ -1369,31 +1374,31 @@
                 });
             });
 
-    // Save to wishlist
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector('.save-btn').addEventListener('click', function () {
-            addWishlist(this.getAttribute('data-tour-id'), window.location.href);
-        });
-    });
+            // Save to wishlist
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelector('.save-btn').addEventListener('click', function () {
+                    addWishlist(this.getAttribute('data-tour-id'), window.location.href);
+                });
+            });
 
-    function addWishlist(tourId, returnUrl) {
-        const request = new XMLHttpRequest();
-        request.open('POST', 'wishlist', true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        request.onreadystatechange = function () {
-            if (request.readyState === XMLHttpRequest.DONE) {
-                const responseMessage = request.status === 200 ? JSON.parse(request.responseText).message : "An error occurred.";
-                Toastify({
-                    text: responseMessage,
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: responseMessage.includes("Failed") ? "linear-gradient(to right, #ff5f6d, #ffc371)" : "linear-gradient(to right, #00b09b, #96c93d)",
-                }).showToast();
+            function addWishlist(tourId, returnUrl) {
+                const request = new XMLHttpRequest();
+                request.open('POST', 'wishlist', true);
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                request.onreadystatechange = function () {
+                    if (request.readyState === XMLHttpRequest.DONE) {
+                        const responseMessage = request.status === 200 ? JSON.parse(request.responseText).message : "An error occurred.";
+                        Toastify({
+                            text: responseMessage,
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: responseMessage.includes("Failed") ? "linear-gradient(to right, #ff5f6d, #ffc371)" : "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
+                    }
+                };
+                request.send(`action=add&tourId=${tourId}&returnUrl=${returnUrl}`);
             }
-        };
-        request.send(`action=add&tourId=${tourId}&returnUrl=${returnUrl}`);
-    }
 
             // Share page on Facebook
             function sharePage() {
@@ -1416,31 +1421,31 @@
                 setTimeout(() => popup.classList.remove("show"), 400);
             });
 
-    window.addEventListener("click", function (event) {
-        var popup = document.getElementById("reviewPopup");
-        if (event.target == popup) {
-            document.querySelector(".popup-content").classList.remove("show");
-            setTimeout(() => popup.classList.remove("show"), 400);
-        }
-    });
+            window.addEventListener("click", function (event) {
+                var popup = document.getElementById("reviewPopup");
+                if (event.target == popup) {
+                    document.querySelector(".popup-content").classList.remove("show");
+                    setTimeout(() => popup.classList.remove("show"), 400);
+                }
+            });
 
-    // Giả sử 'tour' là một đối tượng chứa các giá trị average_Review_Rating và number_Of_Review
-    const averageRating = ${tour.average_Review_Rating};
-    const rankTypeElement = document.querySelector('.rank .rank-type');
+            // Giả sử 'tour' là một đối tượng chứa các giá trị average_Review_Rating và number_Of_Review
+            const averageRating = ${tour.average_Review_Rating};
+            const rankTypeElement = document.querySelector('.rank .rank-type');
 
-    if (averageRating === 0.0) {
-        rankTypeElement.textContent = 'No rating';
-    } else if (averageRating > 0.0 && averageRating <= 1.0) {
-        rankTypeElement.textContent = 'Bad';
-    } else if (averageRating > 1.0 && averageRating <= 2.0) {
-        rankTypeElement.textContent = 'Kinda bad';
-    } else if (averageRating > 2.0 && averageRating <= 3.0) {
-        rankTypeElement.textContent = 'Not so good';
-    } else if (averageRating > 3.0 && averageRating <= 4.0) {
-        rankTypeElement.textContent = 'Good';
-    } else if (averageRating > 4.0 && averageRating <= 5.0) {
-        rankTypeElement.textContent = 'Excellent';
-    }
+            if (averageRating === 0.0) {
+                rankTypeElement.textContent = 'No rating';
+            } else if (averageRating > 0.0 && averageRating <= 1.0) {
+                rankTypeElement.textContent = 'Bad';
+            } else if (averageRating > 1.0 && averageRating <= 2.0) {
+                rankTypeElement.textContent = 'Kinda bad';
+            } else if (averageRating > 2.0 && averageRating <= 3.0) {
+                rankTypeElement.textContent = 'Not so good';
+            } else if (averageRating > 3.0 && averageRating <= 4.0) {
+                rankTypeElement.textContent = 'Good';
+            } else if (averageRating > 4.0 && averageRating <= 5.0) {
+                rankTypeElement.textContent = 'Excellent';
+            }
 </script>
 
 

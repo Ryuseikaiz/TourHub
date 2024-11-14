@@ -304,7 +304,7 @@ public class hoang_UserDB implements DatabaseInfo {
             totalRevenue = 0.0;
             totalRefunds = 0.0;
 
-            String revenueQuery = "SELECT SUM(b.total_Cost) AS TotalRevenue "
+            String revenueQuery = "SELECT SUM(b.total_Cost * 0.9) AS TotalRevenue "
                     + "FROM Company c "
                     + "INNER JOIN Tour t ON c.company_Id = t.company_Id "
                     + "INNER JOIN Booking b ON b.tour_Id = t.tour_Id "

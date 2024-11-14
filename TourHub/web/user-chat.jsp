@@ -51,9 +51,6 @@
 
 
                 <div id="toastContainer" data-message="Welcome back! You have new notifications."></div>
-                <div class="image-container">
-                    <img src="assests/images/avatar.jpg" alt="User Avatar" class="avatar">
-                </div>
             </nav>
             <main>
                 <div class="table-data">

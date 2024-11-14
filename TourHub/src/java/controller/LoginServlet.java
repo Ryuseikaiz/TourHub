@@ -140,9 +140,6 @@ public class LoginServlet extends HttpServlet {
                     return;
                 }
                 
-                System.out.println(user.getUser_Id());
-                ThienDB message = new ThienDB();
-                message.AdminPreMessage(user.getUser_Id());
 //            request.getRequestDispatcher("/home").forward(request, response);
                 // Redirect to the homepage or user dashboard
                 response.sendRedirect("home");

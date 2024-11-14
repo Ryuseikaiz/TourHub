@@ -85,6 +85,7 @@
                                     <div class="clickable" data-url="report-manage">Report management</div>
                                     <div class="clickable" data-url="booking-manage">Booking management</div>
                                     <div class="clickable" data-url="faq-manage">FAQs management</div>
+                                    <div class="clickable" data-url="withdrawal-manage">Withdrawals management</div>
                                 </div>
                             </c:otherwise>
                         </c:choose>

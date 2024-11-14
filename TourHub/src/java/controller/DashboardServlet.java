@@ -117,7 +117,7 @@ private void handleDashboardRequest(HttpServletRequest request, HttpServletRespo
                 .setScale(2, RoundingMode.HALF_UP);
 
         DecimalFormat df = new DecimalFormat("#,##0");
-        String formattedTotalRevenue = df.format(totalRevenue.multiply(BigDecimal.valueOf(1000)));
+        String formattedTotalRevenue = df.format(totalRevenue.multiply(BigDecimal.valueOf(1)));
 
         Map<String, Integer> bookingsByCompany = book.getBookingsByCompany();
         Map<String, Integer> bookingsByLocation = book.getBookingsByLocation();

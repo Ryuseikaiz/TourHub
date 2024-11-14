@@ -22,6 +22,7 @@ import model.User;
 import model.Wishlist;
 import java.util.Date;
 import model.Booking;
+import model.Withdrawals;
 
 /**
  *
@@ -764,6 +765,36 @@ public class ThienDB implements DatabaseInfo {
         }
 
         return added;
+    }
+
+    public List<Withdrawals> getWithdrawal() {
+        List<Withdrawals> withdrawals = new ArrayList<>();
+        String sql = "select withdrawals_Id,provider_Id,withdraw_money,request_Date,respond_Date,Status, bank_Information\n"
+                + "from Withdrawals w inner join Company c on w.provider_Id = c.company_Id";
+
+        try (Connection con = getConnect(); // Assuming you have this utility
+                 PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            // Now execute the query
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Withdrawals Withdrawals = new Withdrawals();
+                    Withdrawals.setId(rs.getInt("withdrawals_Id"));
+                    Withdrawals.setProviderId(rs.getInt("provider_Id"));
+                    Withdrawals.setWithdrawMoney(rs.getBigDecimal("withdraw_money"));
+                    Withdrawals.setRequestDate(rs.getDate("request_Date"));
+                    Withdrawals.setRespondDate(rs.getDate("respond_Date"));
+                    Withdrawals.setStatus(rs.getString("Status"));
+                    Withdrawals.setCompanyBank(rs.getString("bank_Information"));
+
+                    withdrawals.add(Withdrawals);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return withdrawals;
     }
 
     public List<Notification> getNotificationsByUserId(int userId) throws SQLException {

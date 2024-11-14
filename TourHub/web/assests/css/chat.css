@@ -184,10 +184,17 @@
     margin: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    border-radius: 5px;
 }
 .user:hover {
     background-color: #f0f0f0;
 }
+
+.user.active {
+    background-color: #007bff; /* Màu nền khi chọn */
+    color: white; /* Màu chữ khi chọn */
+}
+
 .message {
     padding: 10px;
     border-radius: 5px;
