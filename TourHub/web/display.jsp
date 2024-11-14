@@ -17,7 +17,15 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
         <!-- Toasify JavaScript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
-
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css'>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script> 
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/js/bootstrap.min.js'></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous"
+            />
         <style>
             .order .head {
                 text-align: center;
@@ -541,7 +549,7 @@
                         };
 
                         // Tạo URL QR Code sử dụng MY_BANK
-                        const qrUrl = "https://img.vietqr.io/image/" + MY_BANK.BANK_ID + "-" + MY_BANK.ACCOUNT_NO + "-compact2.jpg?amount=" + withdrawal.withdrawMoney + "&addInfo=thanh%20toan%20boi%20tourhub";
+                        const qrUrl = "https://img.vietqr.io/image/" + MY_BANK.ACCOUNT_NO + "-" + MY_BANK.BANK_ID + "-compact2.jpg?amount=" + withdrawal.withdrawMoney + "&addInfo=thanh%20toan%20boi%20tourhub";
 
                         // Kiểm tra xem phần tử qrImg có tồn tại trong DOM không
                         const qrImg = document.querySelector(".tour-qr-img");
@@ -571,7 +579,7 @@
                 });
             });
 
-// Biến để theo dõi trạng thái thanh toán thành công
+            // Biến để theo dõi trạng thái thanh toán thành công
             let isSuccess = false;
             let checkInterval = null;
 
@@ -579,30 +587,41 @@
                 if (isSuccess) {
                     return;
                 }
+                
+                content = "thanh toan boi tourhub";
 
                 try {
                     const response = await fetch("https://script.google.com/macros/s/AKfycbzUZ3aGbGOZsAgwgGaRreU4HM0F8fi9RoQZnUE-TWCOYX0sWymFkSlfW_ZA73iV5GCQ/exec");
                     const data = await response.json();
-                    const lastPaid = data.data[data.data.length - 1];
 
-                    const lastPrice = lastPaid["Giá trị"];
-                    const lastContent = lastPaid["Mô tả"];
+                    if (Array.isArray(data.data) && data.data.length > 0) {
+                        const lastPaid = data.data[data.data.length - 1];
 
-                    // Kiểm tra thanh toán thành công
-                    if (lastPrice >= price && lastContent.includes(content)) {
-                        isSuccess = true;
-                        clearInterval(checkInterval); // Dừng lại khi thanh toán thành công
+                        // Ensure lastPaid["Giá trị"] exists and is a number
+                        const lastPrice = typeof lastPaid["Giá trị"] === "number" ? lastPaid["Giá trị"] : parseFloat(lastPaid["Giá trị"]);
+                        const lastContent = lastPaid["Mô tả"];
 
-                        // Hiển thị modal thành công thanh toán
-                        const paymentSuccessModal = new bootstrap.Modal(document.getElementById('statusSuccessModal'));
-                        paymentSuccessModal.show();
+                        console.log("Last Price:", lastPrice);    // For debugging
+                        console.log("Last Content:", lastContent); // For debugging
 
-                        // Chuyển hướng đến trang /home khi thanh toán thành công
-                        setTimeout(() => {
-                            window.location.href = '/home'; // Chuyển hướng đến trang chủ
-                        }, 3000); // Đợi 3 giây trước khi chuyển hướng
+                        // Check if payment is successful using Math.abs(lastPrice)
+                        if (Math.abs(lastPrice) >= price && lastContent.includes(content)) {
+                            isSuccess = true;
+                            clearInterval(checkInterval); // Stop checking when payment is successful
+
+                            // Display the payment success modal
+                            const paymentSuccessModal = new bootstrap.Modal(document.getElementById('statusSuccessModal'));
+                            paymentSuccessModal.show();
+
+                            // Redirect to the home page after successful payment
+                            setTimeout(() => {
+                                window.location.href = '/home'; // Redirect to the home page
+                            }, 3000); // Wait 3 seconds before redirecting
+                        } else {
+                            console.log("Payment not successful yet.");
+                        }
                     } else {
-                        console.log("Payment not successful yet.");
+                        console.log("No data available in response");
                     }
                 } catch (error) {
                     console.error("Error occurred during payment check:", error);
