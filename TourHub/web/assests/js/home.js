@@ -214,7 +214,7 @@ function displayTours(city) {
 
 // Event listener to load tours for "Phú Quốc" automatically
 document.addEventListener('DOMContentLoaded', function () {
-    displayTours("Phu Quoc");
+    displayTours("Kien Giang");
     // Add event listeners to buttons
     document.querySelectorAll('button[city]').forEach(button => {
         button.addEventListener('click', function () {
@@ -301,6 +301,12 @@ $(document).ready(function () {
             }
         }
     });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(() => {
+        displayTours("Kien Giang");
+    }, 5);  // Adjust delay as needed
 });
 
 

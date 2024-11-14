@@ -234,11 +234,11 @@
                     </div>
                 </div>
                 <div class="group-btn" role="group" aria-label="City Options">
-                    <button type="button" class="btn btn-primary active" city="Phu Quoc">Phú Quốc</button>
+                    <button type="button" class="btn btn-primary active" city="Kien Giang">Phú Quốc</button>
                     <button type="button" class="btn btn-outline-primary" city="Da Nang">Đà Nẵng</button>
                     <button type="button" class="btn btn-outline-primary" city="Ha Noi">Hà Nội</button>
-                    <button type="button" class="btn btn-outline-primary" city="TP Ho Chi Minh<">TP Hồ Chí Minh</button>
-                    <button type="button" class="btn btn-outline-primary" city="Quy Nhon">Quy Nhơn</button>
+                    <button type="button" class="btn btn-outline-primary" city="Ho Chi Minh">TP Hồ Chí Minh</button>
+                    <button type="button" class="btn btn-outline-primary" city="Binh Dinh">Quy Nhơn</button>
                 </div>
                 <div class="row row-50" id="tour-list">
                     <c:if test="${empty tours}">

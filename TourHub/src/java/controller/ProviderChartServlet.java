@@ -1,12 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import DataAccess.BookingDB;
 import DataAccess.CompanyDB;
-import DataAccess.UserDB;
 import DataAccess.hoang_UserDB;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -27,134 +22,90 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.User;
 
-/**
- *
- * @author hoang
- */
 @WebServlet(name = "ProviderChartServlet", urlPatterns = {"/charts"})
 public class ProviderChartServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProviderChartServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProviderChartServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+    private static final Logger LOGGER = Logger.getLogger(ProviderChartServlet.class.getName());
+
+    // Method to add CORS headers to the response
+    private void addCORSHeaders(HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "*"); // Use "*" for testing or specify your domain
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Check if the user is logged in
+        // Set CORS headers
+        addCORSHeaders(response);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("currentUser") == null) {
+            LOGGER.log(Level.WARNING, "Unauthorized access attempt");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User is not logged in");
             return;
         }
 
-        // Retrieve the logged-in user
         User user = (User) session.getAttribute("currentUser");
         int companyId;
         CompanyDB companyDB = new CompanyDB();
 
-        // Get the year parameter from the request (default to the current year if not provided)
         String yearParam = request.getParameter("year");
-        int year;        
+        int year;
         try {
-            // Default to current year if the year parameter is missing or invalid
             year = (yearParam != null && !yearParam.isEmpty()) ? Integer.parseInt(yearParam) : LocalDate.now().getYear();
         } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "Invalid year parameter: " + yearParam, e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid year parameter");
             return;
         }
 
         try {
-            // Get company ID based on the user ID
             companyId = companyDB.getCompanyIdFromUserId(user.getUser_Id());
+            LOGGER.log(Level.INFO, "Retrieved companyId: " + companyId);
         } catch (SQLException ex) {
-            Logger.getLogger(ProviderAnalysServlet.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "Error retrieving company ID", ex);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred");
             return;
         }
 
-        // Fetch monthly bookings for the company
         hoang_UserDB bookDB = new hoang_UserDB();
         Map<Integer, Integer> monthlyBookings = bookDB.getBookingMonthly(companyId, year);
-
-        // Fetch monthly profits for the selected year
         double[] monthlyProfitsThisYear = bookDB.getMonthlyProfitByYear(companyId, year);
         double[] monthlyProfitsLastYear = bookDB.getMonthlyProfitByYear(companyId, year - 1);
-
-        // Set the response to JSON
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        // Build the JSON response
-        StringBuilder jsonResponse = new StringBuilder();
-        jsonResponse.append("{");
-
-        // Append monthly bookings
-        jsonResponse.append("\"monthlyBookings\": [");
-        if (monthlyBookings.isEmpty()) {
-            jsonResponse.append("],"); // Empty array case
-        } else {
-            for (Map.Entry<Integer, Integer> entry : monthlyBookings.entrySet()) {
-                jsonResponse.append(String.format("{\"month\": %d, \"totalBookings\": %d},", entry.getKey(), entry.getValue()));
-            }
-            jsonResponse.setLength(jsonResponse.length() - 1); // Safely remove the last comma
-        }
-        jsonResponse.append("],"); // Close monthlyBookings array
-
-        // Append monthly profits for this year
-        jsonResponse.append("\"monthlyProfitsThisYear\": [");
-        for (int month = 0; month < 12; month++) {
-            jsonResponse.append(String.format("{\"month\": %d, \"profit\": %.2f},", month + 1, monthlyProfitsThisYear[month]));
-        }
-        jsonResponse.setLength(jsonResponse.length() - 1); // Remove the last comma
-        jsonResponse.append("],"); // Close monthlyProfitsThisYear array
-
-        // Append monthly profits for last year
-        jsonResponse.append("\"monthlyProfitsLastYear\": [");
-        for (int month = 0; month < 12; month++) {
-            jsonResponse.append(String.format("{\"month\": %d, \"profit\": %.2f},", month + 1, monthlyProfitsLastYear[month]));
-        }
-        jsonResponse.setLength(jsonResponse.length() - 1); // Remove the last comma
-        jsonResponse.append("],"); // Close monthlyProfitsLastYear array
-
-        // Fetch hot destinations (assuming you have already done this)
         List<Map<String, Object>> hotDestinations = bookDB.getHotDestination(companyId, year);
 
-        // Prepare data for hot destinations
+        // Ensure that the retrieved data is not null or empty
+        List<Map<String, Object>> monthlyBookingsList = new ArrayList<>();
+        if (monthlyBookings != null) {
+            for (Map.Entry<Integer, Integer> entry : monthlyBookings.entrySet()) {
+                Map<String, Object> bookingData = new HashMap<>();
+                bookingData.put("month", entry.getKey());
+                bookingData.put("totalBookings", entry.getValue());
+                monthlyBookingsList.add(bookingData);
+            }
+        }
+
+        List<Map<String, Object>> profitsThisYearList = new ArrayList<>();
+        List<Map<String, Object>> profitsLastYearList = new ArrayList<>();
+        for (int month = 0; month < 12; month++) {
+            Map<String, Object> profitThisYearData = new HashMap<>();
+            profitThisYearData.put("month", month + 1);
+            profitThisYearData.put("profit", monthlyProfitsThisYear != null ? monthlyProfitsThisYear[month] : 0);
+            profitsThisYearList.add(profitThisYearData);
+
+            Map<String, Object> profitLastYearData = new HashMap<>();
+            profitLastYearData.put("month", month + 1);
+            profitLastYearData.put("profit", monthlyProfitsLastYear != null ? monthlyProfitsLastYear[month] : 0);
+            profitsLastYearList.add(profitLastYearData);
+        }
+
         List<String> categoryLabels = new ArrayList<>();
         List<Integer> categoryData = new ArrayList<>();
-
         if (hotDestinations != null && !hotDestinations.isEmpty()) {
             for (Map<String, Object> destination : hotDestinations) {
                 String location = (String) destination.getOrDefault("location", "Unknown");
@@ -164,41 +115,37 @@ public class ProviderChartServlet extends HttpServlet {
             }
         }
 
-        // Append hot destination data to the JSON response
-        jsonResponse.append("\"categoryLabels\": ").append(new Gson().toJson(categoryLabels)).append(",");
-        jsonResponse.append("\"categoryData\": ").append(new Gson().toJson(categoryData));
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("monthlyBookings", monthlyBookingsList);
+        responseData.put("monthlyProfitsThisYear", profitsThisYearList);
+        responseData.put("monthlyProfitsLastYear", profitsLastYearList);
+        responseData.put("categoryLabels", categoryLabels);
+        responseData.put("categoryData", categoryData);
 
-        // Close the JSON object
-        jsonResponse.append("}");
+        String jsonResponse = new Gson().toJson(responseData);
 
-        // Send the JSON response to the client        
-        PrintWriter out = response.getWriter();
-        out.print(jsonResponse.toString());
-        out.flush();
+        try (PrintWriter out = response.getWriter()) {
+            out.print(jsonResponse);
+            out.flush();
+        }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doGet(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    @Override
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Handle CORS preflight requests
+        addCORSHeaders(response);
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Provider Chart Servlet with CORS support for Azure";
+    }
 }

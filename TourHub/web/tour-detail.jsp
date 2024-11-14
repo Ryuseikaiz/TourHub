@@ -1297,14 +1297,9 @@
                 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 let dateContainers = document.querySelectorAll('.date-container');
                 const tourOptions = [...document.querySelectorAll('.tour-option')];
-
-                // Lấy danh sách ngày có tour và loại bỏ các ngày trùng nhau
-                const availableTourDates = [...new Set(tourOptions.map(option => new Date(option.getAttribute('data-tour-date')).toDateString()))]
-                        .map(dateStr => new Date(dateStr))
+                const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
                         .sort((a, b) => a - b)
                         .filter(date => date >= new Date());
-
-                // Lấy 14 ngày đầu tiên
                 const closestTourDates = availableTourDates.slice(0, 14);
 
                 for (let i = 0; i < dateContainers.length; i++) {

@@ -198,20 +198,19 @@
                                                                     </a>
                                                                 </c:if>
                                                             </figure>
+                                                            <c:if test="${tour.tour_Status != 'Banned'}">                                                                 
+                                                                <div class="button-container">
+                                                                    <!-- Edit Button -->
+                                                                    <a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" class="button button-xs edit-button">
+                                                                        <i class="fas fa-edit"></i> <span>Edit</span>
+                                                                    </a>
 
-                                                            <div class="button-container">
-                                                                <!-- Edit Button -->
-                                                                <a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" class="button button-xs edit-button">
-                                                                    <i class="fas fa-edit"></i> <span>Edit</span>
-                                                                </a>
-
-                                                                <!-- Add Option Button -->
-                                                                <a href="provider-management?action=add-option&tourId=${tour.tour_Id}" class="button button-xs add-option-button">
-                                                                    <i class="fas fa-plus-circle"></i> <span>Add option</span>
-                                                                </a>
-                                                            </div>
-
-
+                                                                    <!-- Add Option Button -->
+                                                                    <a href="provider-management?action=add-option&tourId=${tour.tour_Id}" class="button button-xs add-option-button">
+                                                                        <i class="fas fa-plus-circle"></i> <span>Add option</span>
+                                                                    </a>
+                                                                </div>
+                                                            </c:if>
                                                             <!-- Tour Name -->
                                                             <div class="event-default-inner" style="justify-content: center !important; text-align: center; width: 100%;">
                                                                 <h5><a href="provider-management?action=edit-tour&tourId=${tour.tour_Id}" class="event-default-title">${tour.tour_Name}</a></h5>
