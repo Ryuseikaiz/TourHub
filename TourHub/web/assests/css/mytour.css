@@ -250,3 +250,11 @@
 .button-xs i {
     font-size: 12px !important;
 }
+.highlighted-event-wrap {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.highlighted-event-wrap:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+}

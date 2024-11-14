@@ -167,8 +167,8 @@
                                 <div class="order">
                                     <div class="row row-50">
                                         <c:forEach var="tour" items="${tours}">
-                                            <div class="col-md-6 col-xl-4 lazy">
-                                                <article class="event-default-wrap" style="background: rgba(0, 0, 0, 0.1); border-radius: 10px; max-width: 300px; margin: auto;">
+                                            <div class="col-md-6 col-xl-3 lazy">
+                                                <article class="event-default-wrap highlighted-event-wrap" style="background: rgba(0, 0, 0, 0.0); border-radius: 10px; max-width: 300px; margin: auto;">
                                                     <c:choose>
                                                         <c:when test="${tour.tour_Status == 'Hidden' || tour.tour_Status == 'Banned'}">
                                                             <div class="event-default darken-effect">
