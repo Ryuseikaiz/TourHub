@@ -412,7 +412,7 @@
                             </div>
 
                             <div class="booking-overview-container">
-                                <span class="booking-overview-title">Tóm tắt đặt chỗ</span>
+                                <span class="booking-overview-title">Booking Overview</span>
 
                                 <div class="option-container">
                                     <div class="option-img">
@@ -424,21 +424,18 @@
                                         <br>
                                         <span class="option-description">${book.option_Name}</span>
                                     </div>
-                                </div>
+                                </div>                     
 
                                 <div class="option-detail-information-container">
                                     <span class="visit-title">
-                                        Ngày tham quan: <span class="visit-date">${book.tour_Date}</span>
+                                        Visit Day: <span class="visit-date">${book.tour_Date}</span>
                                     </span>
                                     <br>
                                     <span class="include-title">
-                                        Bao gồm:
+                                        Include:
                                         <span class="include">
                                             <ul>
-                                                <li>Vé vào cổng + Bữa trưa buffet kiểu Việt cho Người lớn: 6</li>
-                                                <li>Xe minivan : 1</li>
-                                                <li>Vé vào cổng + Bữa trưa buffet kiểu Việt cho Trẻ em: 1</li>
-                                                <li>Hướng dẫn viên tiếng Việt/Anh: 1</li>
+                                                <li></li>
                                             </ul>
                                         </span>
                                     </span>
@@ -446,23 +443,23 @@
 
                                 <div class="option-time-container">
                                     <div class="begin-date-container">
-                                        <span>
-                                            Có hiệu lực vào <span>${book.tour_Date}</span>
+                                        <span class="begin-date">
+                                            Available at: <span>${book.tour_Date}</span>
                                         </span>
                                     </div>
 
                                     <span class="pre-book">
-                                        Không cần đặt chỗ trước
+                                        Pre-booking not required
                                     </span>
 
                                     <span class="refundable">
-                                        Có thể hoàn tiền cho đến 12 thg 10 2024
+                                        Refundable until: <span>${book.tour_Date}</span>
                                     </span>
                                 </div>
 
                                 <span class="view-more-detail">
-                                    Để biết thêm chi tiết của vé này,
-                                    <a href="">vui lòng xem tại đây</a>
+                                    See more booking detail,
+                                    <a href="">at here</a>
                                 </span>
                             </div>
                         </div>
@@ -510,6 +507,49 @@
                 priceContainer.innerHTML += detailsArray[i] + "<br>";
             }
         }
+        
+        // Tách bookingDetail thành các phần và bỏ qua giá
+        let items = bookingDetail.split(";").filter((_, index) => index % 2 === 0);
+
+        console.log("Items:", items);  // Kiểm tra đầu ra của items để chắc chắn nó chứa các phần tử như mong muốn
+
+        // Xử lý từng phần tử để lấy loại vé và số lượng
+        let parsedItems = items.map(item => {
+            let match = item.match(/([A-Za-z]+)\s*\(x(\d+)\)/); // Cải tiến biểu thức chính quy để phù hợp với các tên loại vé khác nhau
+            console.log("Match for", item, ":", match); // In kết quả match để kiểm tra
+
+            if (match) {
+                return match[1] + ": " + match[2]; // Loại vé và số lượng
+            }
+            return null;
+        }).filter(Boolean);
+
+        console.log("Parsed Items:", parsedItems); // Kiểm tra đầu ra của parsedItems
+
+        // Hiển thị dưới dạng <li> trong HTML
+        let includeElement = document.querySelector(".include ul");
+        parsedItems.forEach(parsedItem => {
+            let li = document.createElement("li");
+            li.innerText = parsedItem;
+            includeElement.appendChild(li);
+        }); 
+        
+        // Giả định book.tour_Date có định dạng "2024-11-13"
+        let tourDate = `${book.tour_Date}`;
+
+        // Chuyển đổi định dạng ngày từ "YYYY-MM-DD" thành "DD-MM-YYYY"
+        let formattedDate = tourDate.split('-').reverse().join('-');
+
+        // Gán ngày đã định dạng lại vào các phần tử HTML
+        document.querySelectorAll('.visit-date').forEach(element => {
+            element.textContent = formattedDate;
+        });
+        document.querySelectorAll('.refundable span').forEach(element => {
+            element.textContent = formattedDate;
+        });
+        document.querySelectorAll('.begin-date span').forEach(element => {
+            element.textContent = formattedDate;
+        });
     </script>
 
     <script>

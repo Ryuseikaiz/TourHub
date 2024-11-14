@@ -4,6 +4,14 @@
  */
 package controller;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+
 import DataAccess.CompanyDB;
 import DataAccess.KhanhDB;
 import DataAccess.ThienDB;
@@ -16,29 +24,41 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.awt.print.Book;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import model.Booking;
 import model.Company;
 import model.Customer;
 import model.Notification;
 import model.Tour;
 import model.User;
+import utils.CSVReader;
 
 /**
  *
@@ -144,14 +164,16 @@ public class FinishBookingServlet extends HttpServlet {
 
             User user = userDB.getUserFromSession(request.getSession());
             if ("Booked".equalsIgnoreCase(book.getBook_Status())) {
-                sendBookingConfirmationEmail(user.getEmail(), book, user);
+                sendBookingConfirmationEmail(request, user.getEmail(), book, user);
                 setBalanceAfterBookingSuccess(book, request, response);
+
                 String msgProvider = user.getFirst_Name() + " " + user.getLast_Name() + " just book your tour " + book.getTour_Name();
                 String msgCustomer = "You just book success " + book.getTour_Name() + " go to My Booking Section to check your booking, Have a good day!";
                 int userCompanyId = new CompanyDB().getProviderByTourId(book.getTour_Id()).getUser_Id();
                 int userCustomerId = new UserDB().getUserFromSession(request.getSession()).getUser_Id();
                 thienDB.addNotification(userCustomerId, msgCustomer);
                 thienDB.addNotification(userCompanyId, msgProvider);
+
                 response.getWriter().write("Email sent successfully!");
             } else {
                 response.getWriter().write("Tour status is not 'Booked'.");
@@ -168,19 +190,17 @@ public class FinishBookingServlet extends HttpServlet {
         request.getRequestDispatcher("/booked-tour.jsp").forward(request, response);
     }
 
-    private void sendBookingConfirmationEmail(String toEmail, Booking bookedDetail, User userBooking) {
-        // Sender's email credentials
-        final String fromEmail = "tourhubforlife@gmail.com"; // replace with your email
-        final String password = "zlnk ggii octx hbdf"; // replace with your email password
+    private void sendBookingConfirmationEmail(HttpServletRequest request, String toEmail, Booking bookedDetail, User userBooking) {
+        CSVReader reader = new CSVReader();
+        final String fromEmail = "tourhubforlife@gmail.com";
+        final String password = "zlnk ggii octx hbdf";
 
-        // Setup mail server properties
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "587");
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
 
-        // Get the Session object
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(fromEmail, password);
@@ -188,13 +208,24 @@ public class FinishBookingServlet extends HttpServlet {
         });
 
         try {
-            // Create a default MimeMessage object
+            // Get the folder upload path and generate QR code file path
+            File uploadFolder = getFolderUpload(request);
+            String qrFilePath = uploadFolder.getAbsolutePath() + "/bookingQRCode.png";
+
+            // Generate QR code with booking details and save it to the directory
+            String qrContent = generateQRContent(bookedDetail, userBooking);
+            generateQRCode(qrContent, qrFilePath);
+
+            // Get the latest QR code file
+            File latestQRCode = reader.getLatestFileFromDir(uploadFolder.getAbsolutePath());
+
+            // Create the email message
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject("Tour Booking Confirmation");
 
-            // Compose the message
+            // Create the email body
             String emailContent = "Dear " + userBooking.getFirst_Name() + " " + userBooking.getLast_Name() + ",\n\n"
                     + "Thank you for booking your tour with us! We are delighted to confirm your reservation. Here are the details of your tour:\n\n"
                     + "Booking ID: " + bookedDetail.getBook_Id() + "\n"
@@ -203,21 +234,62 @@ public class FinishBookingServlet extends HttpServlet {
                     + "Number of Slots Booked: " + bookedDetail.getSlot_Order() + "\n"
                     + "Booking Details: " + bookedDetail.getBooking_Detail() + "\n"
                     + "Tour Option: " + bookedDetail.getOption_Name() + "\n\n"
+                    + "Please show this email to checkout\n\n"
                     + "If you have any questions or need further assistance, please do not hesitate to reach out to us.\n\n"
-                    // Closing remarks with company branding
                     + "We look forward to providing you with an unforgettable experience!\n\n"
                     + "Best regards,\n"
                     + "TourHub - Buy a tour without leaving your home";
 
-            message.setText(emailContent);
+            // Attach the email content and QR code
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText(emailContent);
+
+            MimeBodyPart qrCodeAttachment = new MimeBodyPart();
+            DataSource source = new FileDataSource(latestQRCode);
+            qrCodeAttachment.setDataHandler(new DataHandler(source));
+            qrCodeAttachment.setFileName("BookingQRCode.png");
+
+            // Create multipart and add parts
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(textPart);
+            multipart.addBodyPart(qrCodeAttachment);
+
+            message.setContent(multipart);
 
             // Send message
             Transport.send(message);
-            System.out.println("Email sent successfully!");
+            System.out.println("Email with QR code sent successfully!");
 
-        } catch (MessagingException e) {
+            // Clean up QR code directory
+            reader.deleteAllFilesInDir(uploadFolder.getAbsolutePath());
+
+        } catch (MessagingException | IOException | WriterException e) {
             e.printStackTrace();
         }
+    }
+
+    // QR Code generation method
+    private void generateQRCode(String qrContent, String filePath) throws WriterException, IOException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        Map<EncodeHintType, Object> hints = new HashMap<>();
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+
+        BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 300, 300, hints);
+        Path path = FileSystems.getDefault().getPath(filePath);
+        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+    }
+
+    // Helper method to create QR code content
+    private String generateQRContent(Booking bookedDetail, User userBooking) {
+        return "Dear " + userBooking.getFirst_Name() + " " + userBooking.getLast_Name() + ",\n\n"
+                + "Thank you for booking with us! Here are your booking details:\n\n"
+                + "Booking ID: " + bookedDetail.getBook_Id() + "\n"
+                + "Tour Name: " + bookedDetail.getTour_Name() + "\n"
+                + "Tour Date: " + bookedDetail.getTour_Date() + "\n"
+                + "Slots: " + bookedDetail.getSlot_Order() + "\n"
+                + "Details: " + bookedDetail.getBooking_Detail() + "\n"
+                + "Option: " + bookedDetail.getOption_Name();
     }
 
     public void setBalanceAfterBookingSuccess(Booking booking, HttpServletRequest request, HttpServletResponse response) {
@@ -255,4 +327,19 @@ public class FinishBookingServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private File getFolderUpload(HttpServletRequest request) {
+        String uploadPath = request.getServletContext().getRealPath("/assests/qr-checkout");
+        String cleanedPath = removeBuildPath(uploadPath);
+
+        File folderUpload = new File(cleanedPath);
+        if (!folderUpload.exists() && !folderUpload.mkdirs()) {
+            System.out.println("Failed to create directory: " + folderUpload.getAbsolutePath());
+        }
+        return folderUpload;
+    }
+
+    private String removeBuildPath(String originalPath) {
+        String buildPath = "build\\";
+        return originalPath.contains(buildPath) ? originalPath.replace(buildPath, "") : originalPath;
+    }
 }

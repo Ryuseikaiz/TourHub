@@ -239,11 +239,11 @@
                             <div class="banking-details">
                                 <div class="detail-item">
                                     <span>Bank account number:</span>
-                                    <span class="value">0364173531</span>
+                                    <span class="value">0000871278620</span>
                                 </div>
                                 <div class="detail-item">
                                     <span>Bank account name:</span>
-                                    <span class="value">PHAM DUY KHANH</span>
+                                    <span class="value">NGUYEN DOAN TRONG DUC</span>
                                 </div>
                                 <div class="detail-item">
                                     <span>Total cost:</span>
