@@ -71,7 +71,7 @@
             </a>
         </li>
         <li>
-            <a href="user-chat.jsp">
+            <a href="ChatController?action=adminPreChat">
                 <i class='bx bxs-message-dots' ></i>
                 <span class="text">Message</span>
             </a>

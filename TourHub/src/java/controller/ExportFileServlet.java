@@ -60,7 +60,7 @@ public class ExportFileServlet extends HttpServlet {
 
             // Format the number with commas and no decimal places
             NumberFormat formatter = new DecimalFormat("#,##0");
-            String formattedRevenue = formatter.format(totalRevenue.multiply(BigDecimal.valueOf(1000)));
+            String formattedRevenue = formatter.format(totalRevenue.multiply(BigDecimal.valueOf(1)));
             String RevenueDot = formattedRevenue.replace(",", ".");
 
             // Add the "VND" suffix

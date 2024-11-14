@@ -393,6 +393,68 @@
                                 </div>
                             </c:when>
 
+                            <c:when test="${type == 'withdrawal'}">
+                                <h3>Withdrawal Management</h3>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Withdrawal ID</th>
+                                            <th>Provider Id</th>
+                                            <th>Money</th>
+                                            <th>Request Date</th>
+                                            <th>Response Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach var="withdrawal" items="${data}">
+                                            <tr>
+                                                <td>${withdrawal.id}</td>
+                                                <td>${withdrawal.providerId}</td>
+                                                <td>${withdrawal.withdrawMoney}</td>
+                                                <td>${withdrawal.requestDate}</td>
+                                                <td>${withdrawal.companyBank}</td>
+                                                <td>${withdrawal.status}</td>
+                                                <td>
+                                                    <div class="action-container">
+                                                        <a href="#" class="action-link approve showQRBtn"
+                                                           data-id="${withdrawal.id}"
+                                                           data-bank="${withdrawal.companyBank}"
+                                                           data-money="${withdrawal.withdrawMoney}">Show QR</a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+
+                                <!-- Modal QR (chỉ cần một modal duy nhất) -->
+                                <div id="qrModal" class="modal" style="display: none;">
+                                    <div class="modal-content">
+                                        <img class="tour-qr-img" src="" alt="QR Code">
+                                        <div id="paid-content"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal thành công thanh toán -->
+                                <div class="modal fade" id="statusSuccessModal" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-body text-center p-lg-4">
+                                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                                                <circle class="path circle" fill="none" stroke="#198754" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
+                                                <polyline class="path check" fill="none" stroke="#198754" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                                                </svg>
+                                                <h4 class="text-success mt-3">Payment Complete!</h4>
+                                                <p class="mt-3">You have successfully booked a tour.</p>
+                                                <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal" onclick="window.location.href = '/home'">Ok</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:when>
+
                         </c:choose>
                     </div>
                 </div>
@@ -402,21 +464,21 @@
         <!-- CONTENT -->
         <script src="assests/js/script_profile.js"></script>
         <script>
-                                            window.onload = function () {
-                                                const message = '${message}';
-                                                if (message) {
-                                                    Toastify({
-                                                        text: message,
-                                                        duration: 3000, // Thời gian hiển thị (3 giây)
-                                                        gravity: "top", // Vị trí hiển thị (top/bottom)
-                                                        position: 'right', // Vị trí bên trái/bên phải
-                                                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // Màu nền
-                                                    }).showToast();
+                        window.onload = function () {
+                            const message = '${message}';
+                            if (message) {
+                                Toastify({
+                                    text: message,
+                                    duration: 3000, // Thời gian hiển thị (3 giây)
+                                    gravity: "top", // Vị trí hiển thị (top/bottom)
+                                    position: 'right', // Vị trí bên trái/bên phải
+                                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", // Màu nền
+                                }).showToast();
 
-                                                    // Xóa message sau khi đã hiển thị
+                                // Xóa message sau khi đã hiển thị
             <c:remove var="message" />
-                                                }
-                                            };
+                            }
+                        };
         </script>
         <script>
             function openModal(bookId, customerName, tourName, bookingDate, slotOrder, totalCost, bookingStatus, tourDate, cancelDate, bookingDetail, refundAmount) {
@@ -442,6 +504,111 @@
                 // Đóng modal
                 document.getElementById("bookingModal").style.display = "none";
             }
+
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Đóng modal khi nhấn vào bất kỳ đâu ngoài modal content
+                window.addEventListener("click", function (event) {
+                    const modal = document.getElementById("qrModal");
+                    if (modal && event.target === modal) {
+                        modal.style.display = "none"; // Đóng modal
+                    }
+                });
+
+                // Sự kiện click vào các nút "Show QR"
+                const showQRBtns = document.querySelectorAll(".showQRBtn");
+                showQRBtns.forEach(function (btn) {
+                    btn.addEventListener("click", function (event) {
+                        event.preventDefault(); // Ngừng hành động mặc định của link
+
+                        // Lấy dữ liệu từ thuộc tính data-* của nút
+                        const withdrawal = {
+                            companyBank: btn.getAttribute('data-bank'),
+                            withdrawMoney: btn.getAttribute('data-money')
+                        };
+
+                        // Tách dữ liệu từ withdrawal.companyBank
+                        const bankInfo = withdrawal.companyBank.split(" "); // Tách chuỗi thành mảng, dùng " " làm dấu phân cách
+                        const accountNo = bankInfo[0]; // Số tài khoản
+                        const bankName = bankInfo.slice(1).join(" "); // Tên ngân hàng (nếu có nhiều từ, ghép lại)
+
+                        // Tạo đối tượng MY_BANK từ dữ liệu đã tách
+                        const MY_BANK = {
+                            BANK_ID: bankName, // Đặt tên ngân hàng vào BANK_ID
+                            ACCOUNT_NO: accountNo // Đặt số tài khoản vào ACCOUNT_NO
+                        };
+
+                        // Tạo URL QR Code sử dụng MY_BANK
+                        const qrUrl = "https://img.vietqr.io/image/" + MY_BANK.BANK_ID + "-" + MY_BANK.ACCOUNT_NO + "-compact2.jpg?amount=" + withdrawal.withdrawMoney + "&addInfo=thanh%20toan%20boi%20tourhub";
+
+                        // Kiểm tra xem phần tử qrImg có tồn tại trong DOM không
+                        const qrImg = document.querySelector(".tour-qr-img");
+                        if (qrImg) {
+                            qrImg.src = qrUrl;  // Chỉ thay đổi src nếu phần tử tồn tại
+                        }
+
+                        // Kiểm tra xem phần tử #paid-content có tồn tại không
+                        const paidContent = document.getElementById("paid-content");
+                        if (paidContent) {
+                            paidContent.textContent = "Bank: " + MY_BANK.BANK_ID + ", Amount: " + withdrawal.withdrawMoney;
+                        }
+
+                        // Hiển thị modal
+                        const modal = document.getElementById("qrModal");
+                        if (modal) {
+                            modal.style.display = "block";
+                        }
+
+                        // Gọi checkPaid sau khi tạo mã QR
+                        setTimeout(() => {
+                            checkInterval = setInterval(() => {
+                                checkPaid(-withdrawal.withdrawMoney, MY_BANK.ACCOUNT_NO + " " + MY_BANK.BANK_ID);
+                            }, 1000);
+                        }, 10000); // Đợi 10 giây trước khi bắt đầu kiểm tra thanh toán
+                    });
+                });
+            });
+
+// Biến để theo dõi trạng thái thanh toán thành công
+            let isSuccess = false;
+            let checkInterval = null;
+
+            async function checkPaid(price, content) {
+                if (isSuccess) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch("https://script.google.com/macros/s/AKfycbzUZ3aGbGOZsAgwgGaRreU4HM0F8fi9RoQZnUE-TWCOYX0sWymFkSlfW_ZA73iV5GCQ/exec");
+                    const data = await response.json();
+                    const lastPaid = data.data[data.data.length - 1];
+
+                    const lastPrice = lastPaid["Giá trị"];
+                    const lastContent = lastPaid["Mô tả"];
+
+                    // Kiểm tra thanh toán thành công
+                    if (lastPrice >= price && lastContent.includes(content)) {
+                        isSuccess = true;
+                        clearInterval(checkInterval); // Dừng lại khi thanh toán thành công
+
+                        // Hiển thị modal thành công thanh toán
+                        const paymentSuccessModal = new bootstrap.Modal(document.getElementById('statusSuccessModal'));
+                        paymentSuccessModal.show();
+
+                        // Chuyển hướng đến trang /home khi thanh toán thành công
+                        setTimeout(() => {
+                            window.location.href = '/home'; // Chuyển hướng đến trang chủ
+                        }, 3000); // Đợi 3 giây trước khi chuyển hướng
+                    } else {
+                        console.log("Payment not successful yet.");
+                    }
+                } catch (error) {
+                    console.error("Error occurred during payment check:", error);
+                }
+            }
+
 
         </script>
 

@@ -19,6 +19,7 @@ public class Withdrawals {
     private Date requestDate; // Date of request
     private Date respondDate; // Date of response
     private String status; // Status of the withdrawal
+    private String companyBank;
 
     // Constructor
     public Withdrawals() {
@@ -37,6 +38,16 @@ public class Withdrawals {
         this.providerId = providerId;
         this.withdrawMoney = withdrawMoney;
         this.status = status;
+    }
+    
+    public Withdrawals(int id, int providerId, BigDecimal withdrawMoney, Date requestDate, Date respondDate, String status, String companyBank) {
+        this.id = id;
+        this.providerId = providerId;
+        this.withdrawMoney = withdrawMoney;
+        this.requestDate = requestDate;
+        this.respondDate = respondDate;
+        this.status = status;
+        this.companyBank = companyBank;
     }
 
     // Getters and Setters
@@ -88,15 +99,18 @@ public class Withdrawals {
         this.status = status;
     }
 
+    public String getCompanyBank() {
+        return companyBank;
+    }
+
+    public void setCompanyBank(String companyBank) {
+        this.companyBank = companyBank;
+    }
+    
+   
     @Override
     public String toString() {
-        return "Withdrawals{"
-                + "id=" + id
-                + ", providerId=" + providerId
-                + ", withdrawMoney=" + withdrawMoney
-                + ", requestDate=" + requestDate
-                + ", respondDate=" + respondDate
-                + ", status='" + status + '\''
-                + '}';
+        return "Withdrawals{" + "id=" + id + ", providerId=" + providerId + ", withdrawMoney=" + withdrawMoney + ", requestDate=" + requestDate + ", respondDate=" + respondDate + ", status=" + status + ", companyBank=" + companyBank + '}';
     }
+    
 }
