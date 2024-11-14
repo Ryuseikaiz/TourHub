@@ -24,6 +24,8 @@
         <link rel="stylesheet" href="assests/css/bootstrap.css" />
         <!--<link rel="stylesheet" href="assests/css/style.css" />-->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
         <!-- Toasify JavaScript -->        
         <title>Analytic</title>
         <style>
@@ -220,7 +222,7 @@
                                                                             padding: 3px 7px;
                                                                             line-height: 1;
                                                                             width: 50px;">
-                                                                        Remove
+                                                                        <i class="fas fa-trash-alt"></i> <!-- FontAwesome trash icon -->
                                                                     </button>
                                                                 </div>
                                                             </figure>
@@ -228,6 +230,7 @@
                                                     </c:forEach>
                                                 </div>
                                             </c:if>
+
                                         </div>                                        
                                         <button type="submit" class="btn btn-primary btn-block action-link approve">Save</button>
                                     </form>

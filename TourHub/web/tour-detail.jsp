@@ -1086,13 +1086,13 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#scrollspyHeading2">Second</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item"></li>
                         <a class="nav-link" href="#scrollspyHeading3">Third</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item"></li>
                         <a class="nav-link" href="#scrollspyHeading4">Fourth</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item"></li>
                         <a class="nav-link" href="#scrollspyHeading5">Fifth</a>
                         </li>
                     </ul>
@@ -1212,53 +1212,53 @@
 </script>-->
 
 <script>
-    // Toggle function for handling blur and popups
-    function toggle(action) {
-        var blur = document.getElementById('blur');
-        if (action === 'blur') {
-            // Chỉ kích hoạt blur
-            blur.classList.toggle('active');
-        } else if (action === 'popup1') {
-            // Kích hoạt popup 1 và blur
-            blur.classList.toggle('active');
-            var popup1 = document.getElementById('popup1');
-            popup1.classList.toggle('active');
-        } else if (action === 'popup2') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup2 = document.getElementById('popup2');
-            popup2.classList.toggle('active');
-        } else if (action === 'popup3') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup3 = document.getElementById('popup3');
-            popup3.classList.toggle('active');
-        } else if (action === 'popup4') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup4 = document.getElementById('popup4');
-            popup4.classList.toggle('active');
-        } else if (action === 'popup5') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            var popup5 = document.getElementById('popup5');
-            popup5.classList.toggle('active');
-        } else if (action === 'calendar') {
-            // Kích hoạt popup 2 và blur
-            blur.classList.toggle('active');
-            const section = document.getElementById('date-section');
-            if (section) {
-                section.scrollLeft -= 600; // Di chuyển về phía trái
+            // Toggle function for handling blur and popups
+            function toggle(action) {
+                var blur = document.getElementById('blur');
+                if (action === 'blur') {
+                    // Chỉ kích hoạt blur
+                    blur.classList.toggle('active');
+                } else if (action === 'popup1') {
+                    // Kích hoạt popup 1 và blur
+                    blur.classList.toggle('active');
+                    var popup1 = document.getElementById('popup1');
+                    popup1.classList.toggle('active');
+                } else if (action === 'popup2') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup2 = document.getElementById('popup2');
+                    popup2.classList.toggle('active');
+                } else if (action === 'popup3') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup3 = document.getElementById('popup3');
+                    popup3.classList.toggle('active');
+                } else if (action === 'popup4') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup4 = document.getElementById('popup4');
+                    popup4.classList.toggle('active');
+                } else if (action === 'popup5') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    var popup5 = document.getElementById('popup5');
+                    popup5.classList.toggle('active');
+                } else if (action === 'calendar') {
+                    // Kích hoạt popup 2 và blur
+                    blur.classList.toggle('active');
+                    const section = document.getElementById('date-section');
+                    if (section) {
+                        section.scrollLeft -= 600; // Di chuyển về phía trái
+                    }
+                } else {
+                    // Đóng popup (khi người dùng nhấn nút "Close")
+                    var popups = document.getElementsByClassName('popup');
+                    for (var i = 0; i < popups.length; i++) {
+                        popups[i].classList.remove('active');
+                    }
+                    blur.classList.remove('active');
+                }
             }
-        } else {
-            // Đóng popup (khi người dùng nhấn nút "Close")
-            var popups = document.getElementsByClassName('popup');
-            for (var i = 0; i < popups.length; i++) {
-                popups[i].classList.remove('active');
-            }
-            blur.classList.remove('active');
-        }
-    }
 
     // Scroll date section
     function scrollRight() {
@@ -1273,25 +1273,25 @@
             section.scrollLeft -= 200;
     }
 
-    // Close blur effect when clicking outside of popup
-    document.addEventListener('click', function (event) {
-        var calendarElement = document.querySelector('.flatpickr-calendar');
-        var blurElement = document.getElementById('blur');
-        if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar') && blurElement && blurElement.classList.contains('active')) {
-            toggle(null);
-        }
-    }, true);
+            // Close blur effect when clicking outside of popup
+            document.addEventListener('click', function (event) {
+                var calendarElement = document.querySelector('.flatpickr-calendar');
+                var blurElement = document.getElementById('blur');
+                if (calendarElement && !calendarElement.contains(event.target) && !event.target.closest('.calendar') && blurElement && blurElement.classList.contains('active')) {
+                    toggle(null);
+                }
+            }, true);
 
-    // Display 14 days with available tour dates
-    let selectedDate = new Date();
-    function displayDateRange() {
-        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        let dateContainers = document.querySelectorAll('.date-container');
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-        const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
-                .sort((a, b) => a - b)
-                .filter(date => date >= new Date());
-        const closestTourDates = availableTourDates.slice(0, 14);
+            // Display 14 days with available tour dates
+            let selectedDate = new Date();
+            function displayDateRange() {
+                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                let dateContainers = document.querySelectorAll('.date-container');
+                const tourOptions = [...document.querySelectorAll('.tour-option')];
+                const availableTourDates = tourOptions.map(option => new Date(option.getAttribute('data-tour-date')))
+                        .sort((a, b) => a - b)
+                        .filter(date => date >= new Date());
+                const closestTourDates = availableTourDates.slice(0, 14);
 
         for (let i = 0; i < dateContainers.length; i++) {
             if (i < closestTourDates.length) {
@@ -1310,28 +1310,28 @@
         filterTourOptions(selectedDate);
     }
 
-    const daysMapping = {
-        'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6
-    };
+            const daysMapping = {
+                'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6
+            };
 
-    function filterTourOptions(selectedDate) {
-        const dayOfWeek = selectedDate.getDay();
-        const tourOptions = [...document.querySelectorAll('.tour-option')];
-        tourOptions.forEach(option => {
-            const refundSection = option.querySelector('.refund-section').innerText;
-            const optionDayOfWeek = daysMapping[refundSection];
-            const tourDateStr = option.getAttribute('data-tour-date');
-            const tourDate = new Date(tourDateStr);
-            option.style.display = optionDayOfWeek === dayOfWeek && selectedDate.toDateString() === tourDate.toDateString() ? 'flex' : 'none';
-        });
-    }
+            function filterTourOptions(selectedDate) {
+                const dayOfWeek = selectedDate.getDay();
+                const tourOptions = [...document.querySelectorAll('.tour-option')];
+                tourOptions.forEach(option => {
+                    const refundSection = option.querySelector('.refund-section').innerText;
+                    const optionDayOfWeek = daysMapping[refundSection];
+                    const tourDateStr = option.getAttribute('data-tour-date');
+                    const tourDate = new Date(tourDateStr);
+                    option.style.display = optionDayOfWeek === dayOfWeek && selectedDate.toDateString() === tourDate.toDateString() ? 'flex' : 'none';
+                });
+            }
 
-    function selectDate(element, dateStr) {
-        document.querySelectorAll('.date-container').forEach(date => date.classList.remove('selected'));
-        element.classList.add('selected');
-        selectedDate = new Date(dateStr);
-        filterTourOptions(selectedDate);
-    }
+            function selectDate(element, dateStr) {
+                document.querySelectorAll('.date-container').forEach(date => date.classList.remove('selected'));
+                element.classList.add('selected');
+                selectedDate = new Date(dateStr);
+                filterTourOptions(selectedDate);
+            }
 
     function openCalendar() {
         flatpickr("#calendarInput", {
@@ -1359,15 +1359,15 @@
         return [...document.querySelectorAll('.tour-option')].map(option => new Date(option.getAttribute('data-tour-date')).toDateString());
     }
 
-    window.onload = displayDateRange;
+            window.onload = displayDateRange;
 
-    // Smooth scroll to section
-    document.querySelectorAll('.nav-link').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({behavior: 'smooth', block: 'start'});
-        });
-    });
+            // Smooth scroll to section
+            document.querySelectorAll('.nav-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({behavior: 'smooth', block: 'start'});
+                });
+            });
 
     // Save to wishlist
     document.addEventListener('DOMContentLoaded', function () {
@@ -1395,26 +1395,26 @@
         request.send(`action=add&tourId=${tourId}&returnUrl=${returnUrl}`);
     }
 
-    // Share page on Facebook
-    function sharePage() {
-        window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), 'facebook-share-dialog', 'width=626,height=436');
-    }
+            // Share page on Facebook
+            function sharePage() {
+                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.href), 'facebook-share-dialog', 'width=626,height=436');
+            }
 
-    // Open and close review popup
-    document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
-        event.preventDefault();
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
-        popup.classList.add("show");
-        setTimeout(() => popupContent.classList.add("show"), 100);
-    });
+            // Open and close review popup
+            document.getElementById("viewAllReviewsBtn").addEventListener("click", function (event) {
+                event.preventDefault();
+                var popup = document.getElementById("reviewPopup");
+                var popupContent = document.querySelector(".popup-content");
+                popup.classList.add("show");
+                setTimeout(() => popupContent.classList.add("show"), 100);
+            });
 
-    document.getElementById("closePopup").addEventListener("click", function () {
-        var popup = document.getElementById("reviewPopup");
-        var popupContent = document.querySelector(".popup-content");
-        popupContent.classList.remove("show");
-        setTimeout(() => popup.classList.remove("show"), 400);
-    });
+            document.getElementById("closePopup").addEventListener("click", function () {
+                var popup = document.getElementById("reviewPopup");
+                var popupContent = document.querySelector(".popup-content");
+                popupContent.classList.remove("show");
+                setTimeout(() => popup.classList.remove("show"), 400);
+            });
 
     window.addEventListener("click", function (event) {
         var popup = document.getElementById("reviewPopup");
