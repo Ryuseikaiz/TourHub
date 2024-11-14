@@ -162,12 +162,15 @@ public class ManagementServlet extends HttpServlet {
             if ("approve-tour".equals(action)) {
                 tourDAO.approveTour(tourId);
                 request.getSession().setAttribute("message", "Tour approved successfully!");
+                response.sendRedirect("manage?action=tour-manage&status=Pending");
             } else if ("cancel-tour".equals(action)) {
                 tourDAO.cancelTour(tourId);
                 request.getSession().setAttribute("message", "Tour cancelled successfully!");
+                response.sendRedirect("manage?action=tour-manage&status=Pending");
             } else if ("ban-tour".equals(action)) {
                 tourDAO.banTour(tourId);
                 request.getSession().setAttribute("message", "Tour cancelled successfully!");
+                response.sendRedirect("manage?action=tour-manage&status=Active");
             }
             response.sendRedirect("manage?action=tour-manage");
         } catch (Exception e) {
